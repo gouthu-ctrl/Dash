@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -5,10 +8,22 @@ plugins {
 }
 
 android {
-    namespace = "com.dash.travel"
-    compileSdk {
-        version = release(36)
+    signingConfigs {
+        create("release") {
+            val keystorePropertiesFile = rootProject.file("app/keystore.properties")
+            if (keystorePropertiesFile.exists()) {
+                val keystoreProperties = Properties()
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
     }
+
+    namespace = "com.dash.travel"
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.dash.travel"
@@ -18,15 +33,33 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Read Supabase config from local.properties
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(FileInputStream(localPropertiesFile))
+        }
+        
+        // Default to Supabase Cloud values if not found in local.properties
+        val supabaseUrl = localProperties.getProperty("SUPABASE_URL") ?: "https://pfuraayelhuxqdhemquf.supabase.co"
+        val supabaseKey = localProperties.getProperty("SUPABASE_KEY") ?: "sb_publishable__arXYbyhouHk52eVDyCQ7A_0WRrxCkx"
+        
+        buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
+        buildConfigField("String", "SUPABASE_KEY", "\"$supabaseKey\"")
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -35,6 +68,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -56,6 +90,9 @@ dependencies {
     implementation(libs.supabase.postgrest)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
+    
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
     
     // Google Credential Manager
     implementation(libs.androidx.credentials)

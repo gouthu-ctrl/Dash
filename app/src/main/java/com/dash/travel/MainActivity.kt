@@ -43,11 +43,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Initialize Supabase Client
-        // Note: For Android Emulator, use 10.0.2.2 to access host's localhost
-        // For physical device, use your machine's local IP address (e.g. 192.168.1.x)
         val supabase = createSupabaseClient(
-            supabaseUrl = "http://10.0.2.2:54321",
-            supabaseKey = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH" // Ensure this is the correct 'anon' key (JWT)
+            supabaseUrl = BuildConfig.SUPABASE_URL,
+            supabaseKey = BuildConfig.SUPABASE_KEY
         ) {
             install(Auth)
             install(Postgrest)
@@ -63,6 +61,7 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     val session = supabase.auth.currentSessionOrNull()
                     if (session != null) {
+                        launch { updateProfile(supabase) }
                         navController.navigate("home") {
                             popUpTo("welcome") { inclusive = true }
                         }
@@ -110,6 +109,9 @@ class MainActivity : ComponentActivity() {
                                                 this.idToken = idToken
                                                 this.provider = Google
                                             }
+
+                                            // Update profile with location info
+                                            launch { updateProfile(supabase) }
 
                                             // Navigate to Home
                                             navController.navigate("home") {
