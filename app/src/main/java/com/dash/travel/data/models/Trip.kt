@@ -12,6 +12,7 @@ data class Trip(
     @SerialName("start_date") val startDate: String? = null,
     @SerialName("end_date") val endDate: String? = null,
     @SerialName("destination_data") val destinationData: JsonElement? = null,
+    @SerialName("origin_data") val originData: JsonElement? = null, // Added originData
     @SerialName("created_by") val createdBy: String? = null,
     @SerialName("trip_image_url") val tripImageUrl: String? = null,
     @SerialName("display_order") val displayOrder: Int = 0,

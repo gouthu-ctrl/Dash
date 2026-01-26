@@ -44,11 +44,15 @@ import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
@@ -63,6 +67,7 @@ data class NewTrip(
     @SerialName("end_date") val endDate: String,
     @SerialName("created_by") val createdBy: String,
     @SerialName("destination_data") val destinationData: JsonObject,
+    @SerialName("origin_data") val originData: JsonObject, // Added for edit screen
     @SerialName("trip_image_url") val tripImageUrl: String? = null
 )
 
@@ -80,7 +85,8 @@ data class TripAttachment(
 @Serializable
 data class Profile(
     val id: String,
-    @SerialName("full_name") val fullName: String? = null
+    @SerialName("full_name") val fullName: String? = null,
+    @SerialName("avatar_url") val avatarUrl: String? = null
 )
 
 @Serializable
@@ -107,8 +113,8 @@ class MainActivity : ComponentActivity() {
                 val context = this
                 val credentialManager = remember { CredentialManager.create(context) }
                 
-                val trips = remember { mutableStateListOf<Trip>() }
                 var userName by remember { mutableStateOf("Traveler") }
+                val trips = remember { mutableStateListOf<Trip>() }
 
                 suspend fun fetchProfile() {
                     try {
@@ -144,6 +150,10 @@ class MainActivity : ComponentActivity() {
                             }
                             db.tripDao().insertTrips(entities)
                             
+                            // Re-fetch trip data from Room to ensure local state uses stable IDs/data
+                            // NOTE: Full Trip objects are not being stored in Room. We rely on Supabase fetch + Room ordering.
+                            // We need to re-fetch *all* trip data to match the UI state logic.
+                            // For simplicity, we stick to updating the mutableStateListOf with the Supabase results.
                             trips.clear()
                             trips.addAll(fetchedTrips)
                         }
@@ -177,6 +187,48 @@ class MainActivity : ComponentActivity() {
                         }
                         db.itineraryDao().insertItems(entities)
                     } catch (e: Exception) { Log.e("DashData", "Itinerary fetch failed", e) }
+                }
+
+                suspend fun fetchTripMembers(tripId: String): List<TripMember> {
+                    return try {
+                        val currentUserId = SupabaseManager.client.auth.currentUserOrNull()?.id // Get current user ID
+                        
+                        val result = SupabaseManager.client.postgrest.from("trip_members").select {
+                            filter { eq("trip_id", tripId) }
+                            // Request full_name and avatar_url from the linked profiles table
+                            select(Columns.list("user_id", "role", "status", "profiles(full_name, avatar_url)"))
+                        }
+                        
+                        val rawBody = result.data 
+                        val json = Json { ignoreUnknownKeys = true }
+                        val response = json.parseToJsonElement(rawBody).jsonArray
+                        
+                        response.map { jsonElement ->
+                            val obj = jsonElement.jsonObject
+                            val profilesObj = obj["profiles"]?.jsonObject
+                            val userId = obj["user_id"]?.jsonPrimitive?.contentOrNull ?: UUID.randomUUID().toString()
+                            
+                            // Use full_name, fall back to a derived name, or 'You' if it's the current user
+                            val rawName = profilesObj?.get("full_name")?.jsonPrimitive?.contentOrNull
+                            val profileAvatarUrl = profilesObj?.get("avatar_url")?.jsonPrimitive?.contentOrNull
+
+                            val memberName = when {
+                                rawName.isNullOrBlank() -> if (userId == currentUserId) "You" else "Dash User"
+                                else -> rawName
+                            }
+                            
+                            TripMember(
+                                id = obj["user_id"]?.jsonPrimitive?.contentOrNull ?: UUID.randomUUID().toString(),
+                                name = memberName,
+                                avatarUrl = profileAvatarUrl,
+                                role = obj["role"]?.jsonPrimitive?.contentOrNull ?: "viewer",
+                                status = obj["status"]?.jsonPrimitive?.contentOrNull ?: "pending"
+                            )
+                        }
+                    } catch (e: Exception) {
+                        Log.e("DashData", "Failed to fetch trip members: $e")
+                        emptyList()
+                    }
                 }
 
                 LaunchedEffect(Unit) {
@@ -230,6 +282,7 @@ class MainActivity : ComponentActivity() {
                     composable("home") {
                         val homeViewModel: HomeViewModel = viewModel(
                             factory = object : ViewModelProvider.Factory {
+                                @Suppress("UNCHECKED_CAST")
                                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                                     return HomeViewModel(db.tripDao()) as T
                                 }
@@ -252,6 +305,9 @@ class MainActivity : ComponentActivity() {
                                         val destinationData = buildJsonObject {
                                             put("name", destination)
                                         }
+                                        val originData = buildJsonObject {
+                                            put("name", "San Francisco") // Placeholder for now
+                                        }
                                         val encodedDest = URLEncoder.encode(destination, "UTF-8")
                                         val imageUrl = "https://loremflickr.com/1280/720/$encodedDest,landmark,cityscape,famous/all?random=${System.currentTimeMillis()}"
                                         
@@ -262,6 +318,7 @@ class MainActivity : ComponentActivity() {
                                             endDate = endDate,
                                             createdBy = userId,
                                             destinationData = destinationData,
+                                            originData = originData,
                                             tripImageUrl = imageUrl
                                         )
                                         SupabaseManager.client.postgrest.from("trips").insert(newTrip)
@@ -285,6 +342,7 @@ class MainActivity : ComponentActivity() {
                         val tripDetailViewModel: TripDetailViewModel = viewModel(
                             key = tripId,
                             factory = object : ViewModelProvider.Factory {
+                                @Suppress("UNCHECKED_CAST")
                                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                                     return TripDetailViewModel(tripId, db.itineraryDao()) as T
                                 }
@@ -315,31 +373,22 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             },
-                            onEditTrip = { title, description, startDate, endDate, destination ->
+                            onEditTrip = { title, description, startDate, endDate, destination, origin ->
                                 coroutineScope.launch {
                                     try {
                                         val destinationData = buildJsonObject { put("name", destination) }
+                                        val originData = buildJsonObject { put("name", origin) }
                                         val updatedTripMap = buildJsonObject {
                                             put("title", title)
                                             put("description", description)
                                             put("start_date", startDate)
                                             put("end_date", endDate)
                                             put("destination_data", destinationData)
+                                            put("origin_data", originData) // Update origin
                                         }
                                         SupabaseManager.client.postgrest.from("trips").update(updatedTripMap) {
                                             filter { eq("id", tripId) }
                                         }
-                                        
-                                        val currentTrip = trips.find { it.id == tripId }
-                                        db.tripDao().updateTrip(TripEntity(
-                                            id = tripId,
-                                            title = title,
-                                            description = description,
-                                            startDate = startDate,
-                                            endDate = endDate,
-                                            tripImageUrl = currentTrip?.tripImageUrl,
-                                            displayOrder = currentTrip?.displayOrder ?: 0
-                                        ))
                                         
                                         fetchTrips()
                                         Toast.makeText(context, "Trip updated!", Toast.LENGTH_SHORT).show()
@@ -348,7 +397,8 @@ class MainActivity : ComponentActivity() {
                                         Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show()
                                     }
                                 }
-                            }
+                            },
+                            fetchTripMembers = { id -> fetchTripMembers(id) } // Pass the real fetch function
                         )
                     }
                     composable("add_itinerary/{tripId}", arguments = listOf(navArgument("tripId") { type = NavType.StringType })) { backStackEntry ->
