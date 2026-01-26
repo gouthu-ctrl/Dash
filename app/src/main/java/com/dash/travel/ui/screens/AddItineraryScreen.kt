@@ -3,13 +3,14 @@ package com.dash.travel.ui.screens
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -32,6 +33,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -94,39 +96,50 @@ fun AddItineraryScreen(
 @Composable
 fun TypeSelectionGrid(onTypeSelected: (ItineraryType) -> Unit) {
     val categories = listOf("Transportation", "Accommodation", "Activities", "Planning")
-    var selectedCategory by remember { mutableStateOf("Transportation") }
+    val pagerState = rememberPagerState(pageCount = { categories.size })
+    val coroutineScope = rememberCoroutineScope()
     
     Column {
         ScrollableTabRow(
-            selectedTabIndex = categories.indexOf(selectedCategory),
+            selectedTabIndex = pagerState.currentPage,
             edgePadding = 16.dp,
             divider = {},
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.primary
         ) {
-            categories.forEach { category ->
+            categories.forEachIndexed { index, category ->
                 Tab(
-                    selected = selectedCategory == category,
-                    onClick = { selectedCategory = category },
+                    selected = pagerState.currentPage == index,
+                    onClick = { 
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
                     text = { 
                         Text(
                             category, 
-                            style = if (selectedCategory == category) MaterialTheme.typography.titleSmall else MaterialTheme.typography.bodyMedium
+                            style = if (pagerState.currentPage == index) MaterialTheme.typography.titleSmall else MaterialTheme.typography.bodyMedium
                         ) 
                     }
                 )
             }
         }
         
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
-        ) {
-            items(itineraryTypes.filter { it.category == selectedCategory }) { type ->
-                TypeCard(type, onClick = { onTypeSelected(type) })
+        ) { pageIndex ->
+            val currentCategory = categories[pageIndex]
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(itineraryTypes.filter { it.category == currentCategory }) { type ->
+                    TypeCard(type, onClick = { onTypeSelected(type) })
+                }
             }
         }
     }

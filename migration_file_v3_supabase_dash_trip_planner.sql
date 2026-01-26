@@ -1,10 +1,10 @@
 /*
 ========================================================================
-   TRIP PLANNER APP - MASTER MIGRATION SCRIPT (v3.6)
+   TRIP PLANNER APP - MASTER MIGRATION SCRIPT (v3.7)
 ========================================================================
-   V3.6 UPDATES:
-   - Added 'is_shared' column to itinerary_attachments for privacy control.
-   - Standardized security policies for file attachments.
+   V3.7 UPDATES:
+   - Added 'display_order' to trips table for manual reordering.
+   - Standardized sorting_index for itinerary_items.
 ========================================================================
 */
 
@@ -98,6 +98,7 @@ create table trips (
     trip_image_url text,
 	custom_attributes jsonb default '{}',
     budget_limit decimal(12, 2),
+    display_order int default 0, -- v3.7 added
     created_at timestamp with time zone default now(),
     updated_at timestamp with time zone default now()
 );
@@ -130,7 +131,7 @@ create table itinerary_items (
     currency varchar(3) default 'USD',
     booking_ref text,
     provider_details jsonb default '{}',
-    sorting_index float8,
+    sorting_index float8 default 0.0,
     created_at timestamp with time zone default now()
 );
 
@@ -142,7 +143,7 @@ create table itinerary_attachments (
     storage_path text not null,
     file_size int,
     user_id uuid references profiles(id),
-    is_shared boolean default true, -- v3.6 added
+    is_shared boolean default true,
     created_at timestamp with time zone default now()
 );
 
@@ -335,7 +336,7 @@ create policy "Update membership" on trip_members
 create policy "View itinerary" on itinerary_items for select using (is_trip_member(trip_id));
 create policy "Manage itinerary" on itinerary_items for all using (is_trip_member(trip_id, 'editor'));
 
--- Attachment Policies (v3.6)
+-- Attachment Policies
 create policy "Trip members can view shared files" on itinerary_attachments
 for select using (
     user_id = auth.uid()

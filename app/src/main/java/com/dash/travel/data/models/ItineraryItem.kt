@@ -19,5 +19,6 @@ data class ItineraryItem(
     @SerialName("booking_ref") val bookingRef: String? = null,
     @SerialName("provider_details") val providerDetails: JsonObject? = null,
     @SerialName("estimated_cost") val estimatedCost: Double = 0.0,
-    val currency: String = "USD"
+    val currency: String = "USD",
+    @SerialName("sorting_index") val sortingIndex: Double? = null
 )
