@@ -46,9 +46,12 @@ android {
         // Default to Supabase Cloud values if not found in local.properties
         val supabaseUrl = localProperties.getProperty("SUPABASE_URL") ?: "https://pfuraayelhuxqdhemquf.supabase.co"
         val supabaseKey = localProperties.getProperty("SUPABASE_KEY") ?: "sb_publishable__arXYbyhouHk52eVDyCQ7A_0WRrxCkx"
+        // Read Mapbox Access Token
+        val mapboxToken = localProperties.getProperty("MAPBOX_ACCESS_TOKEN") ?: ""
         
         buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
         buildConfigField("String", "SUPABASE_KEY", "\"$supabaseKey\"")
+        buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"$mapboxToken\"")
     }
 
     buildTypes {
@@ -109,6 +112,8 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.play.services.base)
+    // implementation(libs.places) // REMOVED
+    implementation(libs.kotlinx.coroutines.play.services)
 
     // Image Loading
     implementation(libs.coil.compose)

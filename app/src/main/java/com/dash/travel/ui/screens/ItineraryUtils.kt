@@ -2,6 +2,7 @@ package com.dash.travel.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
@@ -42,7 +43,7 @@ val itineraryTypes = listOf(
     ItineraryType("hike", "Hiking", Icons.Default.Hiking, "Activities"),
     
     // Planning
-    ItineraryType("note", "Note", Icons.Default.Notes, "Planning"),
+    ItineraryType("note", "Note", Icons.AutoMirrored.Filled.Notes, "Planning"),
     ItineraryType("ticket", "Event Ticket", Icons.Default.ConfirmationNumber, "Planning")
 )
 
@@ -57,7 +58,7 @@ fun EmptyItinerary() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(Icons.Default.EventNote, contentDescription = null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.outlineVariant)
+        Icon(Icons.AutoMirrored.Filled.EventNote, contentDescription = null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.outlineVariant)
         Spacer(modifier = Modifier.height(16.dp))
         Text("Your journey is a blank canvas", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))

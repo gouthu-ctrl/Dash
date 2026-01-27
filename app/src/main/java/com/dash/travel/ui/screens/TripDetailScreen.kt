@@ -67,7 +67,7 @@ fun TripDetailScreen(
     onNavigateBack: () -> Unit,
     onAddItem: () -> Unit,
     onRefreshImage: (String) -> Unit,
-    onEditTrip: (title: String, description: String, startDate: String, endDate: String, destination: String, origin: String) -> Unit = { _, _, _, _, _, _ -> },
+    onEditTripClicked: () -> Unit,
     fetchTripMembers: suspend (String) -> List<TripMember>
 ) {
     val trip = trips.find { it.id == tripId }
@@ -76,7 +76,6 @@ fun TripDetailScreen(
     val haptic = LocalHapticFeedback.current
     
     var showImageOptions by remember { mutableStateOf(false) }
-    var showEditDialog by remember { mutableStateOf(false) }
     
     val destinationName = remember(trip) {
         trip?.destinationData?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
@@ -143,7 +142,7 @@ fun TripDetailScreen(
                         trip = trip,
                         originName = originName,
                         destinationName = destinationName,
-                        onEditClick = { showEditDialog = true },
+                        onEditClick = onEditTripClicked,
                         haptic = haptic,
                         showOptions = { showImageOptions = true }
                     )
@@ -199,6 +198,7 @@ fun TripDetailScreen(
                                 onDragEnd = { 
                                     draggedItemId = null
                                     dragOffset = 0f 
+                                    viewModel.onDragEnd()
                                 }
                             )
                         }
@@ -234,19 +234,6 @@ fun TripDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showImageOptions = false }) { Text("Cancel") }
-            }
-        )
-    }
-
-    if (showEditDialog && trip != null) {
-        EditTripDialog(
-            trip = trip,
-            destinationName = destinationName,
-            originName = originName,
-            onDismiss = { showEditDialog = false },
-            onConfirm = { title, desc, start, end, dest, origin ->
-                onEditTrip(title, desc, start, end, dest, origin)
-                showEditDialog = false
             }
         )
     }
@@ -478,86 +465,6 @@ fun MemberAvatar(member: TripMember) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditTripDialog(
-    trip: Trip,
-    destinationName: String,
-    originName: String,
-    onDismiss: () -> Unit,
-    onConfirm: (String, String, String, String, String, String) -> Unit
-) {
-    var title by remember { mutableStateOf(trip.title) }
-    var description by remember { mutableStateOf(trip.description ?: "") }
-    var start by remember { mutableStateOf(trip.startDate ?: "") }
-    var end by remember { mutableStateOf(trip.endDate ?: "") }
-    var dest by remember { mutableStateOf(destinationName) }
-    var origin by remember { mutableStateOf(originName) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Edit Trip Details") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Title") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = origin,
-                    onValueChange = { origin = it },
-                    label = { Text("Departing From") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = dest,
-                    onValueChange = { dest = it },
-                    label = { Text("Destination") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = start,
-                        onValueChange = { start = it },
-                        label = { Text("Start Date") },
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("YYYY-MM-DD") }
-                    )
-                    OutlinedTextField(
-                        value = end,
-                        onValueChange = { end = it },
-                        label = { Text("End Date") },
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("YYYY-MM-DD") }
-                    )
-                }
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onConfirm(title, description, start, end, dest, origin) },
-                enabled = title.isNotBlank()
-            ) {
-                Text("Save")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-
 private fun findTargetIndexInList(
     state: androidx.compose.foundation.lazy.LazyListState,
     draggedItemKey: String,
@@ -589,9 +496,9 @@ fun LazyItemScope.DraggableTimelineItem(
     onDrag: (Float) -> Unit,
     onDragEnd: () -> Unit
 ) {
-    val scale by animateFloatAsState(if (isDragging) 1.03f else 1f, label = "scale")
+    val scale by animateFloatAsState(if (isDragging) 1.05f else 1f, label = "scale")
     val alpha by animateFloatAsState(if (isDragging) 0.9f else 1f, label = "alpha")
-    val elevation by animateDpAsState(if (isDragging) 12.dp else 0.dp, label = "elevation")
+    val elevation by animateDpAsState(if (isDragging) 8.dp else 0.dp, label = "elevation")
 
     Box(
         modifier = Modifier

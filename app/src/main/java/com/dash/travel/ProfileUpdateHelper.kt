@@ -26,6 +26,8 @@ data class ProfileUpdate(
     val last_seen: String?
 )
 
+private val jsonParser = Json { ignoreUnknownKeys = true }
+
 suspend fun updateProfile(supabase: SupabaseClient) {
     try {
         val session = supabase.auth.currentSessionOrNull()
@@ -40,7 +42,7 @@ suspend fun updateProfile(supabase: SupabaseClient) {
 
         try {
             val responseText = client.get("https://ipapi.co/json/").bodyAsText()
-            val ipData = Json { ignoreUnknownKeys = true }.decodeFromString<IpApiResponse>(responseText)
+            val ipData = jsonParser.decodeFromString<IpApiResponse>(responseText)
             countryCode = ipData.countryCode
             currency = ipData.currency
         } catch (e: Exception) {

@@ -49,6 +49,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
@@ -57,6 +58,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 @Serializable
@@ -150,10 +152,6 @@ class MainActivity : ComponentActivity() {
                             }
                             db.tripDao().insertTrips(entities)
                             
-                            // Re-fetch trip data from Room to ensure local state uses stable IDs/data
-                            // NOTE: Full Trip objects are not being stored in Room. We rely on Supabase fetch + Room ordering.
-                            // We need to re-fetch *all* trip data to match the UI state logic.
-                            // For simplicity, we stick to updating the mutableStateListOf with the Supabase results.
                             trips.clear()
                             trips.addAll(fetchedTrips)
                         }
@@ -205,20 +203,27 @@ class MainActivity : ComponentActivity() {
                         
                         response.map { jsonElement ->
                             val obj = jsonElement.jsonObject
-                            val profilesObj = obj["profiles"]?.jsonObject
                             val userId = obj["user_id"]?.jsonPrimitive?.contentOrNull ?: UUID.randomUUID().toString()
                             
-                            // Use full_name, fall back to a derived name, or 'You' if it's the current user
+                            // Check if profiles is an array or object (PostgREST quirk)
+                            val profilesElement = obj["profiles"]
+                            val profilesObj = if (profilesElement is kotlinx.serialization.json.JsonArray) {
+                                profilesElement.firstOrNull()?.jsonObject
+                            } else {
+                                profilesElement?.jsonObject
+                            }
+
                             val rawName = profilesObj?.get("full_name")?.jsonPrimitive?.contentOrNull
                             val profileAvatarUrl = profilesObj?.get("avatar_url")?.jsonPrimitive?.contentOrNull
 
                             val memberName = when {
-                                rawName.isNullOrBlank() -> if (userId == currentUserId) "You" else "Dash User"
-                                else -> rawName
+                                !rawName.isNullOrBlank() -> rawName
+                                userId == currentUserId -> "You"
+                                else -> "Dash User"
                             }
                             
                             TripMember(
-                                id = obj["user_id"]?.jsonPrimitive?.contentOrNull ?: UUID.randomUUID().toString(),
+                                id = userId,
                                 name = memberName,
                                 avatarUrl = profileAvatarUrl,
                                 role = obj["role"]?.jsonPrimitive?.contentOrNull ?: "viewer",
@@ -298,17 +303,15 @@ class MainActivity : ComponentActivity() {
                     composable("add_trip") {
                         AddTripScreen(
                             onNavigateBack = { navController.popBackStack() },
-                            onSaveTrip = { tripName, description, startDate, endDate, destination, inviteEmails ->
+                            onSaveTrip = { tripName, description, startDate, endDate, destination, origin, inviteEmails ->
                                 coroutineScope.launch {
                                     try {
                                         val userId = SupabaseManager.client.auth.currentUserOrNull()?.id ?: return@launch
-                                        val destinationData = buildJsonObject {
-                                            put("name", destination)
-                                        }
-                                        val originData = buildJsonObject {
-                                            put("name", "San Francisco") // Placeholder for now
-                                        }
-                                        val encodedDest = URLEncoder.encode(destination, "UTF-8")
+                                        val destinationData = destination ?: buildJsonObject { put("name", "Unknown") }
+                                        val originData = origin ?: buildJsonObject { put("name", "Unknown") }
+                                        
+                                        val destName = destinationData["name"]?.jsonPrimitive?.content ?: "Unknown"
+                                        val encodedDest = URLEncoder.encode(destName, "UTF-8")
                                         val imageUrl = "https://loremflickr.com/1280/720/$encodedDest,landmark,cityscape,famous/all?random=${System.currentTimeMillis()}"
                                         
                                         val newTrip = NewTrip(
@@ -335,6 +338,52 @@ class MainActivity : ComponentActivity() {
                             isFirstTrip = false
                         )
                     }
+                    composable(
+                        "edit_trip/{tripId}", 
+                        arguments = listOf(navArgument("tripId") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val tripId = backStackEntry.arguments?.getString("tripId") ?: return@composable
+                        val existingTrip = trips.find { it.id == tripId }
+                        
+                        if (existingTrip == null) {
+                            LaunchedEffect(Unit) { navController.popBackStack() }
+                            return@composable
+                        }
+
+                        AddTripScreen(
+                            onNavigateBack = { navController.popBackStack() },
+                            onSaveTrip = { tripName, description, startDate, endDate, destination, origin, inviteEmails ->
+                                coroutineScope.launch {
+                                    try {
+                                        val destinationData = destination ?: buildJsonObject { put("name", "Unknown") }
+                                        val originData = origin ?: buildJsonObject { put("name", "Unknown") }
+
+                                        val updatedTripMap = buildJsonObject {
+                                            put("title", tripName)
+                                            put("description", description)
+                                            put("start_date", startDate)
+                                            put("end_date", endDate)
+                                            put("destination_data", destinationData)
+                                            put("origin_data", originData)
+                                        }
+                                        SupabaseManager.client.postgrest.from("trips").update(updatedTripMap) {
+                                            filter { eq("id", tripId) }
+                                        }
+                                        
+                                        fetchTrips()
+                                        navController.popBackStack()
+                                        Toast.makeText(context, "Trip updated!", Toast.LENGTH_SHORT).show()
+                                    } catch (e: Exception) {
+                                        Log.e("EditTrip", "Failed", e)
+                                        Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            },
+                            getHomeLocation = { "" },
+                            isFirstTrip = false,
+                            existingTrip = existingTrip
+                        )
+                    }
                     composable("trip_detail/{tripId}", arguments = listOf(navArgument("tripId") { type = NavType.StringType })) { backStackEntry ->
                         val tripId = backStackEntry.arguments?.getString("tripId") ?: return@composable
                         LaunchedEffect(tripId) { fetchItinerary(tripId) }
@@ -359,8 +408,8 @@ class MainActivity : ComponentActivity() {
                                 coroutineScope.launch {
                                     try {
                                         val trip = trips.find { it.id == tripId }
-                                        val destinationName = trip?.destinationData?.jsonObject?.get("name")?.jsonPrimitive?.content ?: title
-                                        val encoded = URLEncoder.encode(destinationName, "UTF-8")
+                                        val destinationName: String = trip?.destinationData?.jsonObject?.get("name")?.jsonPrimitive?.content ?: title
+                                        val encoded = URLEncoder.encode(destinationName, StandardCharsets.UTF_8.toString())
                                         val newUrl = "https://loremflickr.com/1280/720/$encoded,landmark,cityscape,famous/all?random=${System.currentTimeMillis()}"
                                         SupabaseManager.client.postgrest.from("trips").update(buildJsonObject { put("trip_image_url", newUrl) }) { 
                                             filter { eq("id", tripId) } 
@@ -373,32 +422,10 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             },
-                            onEditTrip = { title, description, startDate, endDate, destination, origin ->
-                                coroutineScope.launch {
-                                    try {
-                                        val destinationData = buildJsonObject { put("name", destination) }
-                                        val originData = buildJsonObject { put("name", origin) }
-                                        val updatedTripMap = buildJsonObject {
-                                            put("title", title)
-                                            put("description", description)
-                                            put("start_date", startDate)
-                                            put("end_date", endDate)
-                                            put("destination_data", destinationData)
-                                            put("origin_data", originData) // Update origin
-                                        }
-                                        SupabaseManager.client.postgrest.from("trips").update(updatedTripMap) {
-                                            filter { eq("id", tripId) }
-                                        }
-                                        
-                                        fetchTrips()
-                                        Toast.makeText(context, "Trip updated!", Toast.LENGTH_SHORT).show()
-                                    } catch (e: Exception) {
-                                        Log.e("EditTrip", "Failed", e)
-                                        Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
+                            onEditTripClicked = {
+                                navController.navigate("edit_trip/$tripId")
                             },
-                            fetchTripMembers = { id -> fetchTripMembers(id) } // Pass the real fetch function
+                            fetchTripMembers = { id -> fetchTripMembers(id) }
                         )
                     }
                     composable("add_itinerary/{tripId}", arguments = listOf(navArgument("tripId") { type = NavType.StringType })) { backStackEntry ->

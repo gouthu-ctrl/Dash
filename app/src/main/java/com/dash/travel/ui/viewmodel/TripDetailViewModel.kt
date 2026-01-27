@@ -28,10 +28,25 @@ class TripDetailViewModel(
         viewModelScope.launch {
             itineraryDao.getItineraryForTrip(tripId).collectLatest { dbItems ->
                 // Only update if not currently dragging to avoid visual jumps
-                // In a production app, you might use a flag or separate states
+                // In a production app, you might use a flag or separate states to track if dragging is active
+                // Here we simply check content equality to avoid unnecessary re-compositions or overwrites during optimistic updates
+                // Note: If a drag is active, 'items' might differ from 'dbItems' temporarily. 
+                // A more robust solution would be to pause DB collection updates while dragging.
                 if (items.size != dbItems.size || items.map { it.id } != dbItems.map { it.id }) {
-                    items.clear()
-                    items.addAll(dbItems)
+                     // Simple check: if the list seems to have changed significantly or first load
+                     // Ideally we wouldn't overwrite if user is dragging.
+                     // For now, assuming drag handles optimistic updates and DB consistency follows.
+                     // If existing items match IDs but wrong order, and we are dragging, we might want to skip this?
+                     // But for simplicity:
+                     if (items.isEmpty()) {
+                         items.addAll(dbItems)
+                     } else {
+                         // Sync items but respect local changes if we were the ones who made them?
+                         // The Flow will emit after we write to Room.
+                         // To avoid jitter, we can check if the order matches what we just wrote.
+                         items.clear()
+                         items.addAll(dbItems)
+                     }
                 }
             }
         }
@@ -39,7 +54,7 @@ class TripDetailViewModel(
 
     /**
      * Handles the movement of items in the list.
-     * Updates local state immediately and persists to Room.
+     * Updates local state immediately.
      */
     fun onMove(fromIndex: Int, toIndex: Int) {
         if (fromIndex == toIndex || fromIndex !in items.indices || toIndex !in items.indices) return
@@ -48,7 +63,12 @@ class TripDetailViewModel(
             val item = removeAt(fromIndex)
             add(toIndex, item)
         }
+    }
 
+    /**
+     * Called when drag ends. Persists the order to Room and schedules network sync.
+     */
+    fun onDragEnd() {
         // Update display orders locally
         val updatedOrders = items.mapIndexed { index, item ->
             item.id to index
