@@ -1,0 +1,232 @@
+﻿
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+lifecycle.viewmodel.compose.ViewModelKt.viewModel(Unknown 
+Source:1)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at com.dash.
+travel.MainActivity$onCreate$1$1$6$1$7.invoke(MainActivity.kt:
+557)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at com.dash.
+travel.MainActivity$onCreate$1$1$6$1$7.invoke(MainActivity.kt:
+247)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:139)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:35)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavHostKt$NavHost$32$1.invoke(NavHost.kt:70
+3)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavHostKt$NavHost$32$1.invoke(NavHost.kt:70
+2)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:109)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:35)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.CompositionLocalKt.CompositionLocalProvider(Co
+mpositionLocal.kt:401)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.saveable.SaveableStateHolderImpl.SaveableState
+Provider(SaveableStateHolder.kt:85)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavBackStackEntryProviderKt.SaveableStatePr
+ovider(NavBackStackEntryProvider.kt:65)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavBackStackEntryProviderKt.access$Saveable
+StateProvider(NavBackStackEntryProvider.kt:1)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavBackStackEntryProviderKt$LocalOwnersProv
+ider$1.invoke(NavBackStackEntryProvider.kt:52)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavBackStackEntryProviderKt$LocalOwnersProv
+ider$1.invoke(NavBackStackEntryProvider.kt:51)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:109)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:35)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.CompositionLocalKt.CompositionLocalProvider(Co
+mpositionLocal.kt:380)
+01-29 00:24:52.636 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavBackStackEntryProviderKt.LocalOwnersProv
+ider(NavBackStackEntryProvider.kt:47)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavHostKt$NavHost$32.invoke(NavHost.kt:702)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavHostKt$NavHost$32.invoke(NavHost.kt:683)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:139)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:35)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.animation.AnimatedContentKt$AnimatedContent$6$1$5.invo
+ke(AnimatedContent.kt:803)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.animation.AnimatedContentKt$AnimatedContent$6$1$5.invo
+ke(AnimatedContent.kt:792)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:118)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:35)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.animation.AnimatedVisibilityKt.AnimatedEnterExitImpl(A
+nimatedVisibility.kt:771)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.animation.AnimatedContentKt$AnimatedContent$6$1.invoke
+(AnimatedContent.kt:774)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.animation.AnimatedContentKt$AnimatedContent$6$1.invoke
+(AnimatedContent.kt:757)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:109)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.internal.ComposableLambdaImpl.invoke(Composabl
+eLambda.jvm.kt:35)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.animation.AnimatedContentKt.AnimatedContent(AnimatedCo
+ntent.kt:816)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+androidx.navigation.compose.NavHostKt.NavHost(NavHost.kt:655)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavHostKt$NavHost$34.invoke(Unknown 
+Source:29)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+navigation.compose.NavHostKt$NavHost$34.invoke(Unknown 
+Source:10)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.RecomposeScopeImpl.compose(RecomposeScopeImpl.
+kt:192)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.ComposerImpl.recomposeToGroupEnd(Composer.kt:2
+825)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.ComposerImpl.skipCurrentGroup(Composer.kt:3116
+)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.ComposerImpl.doCompose(Composer.kt:3607)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.ComposerImpl.recompose$runtime_release(Compose
+r.kt:3552)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.CompositionImpl.recompose(Composition.kt:948)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.Recomposer.performRecompose(Recomposer.kt:1206
+)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.Recomposer.access$performRecompose(Recomposer.
+kt:132)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.Recomposer$runRecomposeAndApplyChanges$2$1.inv
+oke(Recomposer.kt:616)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.runtime.Recomposer$runRecomposeAndApplyChanges$2$1.inv
+oke(Recomposer.kt:585)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AndroidUiFrameClock$withFrameNanos$2$callb
+ack$1.doFrame(AndroidUiFrameClock.android.kt:41)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AndroidUiDispatcher.performFrameDispatch(A
+ndroidUiDispatcher.android.kt:109)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AndroidUiDispatcher.access$performFrameDis
+patch(AndroidUiDispatcher.android.kt:41)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AndroidUiDispatcher$dispatchCallback$1.doF
+rame(AndroidUiDispatcher.android.kt:69)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at android.v
+iew.Choreographer$CallbackRecord.run(Choreographer.java:1628)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at android.v
+iew.Choreographer$CallbackRecord.run(Choreographer.java:1639)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at android.v
+iew.Choreographer.doCallbacks(Choreographer.java:1235)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+android.view.Choreographer.doFrame(Choreographer.java:1160)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at android.v
+iew.Choreographer$FrameDisplayEventReceiver.run(Choreographer.
+java:1613)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+android.os.Handler.handleCallback(Handler.java:1070)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+android.os.Looper.loopOnce(Looper.java:263)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+android.os.Looper.loop(Looper.java:367)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+android.app.ActivityThread.main(ActivityThread.java:9287)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+java.lang.reflect.Method.invoke(Native Method)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at com.andro
+id.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit
+.java:566)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	at 
+com.android.internal.os.ZygoteInit.main(ZygoteInit.java:929)
+01-29 00:24:52.637 10742 10742 E AndroidRuntime: 	Suppressed: 
+kotlinx.coroutines.internal.DiagnosticCoroutineContextExceptio
+n: [StandaloneCoroutine{Cancelling}@f5905e1, 
+Dispatchers.Main.immediate]
+01-29 00:24:53.773  2006  3717 W WindowManager: Exception 
+thrown during dispatchAppVisibility Window{d7d8c26 u0 
+com.dash.travel/com.dash.travel.MainActivity EXITING}
+01-29 00:24:53.773  2006  3717 W WindowManager: 
+android.os.DeadObjectException
+01-29 00:24:56.515 11890 12434 I NullBinder: NullBinder for 
+android.net.action.RECOMMEND_NETWORKS triggering remote 
+TransactionTooLargeException due to Service without Chimera 
+impl, calling uid: 1000, calling pid: 0
+01-29 00:25:09.127 11890 14043 I NullBinder: NullBinder for 
+android.net.action.RECOMMEND_NETWORKS triggering remote 
+TransactionTooLargeException due to Service without Chimera 
+impl, calling uid: 1000, calling pid: 0
+01-29 00:25:11.870 13420 14285 W 
+RealClient-ConnectionManager: Generic error while handling 
+connection: com.facebook.wearable.companion.connectivity.lib.b
+lemanager.exceptions.BLEDisabledException: Ble is disabled.
+01-29 00:25:12.317 11890 14043 I NullBinder: NullBinder for 
+android.net.action.RECOMMEND_NETWORKS triggering remote 
+TransactionTooLargeException due to Service without Chimera 
+impl, calling uid: 1000, calling pid: 0
+01-29 00:25:18.723 11890 14043 I NullBinder: NullBinder for 
+android.net.action.RECOMMEND_NETWORKS triggering remote 
+TransactionTooLargeException due to Service without Chimera 
+impl, calling uid: 1000, calling pid: 0
+01-29 00:25:21.858 11890 11899 I NullBinder: NullBinder for 
+android.net.action.RECOMMEND_NETWORKS triggering remote 
+TransactionTooLargeException due to Service without Chimera 
+impl, calling uid: 1000, calling pid: 0
+01-29 00:25:26.256  3867 23173 E SconeCbrsCoverageMonitor: 
+java.lang.IllegalStateException: Cannot initialize 
+WorkManager in direct boot mode
+01-29 00:25:26.259  3867 23173 E SconeCbrsCoverageMonitor: 
+java.lang.IllegalStateException: Cannot initialize 
+WorkManager in direct boot mode
+01-29 00:25:26.260  3867 23173 E SconeCbrsCoverageMonitor: 
+java.lang.IllegalStateException: Cannot initialize 
+WorkManager in direct boot mode
+01-29 00:25:26.263  3867 23173 E SconeCbrsCoverageMonitor: 
+java.lang.IllegalStateException: Cannot initialize 
+WorkManager in direct boot mode
+01-29 00:25:26.266  3867 23173 E SconeCbrsCoverageMonitor: 
+java.lang.IllegalStateException: Cannot initialize 
+WorkManager in direct boot mode
+01-29 00:25:26.268  3867 23173 E SconeCbrsCoverageMonitor: 
+java.lang.IllegalStateException: Cannot initialize 
+WorkManager in direct boot mode
+01-29 00:25:36.516  3867 23173 E SconeCbrsCoverageMonitor: 
+java.lang.IllegalStateException: Cannot initialize 
+WorkManager in direct boot mode
+
+

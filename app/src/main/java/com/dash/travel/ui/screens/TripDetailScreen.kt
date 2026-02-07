@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -34,20 +33,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dash.travel.data.local.entity.ItineraryItemEntity
-import com.dash.travel.data.models.Trip
+import com.dash.travel.ui.components.*
+import com.dash.travel.ui.onboarding.SmartTooltip
+import com.dash.travel.ui.onboarding.TooltipIds
 import com.dash.travel.ui.viewmodel.TripDetailViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.ui.res.stringResource
+import com.dash.travel.R
 
 // Data model for UI representation
 data class TripMember(
@@ -55,39 +54,82 @@ data class TripMember(
     val name: String,
     val avatarUrl: String? = null,
     val role: String, // owner, editor, viewer
-    val status: String // accepted, pending, declined
+    val status: String, // accepted, pending, declined
+    val userId: String? = null
 )
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TripDetailScreen(
     tripId: String,
-    trips: List<Trip>,
     viewModel: TripDetailViewModel,
     onNavigateBack: () -> Unit,
     onAddItem: () -> Unit,
     onRefreshImage: (String) -> Unit,
     onEditTripClicked: () -> Unit,
-    fetchTripMembers: suspend (String) -> List<TripMember>
+    fetchTripMembers: suspend (String) -> List<TripMember>,
+    onViewMaps: () -> Unit = {},
+    onManageMembers: () -> Unit = {},
+    onViewDocs: () -> Unit = {},
+    onShare: () -> Unit = {},
+    onViewChat: () -> Unit = {},
+    onViewReminders: () -> Unit = {},
+    onViewVoting: () -> Unit = {},
+    onEditItem: (String) -> Unit = {},
+    onDownloadAttachment: (String) -> Unit = {}
 ) {
-    val trip = trips.find { it.id == tripId }
+    val trip by viewModel.trip.collectAsState()
     val items = viewModel.items
     val lazyListState = rememberLazyListState()
     val haptic = LocalHapticFeedback.current
+    val context = LocalContext.current
     
     var showImageOptions by remember { mutableStateOf(false) }
     
-    val destinationName = remember(trip) {
-        trip?.destinationData?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+    val destinationName = remember(trip) { trip?.destinationData?.name ?: "" }
+    val originName = remember(trip) { trip?.originData?.name ?: "" }
+    
+    // Date parsing
+    val isoFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.US) }
+    val tripStartDate = remember(trip) {
+        trip?.startDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
     }
-    val originName = remember(trip) {
-        trip?.originData?.jsonObject?.get("name")?.jsonPrimitive?.content ?: ""
+    val tripEndDate = remember(trip) {
+        trip?.endDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
+    }
+    val totalDays = remember(tripStartDate, tripEndDate) {
+        calculateTripDuration(tripStartDate, tripEndDate)
     }
     
     var tripMembers by remember { mutableStateOf(emptyList<TripMember>()) }
+    var selectedDayIndex by remember { mutableStateOf(-1) } // -1 = All days
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var itemToDelete by remember { mutableStateOf<String?>(null) }
     
     LaunchedEffect(tripId) {
         tripMembers = fetchTripMembers(tripId)
+    }
+
+    // [Fix] Calculate Edit Permission
+    val currentUserId = remember { viewModel.currentUserId }
+    val currentUserRole = remember(tripMembers) {
+        tripMembers.find { it.userId == currentUserId }?.role
+    }
+    val canEdit = remember(currentUserRole) {
+        currentUserRole == "owner" || currentUserRole == "editor"
+    }
+
+    // Refresh on resume (e.g. returning from Add Itinerary)
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.onResume()
+                viewModel.refreshItinerary()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     var draggedItemId by remember { mutableStateOf<String?>(null) }
@@ -120,12 +162,19 @@ fun TripDetailScreen(
 
     Scaffold(
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onAddItem,
-                icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                text = { Text("Add Item") },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+            if (canEdit) {
+                GradientButton(
+                    onClick = onAddItem,
+                    text = stringResource(R.string.trip_add_activity),
+                    icon = Icons.Default.Add,
+                    modifier = Modifier.width(160.dp) 
+                )
+            }
+            // FAB Tooltip
+            SmartTooltip(
+                tooltipId = TooltipIds.TRIP_DETAIL_ADD_ITEM,
+                message = stringResource(R.string.trip_fab_tooltip),
+                position = com.dash.travel.ui.onboarding.TooltipPosition.TOP
             )
         }
     ) { innerPadding ->
@@ -134,64 +183,120 @@ fun TripDetailScreen(
                 state = lazyListState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(bottom = innerPadding.calculateBottomPadding())
             ) {
-                // 1. Innovative Hero Section
+                // 1. Hero Section
                 item(key = "hero") {
-                    TripHeroSection(
-                        trip = trip,
-                        originName = originName,
-                        destinationName = destinationName,
-                        onEditClick = onEditTripClicked,
-                        haptic = haptic,
-                        showOptions = { showImageOptions = true }
+                        TripHeroSection(
+                            trip = trip,
+                            originName = originName,
+                            destinationName = destinationName,
+                            canEdit = canEdit,
+                            onEditClick = onEditTripClicked,
+                            showOptions = { if (canEdit) showImageOptions = true }
+                        )
+                }
+
+                // Tools
+                item(key = "tools") {
+                    QuickActionsRow(
+                        onViewMaps = onViewMaps,
+                        onManageMembers = onManageMembers,
+                        onViewDocs = onViewDocs,
+                        onShare = onShare,
+                        onViewChat = onViewChat,
+                        onViewReminders = onViewReminders,
+                        onViewVoting = onViewVoting
                     )
                 }
 
-                // 2. Participants
+                // 2. Summary & Stats
+                item(key = "summary") {
+                    Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                            TripSummaryCard(
+                                totalDays = totalDays,
+                                totalMembers = tripMembers.count { it.status == "accepted" }.coerceAtLeast(1),
+                                totalPlaces = items.size
+                            )
+                    }
+                }
+
+                // 3. Day Chips
+                if (totalDays > 1) {
+                    item(key = "day_chips") {
+                        DayChipsRow(
+                            startDate = tripStartDate,
+                            endDate = tripEndDate,
+                            selectedDayIndex = selectedDayIndex,
+                            onDaySelected = { index, _ -> selectedDayIndex = index },
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                }
+
+                // 4. Participants
                 item(key = "details_section") {
-                    TripDetailsSection(
-                        members = tripMembers
-                    )
+                    TripParticipantsSection(members = tripMembers)
                 }
 
-                // 3. Itinerary Timeline
-                if (items.isEmpty()) {
+                // 5. Itinerary Timeline
+                val filteredItems = if (selectedDayIndex == -1 || tripStartDate == null) {
+                    items
+                } else {
+                    val cal = Calendar.getInstance()
+                    cal.time = tripStartDate
+                    cal.add(Calendar.DAY_OF_MONTH, selectedDayIndex)
+                    val datePrefix = isoFormatter.format(cal.time)
+                    items.filter { it.startTime?.startsWith(datePrefix) == true }
+                }
+
+                if (filteredItems.isEmpty()) {
                     item(key = "empty_itinerary") {
-                        Box(modifier = Modifier.fillMaxWidth().padding(top = 48.dp), contentAlignment = Alignment.Center) {
-                            EmptyItinerary()
+                        EmptyItinerary()
+                        // Tooltip on empty state
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            SmartTooltip(
+                                tooltipId = TooltipIds.TRIP_DETAIL_TIMELINE,
+                                message = stringResource(R.string.trip_empty_itinerary),
+                                position = com.dash.travel.ui.onboarding.TooltipPosition.BOTTOM
+                            )
                         }
                     }
                 } else {
                     item(key = "timeline_header") {
-                        Text(
-                            "Timeline",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = 24.dp, top = 8.dp, bottom = 16.dp)
-                        )
+                        SectionHeader(title = stringResource(R.string.trip_itinerary_title), modifier = Modifier.padding(horizontal = 24.dp))
                     }
-                    itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+                    
+                    itemsIndexed(filteredItems, key = { _, item -> item.id }) { index, item ->
                         val isThisItemDragging = draggedItemId == item.id
                         
+                        // Wrapper box for padding/margins
                         Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                            DraggableTimelineItem(
+                            DraggableTimelineItemWrapper(
                                 item = item,
                                 isDragging = isThisItemDragging,
                                 dragOffset = if (isThisItemDragging) dragOffset else 0f,
                                 onDragStart = { 
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    draggedItemId = item.id
+                                    if (canEdit) {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        draggedItemId = item.id
+                                    }
                                 },
                                 onDrag = { delta -> 
                                     dragOffset += delta
-                                    val currentIndex = items.indexOfFirst { it.id == item.id }
+                                    val currentIndex = filteredItems.indexOfFirst { it.id == item.id }
                                     if (currentIndex != -1) {
-                                        val targetIndex = findTargetIndexInList(lazyListState, item.id, dragOffset, items)
+                                        val targetIndex = findTargetIndexInList(lazyListState, item.id, dragOffset, filteredItems)
                                         if (targetIndex != null && targetIndex != currentIndex) {
                                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.onMove(currentIndex, targetIndex)
-                                            dragOffset = 0f 
+                                            // Find real indices in 'items' for moving
+                                            val realFromIndex = items.indexOfFirst { it.id == item.id }
+                                            val targetItem = filteredItems[targetIndex]
+                                            val realToIndex = items.indexOfFirst { it.id == targetItem.id }
+                                            if (realFromIndex != -1 && realToIndex != -1) {
+                                                viewModel.onMove(realFromIndex, realToIndex)
+                                                dragOffset = 0f 
+                                            }
                                         }
                                     }
                                 },
@@ -200,18 +305,37 @@ fun TripDetailScreen(
                                     dragOffset = 0f 
                                     viewModel.onDragEnd()
                                 }
-                            )
+                            ) {
+                                // ACTUAL CONTENT reusing TripDetailComponents
+                                TimelineItem(
+                                    item = item,
+                                    isFirst = index == 0,
+                                    isLast = index == filteredItems.lastIndex,
+                                    currentUserVote = viewModel.userVotes[item.id],
+                                    voteState = viewModel.voteCounts[item.id],
+                                    onVote = { voteType -> viewModel.vote(item.id, voteType) },
+                                    canEdit = canEdit,
+                                    onClick = { if (canEdit) onEditItem(item.id) },
+                                    onDelete = {
+                                        itemToDelete = item.id
+                                        showDeleteDialog = true
+                                    },
+                                    onDownloadAttachment = onDownloadAttachment
+                                )
+                            }
                         }
                     }
                 }
+                
+                item { Spacer(modifier = Modifier.height(80.dp)) } // Bottom spacing for FAB
             }
 
-            // Floating Navigation Controls
+            // Floating Navigation Back Button (Custom)
             IconButton(
                 onClick = onNavigateBack,
                 modifier = Modifier
                     .statusBarsPadding()
-                    .padding(8.dp)
+                    .padding(16.dp)
                     .clip(CircleShape)
                     .background(Color.Black.copy(alpha = 0.3f))
                     .align(Alignment.TopStart)
@@ -221,132 +345,51 @@ fun TripDetailScreen(
         }
     }
 
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.trip_delete_confirmation_title)) },
+            text = { Text(stringResource(R.string.trip_delete_confirmation_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    itemToDelete?.let { viewModel.deleteItem(it) }
+                    showDeleteDialog = false
+                    itemToDelete = null
+                }) { 
+                    Text(stringResource(R.string.trip_delete), color = MaterialTheme.colorScheme.error) 
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.settings_cancel)) }
+            },
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
+
     if (showImageOptions) {
         AlertDialog(
             onDismissRequest = { showImageOptions = false },
-            title = { Text("Refresh Trip Theme") },
-            text = { Text("Search for a new scenic image for this destination?") },
+            title = { Text(stringResource(R.string.trip_refresh_theme_title)) },
+            text = { Text(stringResource(R.string.trip_refresh_theme_text)) },
             confirmButton = {
                 Button(onClick = { 
                     onRefreshImage(trip?.title ?: "")
                     showImageOptions = false 
-                }) { Text("Refresh") }
+                }) { Text(stringResource(R.string.trip_refresh)) }
             },
             dismissButton = {
-                TextButton(onClick = { showImageOptions = false }) { Text("Cancel") }
+                TextButton(onClick = { showImageOptions = false }) { Text(stringResource(R.string.settings_cancel)) }
             }
         )
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun TripHeroSection(
-    trip: Trip?,
-    originName: String,
-    destinationName: String,
-    onEditClick: () -> Unit,
-    haptic: androidx.compose.ui.hapticfeedback.HapticFeedback,
-    showOptions: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(340.dp)
-    ) {
-        AsyncImage(
-            model = trip?.tripImageUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .combinedClickable(
-                    onClick = { },
-                    onLongClick = { 
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        showOptions()
-                    }
-                ),
-            contentScale = ContentScale.Crop
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color.Black.copy(alpha = 0.2f),
-                            Color.Black.copy(alpha = 0.8f)
-                        ),
-                        startY = 400f
-                    )
-                )
-        )
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(24.dp)
-        ) {
-            if (originName.isNotBlank() || destinationName.isNotBlank()) {
-                Text(
-                    text = "${originName.ifBlank { "START" }} → ${destinationName.ifBlank { "END" }}",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-            
-            Text(
-                text = trip?.title ?: "Trip Details",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.White,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (trip?.startDate != null) {
-                Text(
-                    text = "${trip.startDate}${if (trip.endDate != null) " — ${trip.endDate}" else ""}",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White.copy(alpha = 0.8f),
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-
-        IconButton(
-            onClick = onEditClick,
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(8.dp)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.2f))
-                .align(Alignment.TopEnd)
-        ) {
-            Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White)
-        }
-    }
-}
-
-@Composable
-fun TripDetailsSection(
-    members: List<TripMember>
-) {
-    Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
-        TripParticipantsSection(members = members)
     }
 }
 
 @Composable
 fun TripParticipantsSection(members: List<TripMember>) {
     if (members.isNotEmpty()) {
-        Column {
+        Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
             Text(
-                text = "Trip Members (${members.size})",
+                text = "${stringResource(R.string.trip_members_title)} (${members.size})",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 12.dp)
@@ -364,7 +407,7 @@ fun TripParticipantsSection(members: List<TripMember>) {
                             .background(MaterialTheme.colorScheme.surfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("+${members.size - 6}", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("+${members.size - 6}", style = MaterialTheme.typography.titleSmall)
                     }
                 }
             }
@@ -372,99 +415,60 @@ fun TripParticipantsSection(members: List<TripMember>) {
     }
 }
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MemberAvatar(member: TripMember) {
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
-    
-    val isOwner = member.role == "owner"
-    val isAccepted = member.status == "accepted"
-    val isDeclined = member.status == "declined"
-
-    // FIX 2: Define Gold color outside the lambda for performance and clarity
     val Gold = Color(0xFFFFD700) 
     
-    val indicatorColor = when {
-        isOwner -> Gold 
-        isAccepted -> MaterialTheme.colorScheme.primary
-        isDeclined -> MaterialTheme.colorScheme.error
+    val indicatorColor = when (member.role) {
+        "owner" -> Gold 
+        "editor" -> MaterialTheme.colorScheme.primary
         else -> MaterialTheme.colorScheme.secondary
-    }
-    
-    val indicatorIcon = when {
-        isOwner -> Icons.Default.Star
-        isAccepted -> Icons.Default.Check
-        isDeclined -> Icons.Default.Close
-        else -> Icons.Default.AccessTime
     }
 
     Box(
         modifier = Modifier
-            .size(56.dp) // Container size
+            .size(56.dp)
             .combinedClickable(
                 onClick = {
-                    val statusText = when {
-                        isOwner -> "Owner"
-                        isAccepted -> "Accepted"
-                        isDeclined -> "Declined"
-                        else -> "Pending"
-                    }
-                    Toast.makeText(context, "${member.name} (${statusText})", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "${member.name} (${member.role})", Toast.LENGTH_SHORT).show()
                 },
                 onLongClick = { haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
             ),
         contentAlignment = Alignment.Center
     ) {
-        // Avatar Circle (48dp)
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center
-        ) {
-            // Initials (Fallback layer, z-index 0)
-            Text(
-                text = member.name.take(1).uppercase(),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+        UserAvatar(
+            imageUrl = member.avatarUrl,
+            name = member.name,
+            size = 48.dp
+        )
 
-            // FIX 1: Avatar Image (Foreground, z-index 1) - loads on top of initials
-            if (!member.avatarUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(member.avatarUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = member.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+        // Role Indicator
+        if (member.role == "owner") {
+            Surface(
+                color = indicatorColor,
+                shape = CircleShape,
+                modifier = Modifier
+                    .size(20.dp) 
+                    .align(Alignment.BottomEnd)
+                    .offset(x = (-2).dp, y = (-2).dp)
+                    .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.padding(3.dp)
                 )
             }
-        }
-
-        // Status Indicator (Aligned BottomEnd, size 20dp, sitting over the edge)
-        Surface(
-            color = indicatorColor,
-            shape = CircleShape,
-            modifier = Modifier
-                .size(20.dp) 
-                .align(Alignment.BottomEnd)
-                .offset(x = (-2).dp, y = (-2).dp)
-                .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
-        ) {
-            Icon(
-                imageVector = indicatorIcon,
-                contentDescription = null,
-                tint = if (isOwner) Color.Black else MaterialTheme.colorScheme.onPrimary, // Star tint contrast
-                modifier = Modifier.padding(3.dp)
-            )
         }
     }
 }
 
+// Helper for drag logic
 private fun findTargetIndexInList(
     state: androidx.compose.foundation.lazy.LazyListState,
     draggedItemKey: String,
@@ -488,13 +492,14 @@ private fun visibleItemsfirstOrNull(items: List<androidx.compose.foundation.lazy
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LazyItemScope.DraggableTimelineItem(
+fun LazyItemScope.DraggableTimelineItemWrapper(
     item: ItineraryItemEntity,
     isDragging: Boolean,
     dragOffset: Float,
     onDragStart: () -> Unit,
     onDrag: (Float) -> Unit,
-    onDragEnd: () -> Unit
+    onDragEnd: () -> Unit,
+    content: @Composable () -> Unit
 ) {
     val scale by animateFloatAsState(if (isDragging) 1.05f else 1f, label = "scale")
     val alpha by animateFloatAsState(if (isDragging) 0.9f else 1f, label = "alpha")
@@ -524,97 +529,6 @@ fun LazyItemScope.DraggableTimelineItem(
                 )
             }
     ) {
-        TimelineItemContent(item)
-    }
-}
-
-@Composable
-fun TimelineItemContent(item: ItineraryItemEntity) {
-    Row(modifier = Modifier.height(IntrinsicSize.Min).background(MaterialTheme.colorScheme.background)) {
-        Column(
-            modifier = Modifier.width(48.dp).fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Event,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .width(2.dp)
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.outlineVariant)
-            )
-        }
-
-        Card(
-            modifier = Modifier
-                .padding(bottom = 20.dp, start = 8.dp)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-            )
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = item.startTime ?: "Time TBD",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (!item.bookingRef.isNullOrBlank()) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-                            shape = CircleShape
-                        ) {
-                            Text(
-                                item.bookingRef,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = item.title, 
-                    style = MaterialTheme.typography.titleMedium, 
-                    fontWeight = FontWeight.ExtraBold
-                )
-                item.locationName?.let {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically, 
-                        modifier = Modifier.padding(top = 6.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Place, 
-                            contentDescription = null, 
-                            modifier = Modifier.size(14.dp), 
-                            tint = MaterialTheme.colorScheme.outline
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = it, 
-                            style = MaterialTheme.typography.bodySmall, 
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-        }
+        content()
     }
 }

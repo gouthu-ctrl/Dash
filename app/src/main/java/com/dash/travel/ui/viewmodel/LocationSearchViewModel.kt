@@ -78,7 +78,11 @@ class LocationSearchViewModel(
     init {
         // One-time heavy lifting off Main thread
         viewModelScope.launch(Dispatchers.IO) {
-            localSearchService.initializeIndex()
+            try {
+                localSearchService.initializeIndex()
+            } catch (e: Exception) {
+                Log.e("LocationSearch", "Failed to initialize search index", e)
+            }
         }
         loadRecentLocations()
         observeSearchQuery()
@@ -91,19 +95,27 @@ class LocationSearchViewModel(
 
     private fun loadRecentLocations() {
         viewModelScope.launch(Dispatchers.IO) { // Database access off Main thread
-            recentLocationsDao.getRecentLocations()
-                .map { list -> 
-                    list.map { it.toLocationResult().copy(isRecent = true) } 
-                }
-                .collect { recent ->
-                    _recentLocations.value = recent
-                    if (_searchQuery.value.isEmpty()) {
-                        _uiState.value = LocationSearchUiState.InitialSuggestions(
-                            popular = popularDestinations,
-                            recent = recent
-                        )
+            try {
+                recentLocationsDao.getRecentLocations()
+                    .map { list -> 
+                        list.map { it.toLocationResult().copy(isRecent = true) } 
                     }
-                }
+                    .catch { e ->
+                        Log.e("LocationSearch", "Error loading recent locations", e)
+                        emit(emptyList())
+                    }
+                    .collect { recent ->
+                        _recentLocations.value = recent
+                        if (_searchQuery.value.isEmpty()) {
+                            _uiState.value = LocationSearchUiState.InitialSuggestions(
+                                popular = popularDestinations,
+                                recent = recent
+                            )
+                        }
+                    }
+            } catch (e: Exception) {
+                Log.e("LocationSearch", "Failed to load recent locations", e)
+            }
         }
     }
 

@@ -10,7 +10,10 @@ data class PhotonProperties(
     val name: String? = null,
     val city: String? = null,
     val country: String? = null,
-    val state: String? = null
+    val state: String? = null,
+    val street: String? = null,
+    val housenumber: String? = null,
+    val postcode: String? = null
 )
 
 @Serializable

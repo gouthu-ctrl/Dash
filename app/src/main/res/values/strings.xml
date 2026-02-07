@@ -1,5 +1,159 @@
 <resources>
     <string name="app_name">Dash</string>
-    <!-- Replace this with your actual Web Client ID from Google Cloud Console -> Credentials -> OAuth 2.0 Client IDs -> Web application -->
     <string name="google_client_id">750370194796-e2187fr9ivo7selsn92nrrt316mclddf.apps.googleusercontent.com</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_preferences">Preferences</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_subtitle">Receive alerts for trips and prices</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_privacy">Privacy &amp; Security</string>
+    <string name="settings_about">About Dash</string>
+    <string name="settings_logout">Log Out</string>
+    <string name="settings_version">Version 1.0.0 (Beta)</string>
+    <string name="settings_select_language">Select Language</string>
+    <string name="settings_cancel">Cancel</string>
+
+    <!-- Home Screen -->
+    <string name="home_greeting_morning">Good morning</string>
+    <string name="home_greeting_afternoon">Good afternoon</string>
+    <string name="home_greeting_evening">Good evening</string>
+    <string name="home_new_invitations">New Invitations</string>
+    <string name="home_trip_invite_title">Trip Invite</string>
+    <string name="home_trip_join">Join Trip</string>
+    <string name="home_trip_decline">Decline</string>
+    <string name="home_all_trips">All Trips</string>
+    <string name="home_see_all">See all</string>
+    <string name="home_view_trip">View Trip</string>
+    <string name="home_empty_title">Ready for Adventure?</string>
+    <string name="home_empty_subtitle">Plan your first trip and let Dash\nhandle all the details</string>
+    <string name="home_create_trip">Create Your First Trip</string>
+    
+    <!-- Widgets -->
+    <string name="widget_packing">Packing</string>
+    <string name="widget_weather">Weather</string>
+    <string name="widget_documents">Documents</string>
+    <string name="widget_price_alerts">Price Alerts</string>
+    <string name="widget_ai_planner">Plan with AI</string>
+
+
+    <!-- Time -->
+    <string name="time_today">Today</string>
+    <string name="time_tomorrow">Tomorrow</string>
+    <string name="time_days_format">In %d days</string>
+    <string name="time_days_short_format">%d days</string>
+
+    <!-- Trip Detail -->
+    <string name="trip_add_activity">Add Activity</string>
+    <string name="trip_members_title">Trip Members</string>
+    <string name="trip_delete_activity">Delete Activity</string>
+    <string name="trip_delete_confirmation_title">Delete Activity</string>
+    <string name="trip_delete_confirmation_text">Are you sure you want to delete this activity? This action cannot be undone.</string>
+    <string name="trip_delete">Delete</string>
+    <string name="trip_refresh_theme_title">Refresh Trip Theme</string>
+    <string name="trip_refresh_theme_text">Search for a new scenic image for this destination?</string>
+    <string name="trip_refresh">Refresh</string>
+    <string name="trip_itinerary_title">Itinerary</string>
+    <string name="trip_empty_itinerary">Your itinerary will appear here.</string>
+    <string name="trip_fab_tooltip">Tap to add flights, hotels, or activities!</string>
+
+    <!-- Add Itinerary -->
+    <string name="add_to_journey">Add to Journey</string>
+    <string name="new_item_title">New %s</string>
+    <string name="details_section">Details</string>
+    <string name="title_label">Title (e.g., Flight to NYC)</string>
+    <string name="airline_label">Airline</string>
+    <string name="flight_number_label">Flight Number</string>
+    <string name="terminal_label">Terminal</string>
+    <string name="gate_label">Gate</string>
+    <string name="train_number_label">Train Number</string>
+    <string name="platform_label">Platform</string>
+    <string name="seat_label">Car / Seat</string>
+    <string name="address_label">Address / Location</string>
+    <string name="access_code_label">Access Code</string>
+    <string name="campsite_label">Campsite #</string>
+    <string name="location_label">Location</string>
+    <string name="start_time_label">Start Time &amp; Date</string>
+    <string name="booking_ref_label">Confirmation / PNR</string>
+    <string name="note_details_label">Note Details</string>
+    <string name="attachments_title">Attachments</string>
+    <string name="saved_files_label">Saved Files:</string>
+    <string name="new_upload_label">New Upload:</string>
+    <string name="share_with_members">Share with trip members</string>
+    <string name="propose_voting_title">Propose for Voting</string>
+    <string name="propose_voting_subtitle">Team members can vote on this item.</string>
+    <string name="propose_activity_button">Propose Activity</string>
+    <string name="add_to_itinerary_button">Add to Itinerary</string>
+    <string name="add_new_file">Add New</string>
+    <string name="change_file">Change</string>
+    <string name="file_default_name">File</string>
+    <string name="next_button">Next</string>
+    <string name="ok_button">OK</string>
+
+    <!-- Categories -->
+    <string name="category_transportation">Transportation</string>
+    <string name="category_accommodation">Accommodation</string>
+    <string name="category_activities">Activities</string>
+    <string name="category_planning">Planning</string>
+
+    <!-- Stats & Logic -->
+    <string name="stat_day_singular">Day</string>
+    <string name="stat_day_plural">Days</string>
+    <string name="stat_traveler_singular">Traveler</string>
+    <string name="stat_traveler_plural">Travelers</string>
+    <string name="stat_place_singular">Place</string>
+    <string name="stat_place_plural">Places</string>
+    <string name="route_start">START</string>
+    <string name="route_end">END</string>
+    <string name="trip_empty_title">Your itinerary is empty</string>
+    <string name="trip_empty_subtitle">Start adding activities to plan your trip!</string>
+    <string name="date_tbd">TBD</string>
+    <string name="chip_all_trip">All Trip</string>
+    <!-- Types -->
+    <string name="type_flight">Flight</string>
+    <string name="type_train">Train</string>
+    <string name="type_bus">Bus</string>
+    <string name="type_rental_car">Rental Car</string>
+    <string name="type_hotel">Hotel</string>
+    <string name="type_airbnb">Airbnb / Rental</string>
+    <string name="type_hostel">Hostel</string>
+    <string name="type_camping">Camping</string>
+    <string name="type_restaurant">Dining</string>
+    <string name="type_sightseeing">Sightseeing</string>
+    <string name="type_tour">Guided Tour</string>
+    <string name="type_hike">Hiking</string>
+    <string name="type_note">Note</string>
+    <string name="type_ticket">Event Ticket</string>
+
+    <!-- Quick Actions -->
+    <string name="action_map">Map</string>
+    <string name="action_vote">Vote</string>
+    <string name="action_docs">Docs</string>
+    <string name="action_reminders">Reminders</string>
+    <string name="action_members">Members</string>
+    <string name="action_share">Share</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_unknown_user">Unknown User</string>
+    <string name="profile_stat_trips">Trips</string>
+    <string name="profile_stat_countries">Places</string>
+    <string name="profile_stat_friends">Friends</string>
+    <string name="profile_travel_style">Travel Style</string>
+    <string name="style_nature">Nature Lover</string>
+    <string name="style_foodie">Foodie</string>
+    <string name="style_backpacker">Backpacker</string>
+    
+    <!-- Trip Detail Misc -->
+    <string name="trip_details_default">Trip Details</string>
+    <string name="content_desc_avatar">Avatar</string>
+    <string name="content_desc_back">Back</string>
+    <string name="content_desc_edit">Edit</string>
 </resources>

@@ -1,0 +1,132 @@
+<resources>
+    <string name="app_name">Dash</string>
+    <string name="google_client_id">750370194796-e2187fr9ivo7selsn92nrrt316mclddf.apps.googleusercontent.com</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_appearance">Apparence</string>
+    <string name="settings_theme">Thème</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_theme_system">Système</string>
+    <string name="settings_language">Langue</string>
+    <string name="settings_preferences">Préférences</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_subtitle">Alertes de voyage et de prix</string>
+    <string name="settings_account">Compte</string>
+    <string name="settings_privacy">Confidentialité et Sécurité</string>
+    <string name="settings_about">À propos de Dash</string>
+    <string name="settings_logout">Se déconnecter</string>
+    <string name="settings_version">Version 1.0.0 (Bêta)</string>
+    <string name="settings_select_language">Choisir la langue</string>
+    <string name="settings_cancel">Annuler</string>
+
+    <!-- Home Screen -->
+    <string name="home_greeting_morning">Bonjour</string>
+    <string name="home_greeting_afternoon">Bon après-midi</string>
+    <string name="home_greeting_evening">Bonsoir</string>
+    <string name="home_new_invitations">Nouvelles Invitations</string>
+    <string name="home_trip_invite_title">Invitation de Voyage</string>
+    <string name="home_trip_join">Rejoindre</string>
+    <string name="home_trip_decline">Refuser</string>
+    <string name="home_all_trips">Tous les voyages</string>
+    <string name="home_see_all">Voir tout</string>
+    <string name="home_view_trip">Voir le voyage</string>
+    <string name="home_empty_title">Prêt pour l\'aventure ?</string>
+    <string name="home_empty_subtitle">Planifiez votre premier voyage et laissez Dash\ngérer tous les détails</string>
+    <string name="home_create_trip">Créer votre premier voyage</string>
+
+    <!-- Widgets -->
+    <string name="widget_packing">Bagages</string>
+    <string name="widget_weather">Météo</string>
+    <string name="widget_documents">Documents</string>
+    <string name="widget_price_alerts">Alerte Prix</string>
+
+    <!-- Time -->
+    <string name="time_today">Aujourd\'hui</string>
+    <string name="time_tomorrow">Demain</string>
+    <string name="time_days_format">Dans %d jours</string>
+    <string name="time_days_short_format">%d jours</string>
+
+    <!-- Trip Detail -->
+    <string name="trip_add_activity">Ajouter une activité</string>
+    <string name="trip_members_title">Membres du voyage</string>
+    <string name="trip_delete_activity">Supprimer l\'activité</string>
+    <string name="trip_delete_confirmation_title">Supprimer l\'activité</string>
+    <string name="trip_delete_confirmation_text">Êtes-vous sûr de vouloir supprimer cette activité ? Cette action est irréversible.</string>
+    <string name="trip_delete">Supprimer</string>
+    <string name="trip_refresh_theme_title">Actualiser le thème du voyage</string>
+    <string name="trip_refresh_theme_text">Chercher une nouvelle image scénique pour cette destination ?</string>
+    <string name="trip_refresh">Actualiser</string>
+    <string name="trip_itinerary_title">Itinéraire</string>
+    <string name="trip_empty_itinerary">Votre itinéraire apparaîtra ici.</string>
+    <string name="trip_fab_tooltip">Appuyez pour ajouter des vols, des hôtels ou des activités !</string>
+
+    <!-- Add Itinerary -->
+    <string name="add_to_journey">Ajouter au voyage</string>
+    <string name="new_item_title">Nouveau %s</string>
+    <string name="details_section">Détails</string>
+    <string name="title_label">Titre (ex. Vol pour Paris)</string>
+    <string name="airline_label">Compagnie aérienne</string>
+    <string name="flight_number_label">Numéro de vol</string>
+    <string name="terminal_label">Terminal</string>
+    <string name="gate_label">Porte</string>
+    <string name="train_number_label">Numéro de train</string>
+    <string name="platform_label">Quai</string>
+    <string name="seat_label">Voiture / Siège</string>
+    <string name="address_label">Adresse / Lieu</string>
+    <string name="access_code_label">Code d\'accès</string>
+    <string name="campsite_label">Emplacement #</string>
+    <string name="location_label">Lieu</string>
+    <string name="start_time_label">Date et heure de début</string>
+    <string name="booking_ref_label">Confirmation / PNR</string>
+    <string name="note_details_label">Détails de la note</string>
+    <string name="attachments_title">Pièces jointes</string>
+    <string name="saved_files_label">Fichiers enregistrés :</string>
+    <string name="new_upload_label">Nouveau fichier :</string>
+    <string name="share_with_members">Partager avec les membres</string>
+    <string name="propose_voting_title">Proposer un vote</string>
+    <string name="propose_voting_subtitle">Les membres peuvent voter.</string>
+    <string name="propose_activity_button">Proposer l\'activité</string>
+    <string name="add_to_itinerary_button">Ajouter à l\'itinéraire</string>
+    <string name="add_new_file">Ajouter</string>
+    <string name="change_file">Modifier</string>
+    <string name="file_default_name">Fichier</string>
+    <string name="next_button">Suivant</string>
+    <string name="ok_button">OK</string>
+
+    <!-- Categories -->
+    <string name="category_transportation">Transport</string>
+    <string name="category_accommodation">Hébergement</string>
+    <string name="category_activities">Activités</string>
+    <string name="category_planning">Planification</string>
+
+    <!-- Stats & Logic -->
+    <string name="stat_day_singular">Jour</string>
+    <string name="stat_day_plural">Jours</string>
+    <string name="stat_traveler_singular">Voyageur</string>
+    <string name="stat_traveler_plural">Voyageurs</string>
+    <string name="stat_place_singular">Lieu</string>
+    <string name="stat_place_plural">Lieux</string>
+    <string name="route_start">DÉBUT</string>
+    <string name="route_end">FIN</string>
+    <string name="trip_empty_title">Votre itinéraire est vide</string>
+    <string name="trip_empty_subtitle">Commencez à ajouter des activités !</string>
+    <string name="date_tbd">À définir</string>
+    <string name="chip_all_trip">Tout le voyage</string>
+    <!-- Types -->
+    <string name="type_flight">Vol</string>
+    <string name="type_train">Train</string>
+    <string name="type_bus">Bus</string>
+    <string name="type_rental_car">Voiture de location</string>
+    <string name="type_hotel">Hôtel</string>
+    <string name="type_airbnb">Airbnb / Location</string>
+    <string name="type_hostel">Auberge</string>
+    <string name="type_camping">Camping</string>
+    <string name="type_restaurant">Dîner</string>
+    <string name="type_sightseeing">Tourisme</string>
+    <string name="type_tour">Visite guidée</string>
+    <string name="type_hike">Randonnée</string>
+    <string name="type_note">Note</string>
+    <string name="type_ticket">Ticket d\'événement</string>
+</resources>

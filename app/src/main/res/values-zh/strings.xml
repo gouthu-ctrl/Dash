@@ -1,0 +1,132 @@
+<resources>
+    <string name="app_name">Dash</string>
+    <string name="google_client_id">750370194796-e2187fr9ivo7selsn92nrrt316mclddf.apps.googleusercontent.com</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">设置</string>
+    <string name="settings_appearance">外观</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_system">系统</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_preferences">偏好</string>
+    <string name="settings_notifications">通知</string>
+    <string name="settings_notifications_subtitle">接收行程和价格提醒</string>
+    <string name="settings_account">账户</string>
+    <string name="settings_privacy">隐私与安全</string>
+    <string name="settings_about">关于 Dash</string>
+    <string name="settings_logout">退出登录</string>
+    <string name="settings_version">版本 1.0.0 (Beta)</string>
+    <string name="settings_select_language">选择语言</string>
+    <string name="settings_cancel">取消</string>
+
+    <!-- Home Screen -->
+    <string name="home_greeting_morning">早上好</string>
+    <string name="home_greeting_afternoon">下午好</string>
+    <string name="home_greeting_evening">晚上好</string>
+    <string name="home_new_invitations">新邀请</string>
+    <string name="home_trip_invite_title">行程邀请</string>
+    <string name="home_trip_join">加入</string>
+    <string name="home_trip_decline">拒绝</string>
+    <string name="home_all_trips">所有行程</string>
+    <string name="home_see_all">查看全部</string>
+    <string name="home_view_trip">查看行程</string>
+    <string name="home_empty_title">准备好开始冒险了吗？</string>
+    <string name="home_empty_subtitle">计划您的第一次旅行，让 Dash\n处理所有细节</string>
+    <string name="home_create_trip">创建第一个行程</string>
+
+    <!-- Widgets -->
+    <string name="widget_packing">行李</string>
+    <string name="widget_weather">天气</string>
+    <string name="widget_documents">文档</string>
+    <string name="widget_price_alerts">价格提醒</string>
+
+    <!-- Time -->
+    <string name="time_today">今天</string>
+    <string name="time_tomorrow">明天</string>
+    <string name="time_days_format">%d 天后</string>
+    <string name="time_days_short_format">%d 天</string>
+
+    <!-- Trip Detail -->
+    <string name="trip_add_activity">添加活动</string>
+    <string name="trip_members_title">行程成员</string>
+    <string name="trip_delete_activity">删除活动</string>
+    <string name="trip_delete_confirmation_title">删除活动</string>
+    <string name="trip_delete_confirmation_text">确定要删除此活动吗？此操作无法撤销。</string>
+    <string name="trip_delete">删除</string>
+    <string name="trip_refresh_theme_title">刷新行程主题</string>
+    <string name="trip_refresh_theme_text">为此目的地搜索新的风景图片？</string>
+    <string name="trip_refresh">刷新</string>
+    <string name="trip_itinerary_title">行程</string>
+    <string name="trip_empty_itinerary">您的行程将显示在这里。</string>
+    <string name="trip_fab_tooltip">点击添加航班、酒店或活动！</string>
+
+    <!-- Add Itinerary -->
+    <string name="add_to_journey">添加到行程</string>
+    <string name="new_item_title">新建 %s</string>
+    <string name="details_section">详情</string>
+    <string name="title_label">标题 (例如：飞往北京的航班)</string>
+    <string name="airline_label">航空公司</string>
+    <string name="flight_number_label">航班号</string>
+    <string name="terminal_label">航站楼</string>
+    <string name="gate_label">登机口</string>
+    <string name="train_number_label">车次</string>
+    <string name="platform_label">站台</string>
+    <string name="seat_label">车厢 / 座位</string>
+    <string name="address_label">地址 / 位置</string>
+    <string name="access_code_label">访问代码</string>
+    <string name="campsite_label">营地号</string>
+    <string name="location_label">位置</string>
+    <string name="start_time_label">开始日期和时间</string>
+    <string name="booking_ref_label">确认号 / PNR</string>
+    <string name="note_details_label">备注详情</string>
+    <string name="attachments_title">附件</string>
+    <string name="saved_files_label">已保存文件：</string>
+    <string name="new_upload_label">上传新文件：</string>
+    <string name="share_with_members">与成员分享</string>
+    <string name="propose_voting_title">发起投票</string>
+    <string name="propose_voting_subtitle">团队成员可以对此投票。</string>
+    <string name="propose_activity_button">提议活动</string>
+    <string name="add_to_itinerary_button">添加到行程表</string>
+    <string name="add_new_file">添加新项</string>
+    <string name="change_file">更改</string>
+    <string name="file_default_name">文件</string>
+    <string name="next_button">下一步</string>
+    <string name="ok_button">确定</string>
+
+    <!-- Categories -->
+    <string name="category_transportation">交通</string>
+    <string name="category_accommodation">住宿</string>
+    <string name="category_activities">活动</string>
+    <string name="category_planning">规划</string>
+
+    <!-- Stats & Logic -->
+    <string name="stat_day_singular">天</string>
+    <string name="stat_day_plural">天</string>
+    <string name="stat_traveler_singular">旅客</string>
+    <string name="stat_traveler_plural">旅客</string>
+    <string name="stat_place_singular">地点</string>
+    <string name="stat_place_plural">地点</string>
+    <string name="route_start">起点</string>
+    <string name="route_end">终点</string>
+    <string name="trip_empty_title">您的行程表是空的</string>
+    <string name="trip_empty_subtitle">开始添加活动吧！</string>
+    <string name="date_tbd">待定</string>
+    <string name="chip_all_trip">整个旅程</string>
+    <!-- Types -->
+    <string name="type_flight">航班</string>
+    <string name="type_train">火车</string>
+    <string name="type_bus">巴士</string>
+    <string name="type_rental_car">租车</string>
+    <string name="type_hotel">酒店</string>
+    <string name="type_airbnb">Airbnb / 出租</string>
+    <string name="type_hostel">旅舍</string>
+    <string name="type_camping">露营</string>
+    <string name="type_restaurant">餐饮</string>
+    <string name="type_sightseeing">观光</string>
+    <string name="type_tour">导览游</string>
+    <string name="type_hike">徒步</string>
+    <string name="type_note">笔记</string>
+    <string name="type_ticket">活动门票</string>
+</resources>

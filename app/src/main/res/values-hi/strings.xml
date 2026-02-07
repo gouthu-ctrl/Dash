@@ -1,0 +1,132 @@
+<resources>
+    <string name="app_name">Dash</string>
+    <string name="google_client_id">750370194796-e2187fr9ivo7selsn92nrrt316mclddf.apps.googleusercontent.com</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="settings_appearance">दिखावट</string>
+    <string name="settings_theme">थीम</string>
+    <string name="settings_theme_light">लाइट</string>
+    <string name="settings_theme_dark">डार्क</string>
+    <string name="settings_theme_system">सिस्टम</string>
+    <string name="settings_language">भाषा</string>
+    <string name="settings_preferences">पसंदीदा</string>
+    <string name="settings_notifications">सूचनाएं</string>
+    <string name="settings_notifications_subtitle">यात्रा और मूल्य अलर्ट प्राप्त करें</string>
+    <string name="settings_account">खाता</string>
+    <string name="settings_privacy">गोपनीयता और सुरक्षा</string>
+    <string name="settings_about">Dash के बारे में</string>
+    <string name="settings_logout">लॉग आउट</string>
+    <string name="settings_version">संस्करण 1.0.0 (Beta)</string>
+    <string name="settings_select_language">भाषा चुनें</string>
+    <string name="settings_cancel">रद्द करें</string>
+
+    <!-- Home Screen -->
+    <string name="home_greeting_morning">सुप्रभात</string>
+    <string name="home_greeting_afternoon">शुभ दोपहर</string>
+    <string name="home_greeting_evening">शुभ संध्या</string>
+    <string name="home_new_invitations">नए आमंत्रण</string>
+    <string name="home_trip_invite_title">यात्रा आमंत्रण</string>
+    <string name="home_trip_join">शामिल हों</string>
+    <string name="home_trip_decline">अस्वीकार करें</string>
+    <string name="home_all_trips">सभी यात्राएं</string>
+    <string name="home_see_all">सभी देखें</string>
+    <string name="home_view_trip">यात्रा देखें</string>
+    <string name="home_empty_title">साहसिक कार्य के लिए तैयार?</string>
+    <string name="home_empty_subtitle">अपनी पहली यात्रा की योजना बनाएं और Dash\nको सभी विवरण संभालने दें</string>
+    <string name="home_create_trip">अपनी पहली यात्रा बनाएं</string>
+
+    <!-- Widgets -->
+    <string name="widget_packing">पैकिंग</string>
+    <string name="widget_weather">मौसम</string>
+    <string name="widget_documents">दस्तावेज़</string>
+    <string name="widget_price_alerts">मूल्य अलर्ट</string>
+
+    <!-- Time -->
+    <string name="time_today">आज</string>
+    <string name="time_tomorrow">कल</string>
+    <string name="time_days_format">%d दिनों में</string>
+    <string name="time_days_short_format">%d दिन</string>
+
+    <!-- Trip Detail -->
+    <string name="trip_add_activity">गतिविधि जोड़ें</string>
+    <string name="trip_members_title">यात्रा सदस्य</string>
+    <string name="trip_delete_activity">गतिविधि हटाएं</string>
+    <string name="trip_delete_confirmation_title">गतिविधि हटाएं</string>
+    <string name="trip_delete_confirmation_text">क्या आप वाकई इस गतिविधि को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता है।</string>
+    <string name="trip_delete">हटाएं</string>
+    <string name="trip_refresh_theme_title">यात्रा थीम रिफ्रेश करें</string>
+    <string name="trip_refresh_theme_text">इस गंतव्य के लिए नई सुंदर छवि खोजें?</string>
+    <string name="trip_refresh">रिफ्रेश</string>
+    <string name="trip_itinerary_title">यात्रा कार्यक्रम</string>
+    <string name="trip_empty_itinerary">आपका यात्रा कार्यक्रम यहां दिखाई देगा।</string>
+    <string name="trip_fab_tooltip">उड़ानें, होटल या गतिविधियां जोड़ने के लिए टैप करें!</string>
+
+    <!-- Add Itinerary -->
+    <string name="add_to_journey">यात्रा में जोड़ें</string>
+    <string name="new_item_title">नया %s</string>
+    <string name="details_section">विवरण</string>
+    <string name="title_label">शीर्षक (जैसे: दिल्ली के लिए उड़ान)</string>
+    <string name="airline_label">एयरलाइन</string>
+    <string name="flight_number_label">उड़ान संख्या</string>
+    <string name="terminal_label">टर्मिनल</string>
+    <string name="gate_label">गेट</string>
+    <string name="train_number_label">ट्रेन संख्या</string>
+    <string name="platform_label">प्लेटफ़ॉर्म</string>
+    <string name="seat_label">डिब्बा / सीट</string>
+    <string name="address_label">पता / स्थान</string>
+    <string name="access_code_label">एक्सेस कोड</string>
+    <string name="campsite_label">कैंपसाइट #</string>
+    <string name="location_label">स्थान</string>
+    <string name="start_time_label">प्रारंभ समय और दिनांक</string>
+    <string name="booking_ref_label">पुष्टिकरण / पीएनआर</string>
+    <string name="note_details_label">नोट विवरण</string>
+    <string name="attachments_title">संलग्नक (Attachments)</string>
+    <string name="saved_files_label">सहेजी गई फ़ाइलें:</string>
+    <string name="new_upload_label">नई अपलोड:</string>
+    <string name="share_with_members">सदस्यों के साथ साझा करें</string>
+    <string name="propose_voting_title">वोटिंग के लिए प्रस्ताव दें</string>
+    <string name="propose_voting_subtitle">टीम के सदस्य इस पर वोट कर सकते हैं।</string>
+    <string name="propose_activity_button">गतिविधि प्रस्तावित करें</string>
+    <string name="add_to_itinerary_button">यात्रा कार्यक्रम में जोड़ें</string>
+    <string name="add_new_file">नया जोड़ें</string>
+    <string name="change_file">बदलें</string>
+    <string name="file_default_name">फ़ाइल</string>
+    <string name="next_button">अगला</string>
+    <string name="ok_button">ठीक है</string>
+
+    <!-- Categories -->
+    <string name="category_transportation">परिवहन</string>
+    <string name="category_accommodation">आवास</string>
+    <string name="category_activities">गतिधियाँ</string>
+    <string name="category_planning">योजना</string>
+
+    <!-- Stats & Logic -->
+    <string name="stat_day_singular">दिन</string>
+    <string name="stat_day_plural">दिन</string>
+    <string name="stat_traveler_singular">यात्री</string>
+    <string name="stat_traveler_plural">यात्री</string>
+    <string name="stat_place_singular">जगह</string>
+    <string name="stat_place_plural">जगहें</string>
+    <string name="route_start">शुरुआत</string>
+    <string name="route_end">अंत</string>
+    <string name="trip_empty_title">आपकी यात्रा कार्यक्रम खाली है</string>
+    <string name="trip_empty_subtitle">अपनी यात्रा की योजना बनाना शुरू करें!</string>
+    <string name="date_tbd">तय होना बाकी</string>
+    <string name="chip_all_trip">पूरी यात्रा</string>
+    <!-- Types -->
+    <string name="type_flight">उड़ान</string>
+    <string name="type_train">ट्रेन</string>
+    <string name="type_bus">बस</string>
+    <string name="type_rental_car">किराए की कार</string>
+    <string name="type_hotel">होटल</string>
+    <string name="type_airbnb">Airbnb / किराया</string>
+    <string name="type_hostel">हॉस्टल</string>
+    <string name="type_camping">कैंपिंग</string>
+    <string name="type_restaurant">भोजन</string>
+    <string name="type_sightseeing">सैर सपाटा</string>
+    <string name="type_tour">गाइडेड टूर</string>
+    <string name="type_hike">पहाड़ पर चलना</string>
+    <string name="type_note">नोट</string>
+    <string name="type_ticket">इवेंट टिकट</string>
+</resources>

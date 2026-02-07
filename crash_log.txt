@@ -1,0 +1,216 @@
+﻿
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 
+java.lang.IllegalArgumentException: Key "local-pop-nyc" was 
+already used. If you are using LazyColumn/Row please make 
+sure you provide a unique key for each item.
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.layout.LayoutNodeSubcompositionsState.subcompose(Su
+bcomposeLayout.kt:453)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.layout.LayoutNodeSubcompositionsState$Scope.subcomp
+ose(SubcomposeLayout.kt:895)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.layout.LazyLayoutMeasureScopeImpl.meas
+ure-0kLqBqw(LazyLayoutMeasureScope.kt:125)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.LazyListMeasuredItemProvider.getAndMea
+sure-0kLqBqw(LazyListMeasuredItemProvider.kt:55)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.LazyListMeasuredItemProvider.getAndMea
+sure-0kLqBqw$default(LazyListMeasuredItemProvider.kt:49)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.LazyListMeasureKt.measureLazyList-x0Ok
+8Vo(LazyListMeasure.kt:214)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.LazyListKt$rememberLazyListMeasurePoli
+cy$1$1.invoke-0kLqBqw(LazyList.kt:326)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.LazyListKt$rememberLazyListMeasurePoli
+cy$1$1.invoke(LazyList.kt:183)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.layout.LazyLayoutKt$LazyLayout$3$2$1.i
+nvoke-0kLqBqw(LazyLayout.kt:119)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.lazy.layout.LazyLayoutKt$LazyLayout$3$2$1.i
+nvoke(LazyLayout.kt:112)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.layout.LayoutNodeSubcompositionsState$createMeasure
+Policy$1.measure-3p2s80s(SubcomposeLayout.kt:725)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.InnerNodeCoordinator.measure-BRTryo0(InnerNode
+Coordinator.kt:135)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.graphics.SimpleGraphicsLayerModifier.measure-3p2s80
+s(GraphicsLayerModifier.kt:646)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(
+LayoutModifierNodeCoordinator.kt:188)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.foundation.layout.FillNode.measure-3p2s80s(Size.kt:699
+)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(
+LayoutModifierNodeCoordinator.kt:188)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNodeLayoutDelegate$performMeasureBlock$1
+.invoke(LayoutNodeLayoutDelegate.kt:316)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNodeLayoutDelegate$performMeasureBlock$1
+.invoke(LayoutNodeLayoutDelegate.kt:315)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.runtime.snapshots.Snapshot$Companion.observe(Snapshot.
+kt:2441)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.runtime.snapshots.SnapshotStateObserver$ObservedScopeM
+ap.observe(SnapshotStateObserver.kt:502)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.runtime.snapshots.SnapshotStateObserver.observeReads(S
+napshotStateObserver.kt:258)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.OwnerSnapshotObserver.observeReads$ui_release(
+OwnerSnapshotObserver.kt:133)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.OwnerSnapshotObserver.observeMeasureSnapshotRe
+ads$ui_release(OwnerSnapshotObserver.kt:113)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNodeLayoutDelegate.performMeasure-BRTryo
+0(LayoutNodeLayoutDelegate.kt:1775)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNodeLayoutDelegate.access$performMeasure
+-BRTryo0(LayoutNodeLayoutDelegate.kt:40)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNodeLayoutDelegate$MeasurePassDelegate.r
+emeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:696)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNode.remeasure-_Sx5XlM$ui_release(Layout
+Node.kt:1222)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNode.remeasure-_Sx5XlM$ui_release$defaul
+t(LayoutNode.kt:1213)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.doRemeasure-sdFAvZA(M
+easureAndLayoutDelegate.kt:369)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.remeasureAndRelayoutI
+fNeeded(MeasureAndLayoutDelegate.kt:566)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.onlyRemeasureIfSchedu
+led(MeasureAndLayoutDelegate.kt:660)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.forceMeasureTheSubtre
+eInternal(MeasureAndLayoutDelegate.kt:686)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.forceMeasureTheSubtre
+eInternal(MeasureAndLayoutDelegate.kt:693)
+01-29 00:11:52.411  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.forceMeasureTheSubtre
+eInternal(MeasureAndLayoutDelegate.kt:693)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.forceMeasureTheSubtre
+eInternal(MeasureAndLayoutDelegate.kt:693)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.forceMeasureTheSubtre
+eInternal(MeasureAndLayoutDelegate.kt:693)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.forceMeasureTheSubtre
+eInternal(MeasureAndLayoutDelegate.kt:693)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.forceMeasureTheSubtre
+e(MeasureAndLayoutDelegate.kt:649)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AndroidComposeView.forceMeasureTheSubtree(
+AndroidComposeView.android.kt:1304)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.Owner.forceMeasureTheSubtree$default(Owner.kt:
+263)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNodeLayoutDelegate$MeasurePassDelegate.r
+emeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:708)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.LayoutNode.remeasure-_Sx5XlM$ui_release(Layout
+Node.kt:1222)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.doRemeasure-sdFAvZA(M
+easureAndLayoutDelegate.kt:367)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.remeasureOnly(Measure
+AndLayoutDelegate.kt:622)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.node.MeasureAndLayoutDelegate.measureOnly(MeasureAn
+dLayoutDelegate.kt:420)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AndroidComposeView.onMeasure(AndroidCompos
+eView.android.kt:1375)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.view.View.measure(View.java:28595)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AbstractComposeView.internalOnMeasure$ui_r
+elease(ComposeView.android.kt:309)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at androidx.
+compose.ui.platform.AbstractComposeView.onMeasure(ComposeView.
+android.kt:296)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.view.View.measure(View.java:28595)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.ViewGroup.measureChildWithMargins(ViewGroup.java:7031)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.widget.FrameLayout.onMeasure(FrameLayout.java:194)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.view.View.measure(View.java:28595)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.ViewGroup.measureChildWithMargins(ViewGroup.java:7031)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.widget.FrameLayout.onMeasure(FrameLayout.java:194)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.view.View.measure(View.java:28595)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.ViewGroup.measureChildWithMargins(ViewGroup.java:7031)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.widget.FrameLayout.onMeasure(FrameLayout.java:194)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at com.andro
+id.internal.policy.DecorView.onMeasure(DecorView.java:758)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.view.View.measure(View.java:28595)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.ViewRootImpl.performMeasure(ViewRootImpl.java:5088)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.ViewRootImpl.measureHierarchy(ViewRootImpl.java:3436)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.ViewRootImpl.performTraversals(ViewRootImpl.java:3749)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.view.ViewRootImpl.doTraversal(ViewRootImpl.java:3127)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.ViewRootImpl$TraversalRunnable.run(ViewRootImpl.java:10807
+)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.Choreographer$CallbackRecord.run(Choreographer.java:1630)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.Choreographer$CallbackRecord.run(Choreographer.java:1639)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.Choreographer.doCallbacks(Choreographer.java:1235)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.view.Choreographer.doFrame(Choreographer.java:1164)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at android.v
+iew.Choreographer$FrameDisplayEventReceiver.run(Choreographer.
+java:1613)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.os.Handler.handleCallback(Handler.java:1070)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.os.Looper.loopOnce(Looper.java:263)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.os.Looper.loop(Looper.java:367)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+android.app.ActivityThread.main(ActivityThread.java:9287)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+java.lang.reflect.Method.invoke(Native Method)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at com.andro
+id.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit
+.java:566)
+01-29 00:11:52.413  6569  6569 E AndroidRuntime: 	at 
+com.android.internal.os.ZygoteInit.main(ZygoteInit.java:929)
+
+

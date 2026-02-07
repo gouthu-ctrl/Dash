@@ -1,0 +1,132 @@
+<resources>
+    <string name="app_name">Dash</string>
+    <string name="google_client_id">750370194796-e2187fr9ivo7selsn92nrrt316mclddf.apps.googleusercontent.com</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">設定</string>
+    <string name="settings_appearance">外観</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_theme_light">ライト</string>
+    <string name="settings_theme_dark">ダーク</string>
+    <string name="settings_theme_system">システム</string>
+    <string name="settings_language">言語</string>
+    <string name="settings_preferences">設定</string>
+    <string name="settings_notifications">通知</string>
+    <string name="settings_notifications_subtitle">旅行と価格のアラートを受け取る</string>
+    <string name="settings_account">アカウント</string>
+    <string name="settings_privacy">プライバシーとセキュリティ</string>
+    <string name="settings_about">Dashについて</string>
+    <string name="settings_logout">ログアウト</string>
+    <string name="settings_version">バージョン 1.0.0 (ベータ)</string>
+    <string name="settings_select_language">言語を選択</string>
+    <string name="settings_cancel">キャンセル</string>
+
+    <!-- Home Screen -->
+    <string name="home_greeting_morning">おはようございます</string>
+    <string name="home_greeting_afternoon">こんにちは</string>
+    <string name="home_greeting_evening">こんばんは</string>
+    <string name="home_new_invitations">新しい招待</string>
+    <string name="home_trip_invite_title">旅行の招待</string>
+    <string name="home_trip_join">参加</string>
+    <string name="home_trip_decline">辞退</string>
+    <string name="home_all_trips">すべての旅行</string>
+    <string name="home_see_all">すべて見る</string>
+    <string name="home_view_trip">旅行を見る</string>
+    <string name="home_empty_title">冒険の準備はできましたか？</string>
+    <string name="home_empty_subtitle">最初の旅行を計画して、詳細を\nDashに任せましょう</string>
+    <string name="home_create_trip">最初の旅行を作成</string>
+
+    <!-- Widgets -->
+    <string name="widget_packing">持ち物</string>
+    <string name="widget_weather">天気</string>
+    <string name="widget_documents">書類</string>
+    <string name="widget_price_alerts">価格アラート</string>
+
+    <!-- Time -->
+    <string name="time_today">今日</string>
+    <string name="time_tomorrow">明日</string>
+    <string name="time_days_format">%d日後</string>
+    <string name="time_days_short_format">%d日</string>
+
+    <!-- Trip Detail -->
+    <string name="trip_add_activity">アクティビティを追加</string>
+    <string name="trip_members_title">旅行メンバー</string>
+    <string name="trip_delete_activity">アクティビティを削除</string>
+    <string name="trip_delete_confirmation_title">アクティビティを削除</string>
+    <string name="trip_delete_confirmation_text">このアクティビティを削除してもよろしいですか？この操作は元に戻せません。</string>
+    <string name="trip_delete">削除</string>
+    <string name="trip_refresh_theme_title">旅行テーマを更新</string>
+    <string name="trip_refresh_theme_text">この目的地の新しい風景画像を検索しますか？</string>
+    <string name="trip_refresh">更新</string>
+    <string name="trip_itinerary_title">旅程</string>
+    <string name="trip_empty_itinerary">旅程はここに表示されます。</string>
+    <string name="trip_fab_tooltip">タップしてフライト、ホテル、アクティビティを追加！</string>
+
+    <!-- Add Itinerary -->
+    <string name="add_to_journey">旅程に追加</string>
+    <string name="new_item_title">新規 %s</string>
+    <string name="details_section">詳細</string>
+    <string name="title_label">タイトル (例: 東京行きのフライト)</string>
+    <string name="airline_label">航空会社</string>
+    <string name="flight_number_label">便名</string>
+    <string name="terminal_label">ターミナル</string>
+    <string name="gate_label">搭乗口</string>
+    <string name="train_number_label">列車番号</string>
+    <string name="platform_label">ホーム</string>
+    <string name="seat_label">号車 / 座席</string>
+    <string name="address_label">住所 / 場所</string>
+    <string name="access_code_label">アクセスコード</string>
+    <string name="campsite_label">キャンプサイト番号</string>
+    <string name="location_label">場所</string>
+    <string name="start_time_label">開始日時</string>
+    <string name="booking_ref_label">確認番号 / PNR</string>
+    <string name="note_details_label">メモの詳細</string>
+    <string name="attachments_title">添付ファイル</string>
+    <string name="saved_files_label">保存されたファイル:</string>
+    <string name="new_upload_label">新規アップロード:</string>
+    <string name="share_with_members">メンバーと共有</string>
+    <string name="propose_voting_title">投票を提案</string>
+    <string name="propose_voting_subtitle">メンバーが投票できます。</string>
+    <string name="propose_activity_button">アクティビティを提案</string>
+    <string name="add_to_itinerary_button">旅程に追加</string>
+    <string name="add_new_file">新規追加</string>
+    <string name="change_file">変更</string>
+    <string name="file_default_name">ファイル</string>
+    <string name="next_button">次へ</string>
+    <string name="ok_button">OK</string>
+
+    <!-- Categories -->
+    <string name="category_transportation">交通機関</string>
+    <string name="category_accommodation">宿泊施設</string>
+    <string name="category_activities">アクティビティ</string>
+    <string name="category_planning">計画</string>
+
+    <!-- Stats & Logic -->
+    <string name="stat_day_singular">日</string>
+    <string name="stat_day_plural">日間</string>
+    <string name="stat_traveler_singular">旅行者</string>
+    <string name="stat_traveler_plural">旅行者</string>
+    <string name="stat_place_singular">場所</string>
+    <string name="stat_place_plural">場所</string>
+    <string name="route_start">出発</string>
+    <string name="route_end">到着</string>
+    <string name="trip_empty_title">旅程が空です</string>
+    <string name="trip_empty_subtitle">アクティビティを追加しましょう！</string>
+    <string name="date_tbd">未定</string>
+    <string name="chip_all_trip">全旅程</string>
+    <!-- Types -->
+    <string name="type_flight">フライト</string>
+    <string name="type_train">列車</string>
+    <string name="type_bus">バス</string>
+    <string name="type_rental_car">レンタカー</string>
+    <string name="type_hotel">ホテル</string>
+    <string name="type_airbnb">Airbnb / レンタル</string>
+    <string name="type_hostel">ホステル</string>
+    <string name="type_camping">キャンプ</string>
+    <string name="type_restaurant">食事</string>
+    <string name="type_sightseeing">観光</string>
+    <string name="type_tour">ガイドツアー</string>
+    <string name="type_hike">ハイキング</string>
+    <string name="type_note">メモ</string>
+    <string name="type_ticket">イベントチケット</string>
+</resources>

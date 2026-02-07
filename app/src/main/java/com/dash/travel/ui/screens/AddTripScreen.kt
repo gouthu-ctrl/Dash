@@ -1,99 +1,128 @@
 package com.dash.travel.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDateRangePickerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.dash.travel.data.models.Trip
-import com.dash.travel.ui.components.BeginnerTooltip
-import com.dash.travel.ui.components.LocationPickerField
-import com.dash.travel.ui.components.SectionHeader
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dash.travel.data.model.SupabaseTrip
+import com.dash.travel.data.model.DestinationData
+import com.dash.travel.data.model.OriginData
+import com.dash.travel.ui.viewmodel.AddTripViewModel
+import com.dash.travel.ui.components.*
+import com.dash.travel.ui.onboarding.SmartTooltip
+import com.dash.travel.ui.onboarding.TooltipIds
+import com.dash.travel.ui.theme.*
+import kotlinx.serialization.json.*
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
+import java.util.*
 
+/**
+ * Premium Add/Edit Trip Screen
+ * 
+ * Features:
+ * - Location picker with search
+ * - Date range selection
+ * - Custom fields and notes
+ * - Timezone selection
+ * - Collaborator invite
+ * - Smart tooltips
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTripScreen(
     onNavigateBack: () -> Unit,
-    onSaveTrip: (tripName: String, description: String, startDate: String, endDate: String, destination: JsonObject?, origin: JsonObject?, inviteEmails: List<String>) -> Unit,
+    onSaveTrip: (
+        tripName: String,
+        description: String,
+        startDate: String,
+        endDate: String,
+        timezone: String,
+        customAttributes: JsonObject?,
+        destination: JsonObject?,
+        origin: JsonObject?,
+        inviteEmails: List<String>
+    ) -> Unit,
     getHomeLocation: suspend () -> String,
     isFirstTrip: Boolean = true,
-    existingTrip: Trip? = null
+    existingTrip: SupabaseTrip? = null,
+    tripId: String? = null,
+    viewModel: AddTripViewModel? = null
 ) {
     val isoFormatter = remember {
         SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
     }
-    
-    // State to hold the selected location's JSON object
-    var fromLocationData by remember { 
-        mutableStateOf<JsonObject?>(existingTrip?.originData?.jsonObject) 
-    }
-    
-    // State to hold the displayed name of the location
-    var fromLocationName by remember { 
-        mutableStateOf(existingTrip?.originData?.jsonObject?.get("name")?.jsonPrimitive?.content ?: "")
+
+    // Load trip if ID provided
+    LaunchedEffect(tripId) {
+        if (tripId != null && viewModel != null) {
+            viewModel.loadTrip(tripId)
+        }
     }
 
-    var destinationData by remember { 
-        mutableStateOf<JsonObject?>(existingTrip?.destinationData?.jsonObject) 
+    val loadedTripState = viewModel?.trip?.collectAsStateWithLifecycle()
+    val loadedTrip = loadedTripState?.value
+    val displayTrip = loadedTrip ?: existingTrip
+    
+    // Helper to convert data model to JsonObject for existing components (if needed)
+    // or adapt components. For now we reconstruct JsonObjects from SupabaseTrip data.
+    fun DestinationData?.toJson(): JsonObject? {
+        if (this == null) return null
+        return buildJsonObject {
+            put("name", name ?: "")
+            put("country", country ?: "")
+            placeId?.let { put("place_id", it) }
+            lat?.let { put("lat", it) }
+            lng?.let { put("lng", it) }
+        }
     }
-    var destinationName by remember { 
-        mutableStateOf(existingTrip?.destinationData?.jsonObject?.get("name")?.jsonPrimitive?.content ?: "") 
+
+    fun OriginData?.toJson(): JsonObject? {
+        if (this == null) return null
+        return buildJsonObject {
+            put("name", name ?: "")
+            put("country", country ?: "")
+            placeId?.let { put("place_id", it) }
+            lat?.let { put("lat", it) }
+            lng?.let { put("lng", it) }
+        }
+    }
+
+    // Location states - Initialize from displayTrip (which might be null initially then update)
+    var fromLocationData by remember { mutableStateOf<JsonObject?>(displayTrip?.originData.toJson()) }
+    var fromLocationName by remember { mutableStateOf(displayTrip?.originData?.name ?: "") }
+    
+    var destinationData by remember { mutableStateOf<JsonObject?>(displayTrip?.destinationData.toJson()) }
+    var destinationName by remember { mutableStateOf(displayTrip?.destinationData?.name ?: "") }
+
+    // Update state when displayTrip changes (async load)
+    LaunchedEffect(displayTrip) {
+        if (displayTrip != null) {
+            fromLocationData = displayTrip.originData.toJson()
+            fromLocationName = displayTrip.originData?.name ?: ""
+            destinationData = displayTrip.destinationData.toJson()
+            destinationName = displayTrip.destinationData?.name ?: ""
+        }
     }
     
     // Derived Trip Title
@@ -101,22 +130,57 @@ fun AddTripScreen(
         if (destinationName.isNotBlank()) "Trip to $destinationName" else "New Trip"
     }
     
-    var inviteEmails by remember { mutableStateOf("") } 
+    // Timezone state
+    var selectedTimezone by remember { mutableStateOf(displayTrip?.timezone ?: "UTC") }
+    
+    // Custom fields state
+    val customFields = remember { mutableStateListOf<CustomField>() }
+    
+    LaunchedEffect(displayTrip) {
+        if (displayTrip != null) {
+             selectedTimezone = displayTrip.timezone
+             // Handle Notes
+             // customFields logic...
+             customFields.clear()
+             displayTrip.customAttributes?.customFields?.let { fields ->
+                 customFields.addAll(fields.map { CustomField(name = it.label, value = it.value) })
+             }
+             // For backward compatibility or if notes stored differently
+             // displayTrip.description -> notes
+        }
+    }
 
+    // Notes state
+    var notes by remember { mutableStateOf(displayTrip?.description ?: "") }
+    LaunchedEffect(displayTrip) {
+        if (displayTrip != null) {
+             notes = displayTrip.description ?: ""
+        }
+    }
+    
+    // Invite emails
+    var inviteEmails by remember { mutableStateOf("") }
+
+    // Date states
     var startDate by remember { 
         mutableStateOf<Date?>(
-            existingTrip?.startDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
+            displayTrip?.startDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
         ) 
     }
     var endDate by remember { 
         mutableStateOf<Date?>(
-            existingTrip?.endDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
+            displayTrip?.endDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
         ) 
+    }
+    
+    LaunchedEffect(displayTrip) {
+        if (displayTrip != null) {
+            startDate = displayTrip.startDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
+            endDate = displayTrip.endDate?.let { try { isoFormatter.parse(it) } catch (e: Exception) { null } }
+        }
     }
 
     var showDateRangePicker by remember { mutableStateOf(false) }
-
-    var showTooltip by remember { mutableStateOf(isFirstTrip && existingTrip == null) }
 
     val dateFormatter = remember {
         SimpleDateFormat("MMM dd, yyyy", Locale.US).apply {
@@ -124,19 +188,21 @@ fun AddTripScreen(
         }
     }
     
+    // Load home location on first launch
     LaunchedEffect(Unit) {
-        if (existingTrip == null && fromLocationName.isBlank()) {
+        if (displayTrip == null && fromLocationName.isBlank()) {
             fromLocationName = getHomeLocation()
         }
     }
 
     Scaffold(
+        containerColor = Background,
         topBar = {
             TopAppBar(
                 title = { 
                     Text(
-                        if (existingTrip != null) "Edit Trip" else "Plan a New Trip",
-                        style = MaterialTheme.typography.headlineSmall,
+                        if (existingTrip != null) "Edit Trip" else "New Adventure",
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     ) 
                 },
@@ -146,8 +212,9 @@ fun AddTripScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = Background,
+                    titleContentColor = OnBackground,
+                    navigationIconContentColor = OnBackground
                 )
             )
         }
@@ -156,154 +223,216 @@ fun AddTripScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            contentPadding = PaddingValues(bottom = 48.dp)
         ) {
+            // Location Section
             item {
-                AnimatedVisibility(
-                    visible = showTooltip,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
-                ) {
-                    BeginnerTooltip(
-                        text = "Pick a destination and we'll handle the rest.",
-                        onDismiss = { showTooltip = false }
-                    )
-                }
-            }
-            
-            // Location Section - Moved to Top
-            item {
-                SectionHeader("Where to?")
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    LocationPickerField(
-                        label = "Destination",
-                        initialValue = destinationName,
-                        onLocationSelected = { name, json ->
-                            destinationName = name
-                            destinationData = json
+                SectionHeader(title = "Where & When")
+                DashCard(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        LocationPickerField(
+                            label = "Destination",
+                            initialValue = destinationName,
+                            onLocationSelected = { name, json ->
+                                destinationName = name
+                                destinationData = json
+                            }
+                        )
+                        
+                        LocationPickerField(
+                            label = "Departing From",
+                            initialValue = fromLocationName,
+                            onLocationSelected = { name, json ->
+                                fromLocationName = name
+                                fromLocationData = json
+                            }
+                        )
+                        
+                        // Date Picker Trigger
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable { showDateRangePicker = true },
+                            color = SurfaceContainer
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Default.CalendarMonth, 
+                                    contentDescription = null,
+                                    tint = Primary
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        text = if (startDate != null && endDate != null) 
+                                            "${dateFormatter.format(startDate!!)} - ${dateFormatter.format(endDate!!)}"
+                                        else "Select Dates",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium,
+                                        color = if (startDate != null) OnSurface else OnSurfaceVariant
+                                    )
+                                    if (startDate == null) {
+                                        Text(
+                                            text = "When are you going?",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = OnSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
                         }
-                    )
-                    
-                    LocationPickerField(
-                        label = "Departing From",
-                        initialValue = fromLocationName,
-                        onLocationSelected = { name, json ->
-                            fromLocationName = name
-                            fromLocationData = json
-                        }
-                    )
+                    }
                 }
             }
 
-            // Dates Section - Improved UI
+            // Timezone & Notes
             item {
-                SectionHeader("Dates")
-                Surface(
-                    onClick = { showDateRangePicker = true },
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surface, // Using surface with border as a safe default
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                SectionHeader(title = "Details")
+                DashCard(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column {
-                            Text(
-                                text = if (startDate != null && endDate != null) 
-                                    "${dateFormatter.format(startDate!!)} - ${dateFormatter.format(endDate!!)}"
-                                else "Select Dates",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = if (startDate != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            if (startDate == null) {
-                                Text(
-                                    text = "When are you going?",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                        Icon(
-                            Icons.Default.CalendarMonth, 
-                            contentDescription = "Select Dates",
-                            tint = MaterialTheme.colorScheme.primary
+                        TimezoneSelector(
+                            selectedTimezone = selectedTimezone,
+                            onTimezoneSelected = { selectedTimezone = it }
+                        )
+                        
+                        NotesSection(
+                            notes = notes,
+                            onNotesChange = { notes = it }
                         )
                     }
                 }
             }
 
+            // Custom Fields (Progressive Disclosure)
+            item {
+                CustomFieldsSection(
+                    fields = customFields,
+                    onAddField = { name, value ->
+                        customFields.add(CustomField(name = name, value = value))
+                    },
+                    onRemoveField = { id ->
+                        customFields.removeAll { it.id == id }
+                    }
+                )
+            }
+
+            // Travel Companions (only for new trips)
             if (existingTrip == null) {
                 item {
-                    SectionHeader("Travel Companions")
-                    OutlinedTextField(
-                        value = inviteEmails,
-                        onValueChange = { inviteEmails = it },
-                        label = { Text("Invite via Email") },
-                        modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
-                        trailingIcon = { Icon(Icons.Default.PersonAdd, contentDescription = null) },
-                        placeholder = { Text("friend@example.com") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                        shape = MaterialTheme.shapes.medium,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        )
-                    )
-                    Text(
-                        text = "Separate emails with commas",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-                    )
+                    SectionHeader(title = "Travel Companions")
+                    DashCard(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            OutlinedTextField(
+                                value = inviteEmails,
+                                onValueChange = { inviteEmails = it },
+                                label = { Text("Invite via Email") },
+                                modifier = Modifier.fillMaxWidth(),
+                                leadingIcon = { 
+                                    Icon(
+                                        Icons.Default.Email, 
+                                        contentDescription = null,
+                                        tint = OnSurfaceVariant 
+                                    ) 
+                                },
+                                placeholder = { Text("friend@example.com, family@test.com") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = SurfaceContainer,
+                                    unfocusedContainerColor = SurfaceContainer,
+                                    focusedBorderColor = Primary,
+                                    unfocusedBorderColor = Color.Transparent
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.GroupAdd, 
+                                    contentDescription = null,
+                                    tint = Primary, 
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "They'll get an invite to join this trip",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = OnSurfaceVariant
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
+            // Primary Action Button
             item {
-                Button(
+                Spacer(modifier = Modifier.height(16.dp))
+                GradientButton(
+                    text = if (existingTrip != null) "Update Trip" else "Start Planning",
                     onClick = {
-                        val emails = inviteEmails.split(",").map { it.trim() }.filter { it.isNotBlank() }
+                        val emails = inviteEmails.split(",")
+                            .map { it.trim() }
+                            .filter { it.isNotBlank() }
+                        
+                        val customAttrs = if (customFields.isNotEmpty()) {
+                            buildJsonObject {
+                                customFields.forEach { field ->
+                                    put(field.name, field.value)
+                                }
+                            }
+                        } else null
+                        
                         startDate?.let { sDate ->
                             endDate?.let { eDate ->
                                 onSaveTrip(
-                                    tripName, 
-                                    "", // Description removed
-                                    isoFormatter.format(sDate), 
-                                    isoFormatter.format(eDate), 
-                                    destinationData, 
-                                    fromLocationData, 
+                                    tripName,
+                                    notes,
+                                    isoFormatter.format(sDate),
+                                    isoFormatter.format(eDate),
+                                    selectedTimezone,
+                                    customAttrs,
+                                    destinationData,
+                                    fromLocationData,
                                     emails
                                 )
                             }
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .height(56.dp),
-                    enabled = destinationName.isNotBlank() && startDate != null && endDate != null && destinationData != null && fromLocationData != null,
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Text(
-                        if (existingTrip != null) "Update Trip" else "Start Planning", 
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = destinationName.isNotBlank() && 
+                              startDate != null && 
+                              endDate != null && 
+                              destinationData != null && 
+                              fromLocationData != null
+                )
+                
+                // Tooltip for first time users
+                if (isFirstTrip && existingTrip == null) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        SmartTooltip(
+                            tooltipId = TooltipIds.ADD_TRIP_SAVE,
+                            message = "Fill in the details to enable the button!",
+                            position = com.dash.travel.ui.onboarding.TooltipPosition.TOP
+                        )
+                    }
                 }
             }
-            
-            item { Spacer(modifier = Modifier.height(24.dp)) }
         }
     }
 
+    // Date Range Picker Dialog
     if (showDateRangePicker) {
         val dateRangePickerState = rememberDateRangePickerState(
             initialSelectedStartDateMillis = startDate?.time,
@@ -312,30 +441,63 @@ fun AddTripScreen(
         DatePickerDialog(
             onDismissRequest = { showDateRangePicker = false },
             confirmButton = {
-                TextButton(onClick = {
-                    dateRangePickerState.selectedStartDateMillis?.let { startMillis ->
-                        dateRangePickerState.selectedEndDateMillis?.let { endMillis ->
-                            val calStart = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                            calStart.timeInMillis = startMillis
-                            startDate = calStart.time
+                TextButton(
+                    onClick = {
+                        dateRangePickerState.selectedStartDateMillis?.let { startMillis ->
+                            dateRangePickerState.selectedEndDateMillis?.let { endMillis ->
+                                val calStart = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = startMillis }
+                                startDate = calStart.time
 
-                            val calEnd = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                            calEnd.timeInMillis = endMillis
-                            endDate = calEnd.time
+                                val calEnd = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = endMillis }
+                                endDate = calEnd.time
+                            }
                         }
+                        showDateRangePicker = false
                     }
-                    showDateRangePicker = false
-                }) { Text("Confirm") }
+                ) { 
+                    Text("Confirm", fontWeight = FontWeight.Bold) 
+                }
             },
             dismissButton = {
-                TextButton(onClick = { showDateRangePicker = false }) { Text("Cancel") }
-            }
+                TextButton(onClick = { showDateRangePicker = false }) { 
+                    Text("Cancel", color = OnSurfaceVariant) 
+                }
+            },
+            colors = DatePickerDefaults.colors(
+                containerColor = SurfaceContainerHigh,
+                titleContentColor = OnSurface,
+                headlineContentColor = OnSurface,
+                weekdayContentColor = OnSurfaceVariant,
+                subheadContentColor = OnSurfaceVariant,
+                yearContentColor = OnSurfaceVariant,
+                currentYearContentColor = Primary,
+                selectedYearContentColor = OnPrimary,
+                selectedDayContentColor = OnPrimary,
+                selectedDayContainerColor = Primary,
+                todayContentColor = Primary,
+                dayContentColor = OnSurface
+            )
         ) {
             DateRangePicker(
                 state = dateRangePickerState,
                 modifier = Modifier.height(500.dp),
-                title = { Text("Select Trip Dates", modifier = Modifier.padding(16.dp)) },
-                showModeToggle = false
+                title = { 
+                    Text(
+                        "Select Trip Dates", 
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.titleMedium
+                    ) 
+                },
+                showModeToggle = false,
+                colors = DatePickerDefaults.colors(
+                    containerColor = SurfaceContainerHigh,
+                    titleContentColor = OnSurface,
+                    headlineContentColor = OnSurface,
+                    weekdayContentColor = OnSurfaceVariant,
+                    subheadContentColor = OnSurfaceVariant,
+                    dayContentColor = OnSurface,
+                    selectedDayContainerColor = Primary
+                )
             )
         }
     }

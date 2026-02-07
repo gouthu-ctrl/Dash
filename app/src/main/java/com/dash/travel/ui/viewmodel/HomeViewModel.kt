@@ -5,31 +5,175 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dash.travel.data.local.dao.TripDao
 import com.dash.travel.data.local.entity.TripEntity
+import com.dash.travel.data.model.MemberStatus
+import com.dash.travel.data.model.TripWithMembership
+import com.dash.travel.data.repository.TripRepository
+import com.dash.travel.data.repository.ProfileRepository
+import com.dash.travel.data.model.Profile
 import com.dash.travel.data.remote.SupabaseManager
-import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 
 class HomeViewModel(
-    private val tripDao: TripDao
+    private val tripDao: TripDao,
+    private val tripRepository: TripRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     val trips = mutableStateListOf<TripEntity>()
     private var syncJob: Job? = null
+    
+    // Loading state for initial fetch
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error = _error.asStateFlow()
+
+    private val _userProfile = MutableStateFlow<Profile?>(null)
+    val userProfile = _userProfile.asStateFlow()
 
     init {
+        // Observe local database
         viewModelScope.launch {
             tripDao.getAllTrips().collectLatest { dbTrips ->
-                // Sync logic: only update if the list has changed externally (e.g., initial load)
-                // We avoid updating during a drag session to prevent flickering
-                if (trips.size != dbTrips.size || trips.map { it.id } != dbTrips.map { it.id }) {
-                    trips.clear()
-                    trips.addAll(dbTrips)
+                trips.clear()
+                trips.addAll(dbTrips)
+            }
+        }
+        
+        // Initial sync from cloud
+        refreshTrips()
+        
+        // Fetch User Profile
+        fetchUserProfile()
+    }
+
+    private fun fetchUserProfile() {
+        viewModelScope.launch {
+            repeat(3) { attempt ->
+                try {
+                    val user = SupabaseManager.client.auth.currentUserOrNull()
+                    val userId = user?.id
+                    val email = user?.email
+                    
+                    if (userId != null) {
+                        _userProfile.value = profileRepository.getProfile(userId)
+                        
+                        if (email != null) {
+                            val normalizedEmail = email.trim().lowercase()
+                            tripRepository.linkInvitedMember(normalizedEmail, userId)
+                            delay(1000) // Give DB a moment to link
+                            refreshTrips()
+                            return@launch // Success
+                        }
+                    }
+                } catch (e: Exception) {
+                   if (attempt == 2) e.printStackTrace()
                 }
+                delay(2000) // Wait before retry
+            }
+        }
+    }
+
+    /**
+     * Fetch latest trips with membership status from Supabase and update Room
+     */
+    fun refreshTrips() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                // Fetch trips with membership status
+                val tripsWithStatus = tripRepository.getTripsWithMembership()
+                
+                // FAILSAFE: Fetch owned trips to catch any where trip_members trigger lagged/failed
+                val ownedTrips = tripRepository.getOwnedTrips()
+                
+                // Merge strategies
+                val mergedTripsMap = tripsWithStatus.associateBy { it.trip.id }.toMutableMap()
+                
+                ownedTrips.forEach { ownedTrip ->
+                    val id = ownedTrip.id ?: return@forEach
+                    if (!mergedTripsMap.containsKey(id)) {
+                        // User owns this trip but has no member record -> Assume OWNER/ACCEPTED
+                        mergedTripsMap[id] = TripWithMembership(
+                            trip = ownedTrip,
+                            status = MemberStatus.ACCEPTED
+                        )
+                    }
+                }
+                
+                // Map to Room entities
+                val entities = mergedTripsMap.values.mapIndexed { index, item ->
+                    val trip = item.trip
+                    TripEntity(
+                        id = trip.id ?: "",
+                        title = trip.title,
+                        description = trip.description,
+                        startDate = trip.startDate,
+                        endDate = trip.endDate,
+                        tripImageUrl = trip.tripImageUrl,
+                        displayOrder = trip.displayOrder ?: index,
+                        membershipStatus = item.status.name.lowercase()
+                    )
+                }
+                
+                // Update local DB
+                tripDao.insertTrips(entities)
+            } catch (e: Exception) {
+                _error.value = "Failed to sync trips: ${e.message}"
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    /**
+     * Accept a pending trip invitation
+     */
+    /**
+     * Accept a pending trip invitation
+     */
+    fun acceptTrip(tripId: String) {
+        viewModelScope.launch {
+            try {
+                val user = SupabaseManager.client.auth.currentUserOrNull()
+                val userId = user?.id ?: return@launch
+                val email = user.email ?: return@launch
+                
+                tripRepository.acceptTripInvitation(tripId, userId, email)
+                refreshTrips()
+            } catch (e: Exception) {
+                _error.value = "Failed to accept trip: ${e.message}"
+            }
+        }
+    }
+
+    /**
+     * Reject a pending trip invitation
+     */
+    fun rejectTrip(tripId: String) {
+        viewModelScope.launch {
+            try {
+                val user = SupabaseManager.client.auth.currentUserOrNull()
+                val userId = user?.id ?: return@launch
+                val email = user.email ?: return@launch
+                
+                tripRepository.rejectTripInvitation(tripId, userId, email)
+                
+                // Locally remove it immediately for better UX
+                tripDao.hardDeleteTrip(tripId)
+                
+                refreshTrips()
+            } catch (e: Exception) {
+                _error.value = "Failed to reject trip: ${e.message}"
             }
         }
     }
@@ -73,14 +217,10 @@ class HomeViewModel(
     private suspend fun syncToSupabase() {
         try {
             trips.forEachIndexed { index, trip ->
-                SupabaseManager.client.postgrest.from("trips").update(buildJsonObject {
-                    put("display_order", index)
-                }) {
-                    filter { eq("id", trip.id) }
-                }
+                tripRepository.updateTripOrder(trip.id, index)
             }
         } catch (e: Exception) {
-            // Silently fail or track for retry
+            _error.value = "Failed to sync order: ${e.message}"
         }
     }
 }

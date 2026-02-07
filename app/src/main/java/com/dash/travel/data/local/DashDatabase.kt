@@ -16,7 +16,7 @@ import com.dash.travel.data.local.entity.RecentLocationEntity
         ItineraryItemEntity::class,
         RecentLocationEntity::class
     ], 
-    version = 2, 
+    version = 6, 
     exportSchema = false
 )
 abstract class DashDatabase : RoomDatabase() {

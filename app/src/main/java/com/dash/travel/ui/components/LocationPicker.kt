@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AirplanemodeActive
 import androidx.compose.material.icons.filled.Close
@@ -15,17 +16,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.Room
-import com.dash.travel.data.local.DashDatabase
 import com.dash.travel.data.local.dao.RecentLocationsDao
 import com.dash.travel.data.models.LocationResult
 import com.dash.travel.data.search.LocalSearchService
+import com.dash.travel.di.DiContainer
+import com.dash.travel.ui.theme.*
 import com.dash.travel.ui.viewmodel.LocationSearchUiState
 import com.dash.travel.ui.viewmodel.LocationSearchViewModel
 import kotlinx.serialization.json.JsonObject
@@ -40,21 +43,6 @@ fun LocationPickerField(
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(initialValue) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    
-    val context = LocalContext.current
-    
-    // WARNING: In a production application, these dependencies (Room DB) 
-    // should be initialized at the Application level and injected here (e.g., using Hilt) 
-    // to prevent potential leaks or jank on first access.
-    val database = remember {
-        Room.databaseBuilder(
-            context.applicationContext,
-            DashDatabase::class.java, "dash_database"
-        ).fallbackToDestructiveMigration().build()
-    }
-    
-    val dao = remember { database.recentLocationsDao() }
-    val localSearchService = remember { LocalSearchService(context) } 
 
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -62,26 +50,43 @@ fun LocationPickerField(
             onValueChange = {},
             readOnly = true,
             label = { Text(label) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            leadingIcon = { 
+                Icon(
+                    Icons.Default.Search, 
+                    contentDescription = null,
+                    tint = Primary 
+                ) 
+            },
             modifier = Modifier.fillMaxWidth(),
-            colors = OutlinedTextFieldDefaults.colors()
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = SurfaceContainer,
+                unfocusedContainerColor = SurfaceContainer,
+                focusedBorderColor = Primary,
+                unfocusedBorderColor = Color.Transparent
+            )
         )
         // Overlay to capture clicks
         Box(
             modifier = Modifier
                 .matchParentSize()
+                .clip(RoundedCornerShape(12.dp))
                 .clickable { showBottomSheet = true }
         )
     }
 
     if (showBottomSheet) {
+        // Access DiContainer dependencies ONLY when sheet is shown (lazy access)
+        val dao = remember { DiContainer.recentLocationsDao }
+        val localSearchService = remember { DiContainer.localSearchService }
+        
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            dragHandle = { BottomSheetDefaults.DragHandle() },
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.fillMaxHeight() 
+            containerColor = Background,
+            contentColor = OnBackground,
+            dragHandle = { BottomSheetDefaults.DragHandle(color = OnSurfaceVariant) },
+            modifier = Modifier.fillMaxHeight(0.9f)
         ) {
             LocationSearchSheetContent(
                 recentLocationsDao = dao,
@@ -107,14 +112,12 @@ fun LocationSearchSheetContent(
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                // NEW: Pass dependencies without PlacesClient
                 return LocationSearchViewModel(recentLocationsDao, localSearchService) as T
             }
         }
     }
     val viewModel: LocationSearchViewModel = viewModel(factory = factory)
     
-    // Read state once
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
@@ -123,19 +126,33 @@ fun LocationSearchSheetContent(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
+        // Search Bar
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { viewModel.onSearchQueryChanged(it) },
             placeholder = { Text("Search cities or airports") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            leadingIcon = { 
+                Icon(
+                    Icons.Default.Search, 
+                    contentDescription = null,
+                    tint = OnSurfaceVariant
+                ) 
+            },
             trailingIcon = {
                 if (searchQuery.isNotEmpty()) {
                     IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
-                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                        Icon(Icons.Default.Close, contentDescription = "Clear", tint = OnSurfaceVariant)
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = SurfaceContainerHigh,
+                unfocusedContainerColor = SurfaceContainerHigh,
+                focusedBorderColor = Primary,
+                unfocusedBorderColor = Color.Transparent
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -148,23 +165,42 @@ fun LocationSearchSheetContent(
         ) {
             when (val state = uiState) {
                 is LocationSearchUiState.Loading -> {
-                    item(key = "loading") {
-                        Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp), 
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Primary)
                         }
                     }
                 }
                 is LocationSearchUiState.Empty -> {
-                    item(key = "empty") {
-                        Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                            Text("No results found for \"$searchQuery\"", style = MaterialTheme.typography.bodyLarge)
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp), 
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "No results found", 
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = OnSurfaceVariant
+                            )
                         }
                     }
                 }
                 is LocationSearchUiState.Error -> {
-                    item(key = "error") {
-                        Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                            Text("Error: ${state.message}", color = MaterialTheme.colorScheme.error)
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp), 
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Error: ${state.message}", color = Error)
                         }
                     }
                 }
@@ -177,30 +213,39 @@ fun LocationSearchSheetContent(
                 }
                 is LocationSearchUiState.InitialSuggestions -> {
                     if (state.popular.isNotEmpty()) {
-                        item(key = "header-popular") { HeaderText(text = "Popular Destinations") }
-                        items(state.popular, key = { it.placeId }) { result ->
+                        item { HeaderText(text = "Popular Destinations") }
+                        items(state.popular, key = { "popular-${it.placeId}" }) { result ->
                             LocationResultItem(result) {
                                 viewModel.onLocationSelected(result, onLocationSelected)
                             }
                         }
                     }
                     if (state.recent.isNotEmpty()) {
-                        item(key = "header-recent") { HeaderText(text = "Recently Selected") }
-                        items(state.recent, key = { it.placeId }) { result ->
+                        item { HeaderText(text = "Recently Selected") }
+                        items(state.recent, key = { "recent-${it.placeId}" }) { result ->
                             LocationResultItem(result) {
                                 viewModel.onLocationSelected(result, onLocationSelected)
                             }
                         }
                     }
                     if (state.popular.isEmpty() && state.recent.isEmpty()) {
-                        item(key = "empty-suggestions") {
-                            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                                Text("Start typing to search for a destination.", style = MaterialTheme.typography.bodyLarge)
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(32.dp), 
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "Start typing to search...",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = OnSurfaceVariant
+                                )
                             }
                         }
                     }
                 }
-                else -> { /* Idle state, nothing to show */ }
+                else -> {}
             }
         }
     }
@@ -210,9 +255,10 @@ fun LocationSearchSheetContent(
 private fun HeaderText(text: String) {
     Text(
         text,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+        style = MaterialTheme.typography.labelMedium,
+        color = Primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(top = 12.dp, bottom = 8.dp, start = 8.dp)
     )
 }
 
@@ -229,34 +275,57 @@ fun LocationResultItem(
     }
     
     val tint = when {
-        result.isRecent -> MaterialTheme.colorScheme.secondary
-        result.isPopular -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.onSurface
+        result.isRecent -> Secondary
+        result.isPopular -> Warning
+        else -> OnSurfaceVariant
     }
 
-    Column {
-        ListItem(
-            headlineContent = { Text(result.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-            supportingContent = { 
-                Text(
-                    result.country ?: "", 
-                    maxLines = 1, 
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                ) 
-            },
-            leadingContent = {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = tint
-                )
-            },
+    Surface(
+        onClick = onClick,
+        color = Color.Transparent,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-        )
-        HorizontalDivider()
+                .padding(vertical = 12.dp, horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = SurfaceContainerHigh,
+                modifier = Modifier.size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = tint,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = result.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = OnSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (!result.country.isNullOrEmpty()) {
+                    Text(
+                        text = result.country,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = OnSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
     }
+    HorizontalDivider(color = SurfaceBorder.copy(alpha = 0.5f))
 }
