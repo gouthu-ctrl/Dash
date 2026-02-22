@@ -110,7 +110,7 @@
 
 **Architecture:**
 - **Primary:** usage of **Gemini Nano** on supported devices (Pixel 10 Pro, etc) -> Zero Latency, privacy.
-- **Fallback:** usage of **Supabase Edge Function** wrapping **Gemini 1.5 Flash** -> Low cost, universal access.
+- **Fallback:** usage of **Supabase Edge Function** wrapping **Gemini 2.5 Flash** -> Low cost, universal access.
 
 ---
 
@@ -184,6 +184,7 @@
 | **Itinerary Optimization** | Medium | High | Component exists, needs algorithm |
 | **Recommendations from History** | Low | High | Need ML pipeline |
 | **Vector DB (Pinecone)** | Low | High | `place_knowledge` table ready |
+| **AI Suggestions for Active Trips** | High | Medium | Intuitive add-to-trip flow |
 
 ### Social Features
 

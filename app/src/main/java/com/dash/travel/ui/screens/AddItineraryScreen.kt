@@ -66,8 +66,14 @@ fun AddItineraryScreen(
     onDownloadAttachment: (String) -> Unit = {},
     onSaveItem: (item: ItineraryItem, attachmentUri: Uri?, isShared: Boolean) -> Unit
 ) {
-    var selectedType by remember(itemToEdit) { 
-        mutableStateOf(if (itemToEdit != null) itineraryTypes.find { it.id == itemToEdit.type } else null) 
+    // Start with null type and update when itemToEdit becomes available
+    var selectedType by remember { mutableStateOf<ItineraryType?>(null) }
+    
+    // Update selectedType when itemToEdit loads asynchronously
+    LaunchedEffect(itemToEdit) {
+        if (itemToEdit != null) {
+            selectedType = itineraryTypes.find { it.id == itemToEdit.type }
+        }
     }
     
     Scaffold(
@@ -535,8 +541,14 @@ fun DateTimeSelector(value: String, onValueChange: (String) -> Unit) {
         if (value.isBlank()) ""
         else {
             try {
-                // Try parsing current value (might be ISO or display format)
-                val date = try { storageFormat.parse(value) } catch (e: Exception) { displayFormat.parse(value) }
+                val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                // Try parsing current value (Order: ISO, Storage, Display)
+                val date = try { 
+                    isoFormat.parse(value) 
+                } catch (e: Exception) {
+                    try { storageFormat.parse(value) } catch (e2: Exception) { displayFormat.parse(value) }
+                }
+                
                 if (date != null) displayFormat.format(date) else value
             } catch (e: Exception) { value }
         }
@@ -735,7 +747,10 @@ fun AttachmentSection(
                         onCheckedChange = onShareToggle,
                         colors = CheckboxDefaults.colors(checkedColor = Primary)
                     )
-                    Text(stringResource(R.string.share_with_members), style = MaterialTheme.typography.bodyMedium, color = OnSurface)
+                    Column {
+                        Text("Share with Trip members in this Trip", style = MaterialTheme.typography.bodyMedium, color = OnSurface)
+                        Text("Attachments will not be shared outside of this trip.", style = MaterialTheme.typography.labelSmall, color = OnSurfaceVariant)
+                    }
                 }
             }
         }

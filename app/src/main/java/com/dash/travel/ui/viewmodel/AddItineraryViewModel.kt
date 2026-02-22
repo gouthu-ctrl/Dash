@@ -30,8 +30,12 @@ class AddItineraryViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                _editingItem.value = tripRepository.getItineraryItem(itemId)
+                android.util.Log.d("AddItineraryVM", "Loading item with ID: $itemId")
+                val item = tripRepository.getItineraryItem(itemId)
+                android.util.Log.d("AddItineraryVM", "Loaded item: ${item.title}, id=${item.id}")
+                _editingItem.value = item
             } catch (e: Exception) {
+                android.util.Log.e("AddItineraryVM", "Failed to load item: ${e.message}", e)
                 // Handle error
             } finally {
                 _isLoading.value = false

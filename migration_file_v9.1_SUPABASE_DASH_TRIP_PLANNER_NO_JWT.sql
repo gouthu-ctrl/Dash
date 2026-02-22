@@ -269,7 +269,8 @@ create table trips (
     budget_limit decimal(12, 2),                       -- Total budget cap
     display_order int default 0,                       -- UI sorting order
     created_at timestamp with time zone default now(),
-    updated_at timestamp with time zone default now()
+    updated_at timestamp with time zone default now(),
+    deleted_at timestamp with time zone
 );
 
 -- ----------------------------------------------------------------------------

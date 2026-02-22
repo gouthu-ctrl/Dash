@@ -252,7 +252,7 @@ fun InviteMemberDialog(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Viewer (Read only)") },
+                            text = { Text("Viewer (Read-only, can vote)") },
                             onClick = { 
                                 selectedRole = MemberRole.VIEWER
                                 expanded = false

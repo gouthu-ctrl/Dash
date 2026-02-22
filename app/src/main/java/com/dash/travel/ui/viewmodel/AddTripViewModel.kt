@@ -2,27 +2,23 @@ package com.dash.travel.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dash.travel.data.model.NewTripPayload
-import com.dash.travel.data.repository.TripRepository
+import com.dash.travel.data.model.*
+import com.dash.travel.data.repository.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import com.dash.travel.data.model.DestinationData
-import com.dash.travel.data.model.OriginData
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonPrimitive
-
-import java.net.URLEncoder
-
-import com.dash.travel.data.repository.ProfileRepository
-import com.dash.travel.data.model.Profile
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 
 class AddTripViewModel(
     private val tripRepository: TripRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -54,6 +50,7 @@ class AddTripViewModel(
         destination: JsonObject?,
         origin: JsonObject?,
         userId: String,
+        inviteEmails: List<String>,
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
@@ -71,11 +68,9 @@ class AddTripViewModel(
                    profileRepository.upsertProfile(newProfile)
                 }
 
-                // Generate random image based on destination
-                // In a real app, we'd use Unsplash API properly or user upload
+                // Generate random image from Pixabay based on destination
                 val destinationName = destination?.get("name")?.jsonPrimitive?.content?.replace("\"", "") ?: "Unknown"
-                val encodedDest = URLEncoder.encode(destinationName, "UTF-8")
-                val imageUrl = "https://loremflickr.com/1280/720/$encodedDest,landmark,cityscape,famous/all?random=${System.currentTimeMillis()}"
+                val imageUrl = imageRepository.fetchRandomImage(destinationName)
 
                 val destData = destination?.let {
                     DestinationData(
@@ -107,7 +102,26 @@ class AddTripViewModel(
                     tripImageUrl = imageUrl
                 )
                 
-                tripRepository.createTrip(newTrip)
+                val createdTrip = tripRepository.createTrip(newTrip)
+                
+                // Handle Invitations
+                createdTrip.id?.let { tripId ->
+                    inviteEmails.forEach { email ->
+                        if (email.isNotBlank()) {
+                            try {
+                                tripRepository.inviteMember(
+                                    tripId = tripId,
+                                    email = email.trim(),
+                                    role = com.dash.travel.data.model.TripRole.EDITOR 
+                                )
+                            } catch (e: Exception) {
+                                // Log error but don't fail the whole trip creation
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                }
+
                 onSuccess()
             } catch (e: Exception) {
                 onError(e.message ?: "Failed to create trip")

@@ -5,14 +5,15 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.*
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
-import io.github.jan.supabase.realtime.channel
-import io.github.jan.supabase.realtime.postgresChangeFlow
-import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.postgrest.query.filter.*
+import io.github.jan.supabase.realtime.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+// Removed explicit presence imports to rely on wildcard if possible
 import io.github.jan.supabase.auth.auth
 
 /**
@@ -27,7 +28,11 @@ class TripRepository(private val supabase: SupabaseClient) {
      */
     suspend fun getTrips(): List<SupabaseTrip> {
         return supabase.from("trips")
-            .select()
+            .select {
+                filter {
+                    filter("deleted_at", FilterOperator.IS, null)
+                }
+            }
             .decodeList()
     }
 
@@ -38,9 +43,10 @@ class TripRepository(private val supabase: SupabaseClient) {
         val userId = supabase.auth.currentUserOrNull()?.id ?: return emptyList()
         
         return supabase.from("trip_members")
-            .select(Columns.raw("status, trips(*)")) {
+            .select(Columns.raw("status, trips!inner(*)")) {
                 filter {
                     eq("user_id", userId)
+                    filter("trips.deleted_at", FilterOperator.IS, null)
                 }
             }
             .decodeList<TripMemberWithTrip>()
@@ -56,6 +62,7 @@ class TripRepository(private val supabase: SupabaseClient) {
             .select {
                 filter {
                     eq("created_by", userId)
+                    filter("deleted_at", FilterOperator.IS, null)
                 }
             }
             .decodeList()
@@ -67,6 +74,9 @@ class TripRepository(private val supabase: SupabaseClient) {
     suspend fun getTripsOrdered(): List<SupabaseTrip> {
         return supabase.from("trips")
             .select {
+                filter {
+                    filter("deleted_at", FilterOperator.IS, null)
+                }
                 order("display_order", Order.ASCENDING)
             }
             .decodeList()
@@ -78,7 +88,10 @@ class TripRepository(private val supabase: SupabaseClient) {
     suspend fun getTripById(tripId: String): SupabaseTrip? {
         return supabase.from("trips")
             .select {
-                filter { eq("id", tripId) }
+                filter { 
+                    eq("id", tripId) 
+                    filter("deleted_at", FilterOperator.IS, null)
+                }
             }
             .decodeSingleOrNull()
     }
@@ -107,11 +120,11 @@ class TripRepository(private val supabase: SupabaseClient) {
     }
 
     /**
-     * Delete trip
+     * Soft delete trip - sets deleted_at timestamp instead of removing the row
      */
     suspend fun deleteTrip(tripId: String) {
         supabase.from("trips")
-            .delete {
+            .update(mapOf("deleted_at" to java.time.Instant.now().toString())) {
                 filter { eq("id", tripId) }
             }
     }
@@ -358,10 +371,16 @@ class TripRepository(private val supabase: SupabaseClient) {
      * Create itinerary item
      */
     suspend fun createItineraryItem(item: ItineraryItem): ItineraryItem {
-        // Exclude virtual fields like 'attachments' from the insert payload
+        // Exclude virtual fields and server-generated fields from the insert payload
         val json = kotlinx.serialization.json.Json { encodeDefaults = true; ignoreUnknownKeys = true }
         val itemJson = json.encodeToJsonElement(ItineraryItem.serializer(), item) as kotlinx.serialization.json.JsonObject
-        val insertMap = itemJson.filter { it.key != "attachments" }
+        // Filter out: attachments (virtual), created_at (server-generated)
+        // We ALLOW id to be passed if generated on client
+        val insertMap = itemJson.filter { entry -> 
+            entry.key != "attachments" && 
+            entry.key != "created_at" &&
+            !(entry.key == "id" && entry.value.toString() == "null")
+        }
         
         return supabase.from("itinerary_items")
             .insert(insertMap) {
@@ -373,7 +392,7 @@ class TripRepository(private val supabase: SupabaseClient) {
     /**
      * Update itinerary item
      */
-    suspend fun updateItineraryItem(itemId: String, updates: Map<String, Any?>) {
+    suspend fun updateItineraryItem(itemId: String, updates: kotlinx.serialization.json.JsonObject) {
         supabase.from("itinerary_items")
             .update(updates) {
                 filter { eq("id", itemId) }
@@ -624,6 +643,51 @@ class TripRepository(private val supabase: SupabaseClient) {
                 runBlocking { channel.unsubscribe() }
             }
         }
+    }
+
+    // ==================== PRESENCE ====================
+    
+    /**
+     * Subscribe to presence changes and track current user
+     */
+    fun subscribeToPresence(tripId: String, user: PresenceUser): Flow<List<PresenceUser>> {
+        // Presence temporarily disabled due to library import issues
+        return kotlinx.coroutines.flow.flowOf(emptyList())
+        /*
+        return callbackFlow {
+            // Use a specific topic for presence to avoid collisions with db changes if needed, 
+            // though reusing 'trip-presence-$tripId' is fine.
+            val channel = supabase.channel("presence-$tripId")
+            
+            // Get the flow BEFORE subscribing
+            // val flow = channel.presenceDataFlow<PresenceUser>()
+            
+            channel.subscribe()
+            
+            // Track the user after subscribing
+            launch {
+                try {
+                    // Randomize color if needed or rely on user's color
+                    // channel.presence.track(user)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            
+            try {
+                // flow.collect { users ->
+                    // Distinct users by ID to avoid duplicates if multiple tabs/devices for same user
+                    // trySend(users.distinctBy { it.userId }) 
+                // }
+            } finally {
+                channel.unsubscribe()
+            }
+            
+            awaitClose {
+                runBlocking { channel.unsubscribe() }
+            }
+        }
+        */
     }
 }
 

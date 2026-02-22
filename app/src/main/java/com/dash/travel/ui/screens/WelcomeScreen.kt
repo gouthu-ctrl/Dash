@@ -1,13 +1,16 @@
 package com.dash.travel.ui.screens
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +21,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -30,20 +34,69 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dash.travel.R
 import com.dash.travel.ui.components.DividerWithText
-import com.dash.travel.ui.components.GradientButton
 import com.dash.travel.ui.theme.*
 import kotlinx.coroutines.delay
 
+// =============================================================================
+// DASH TRIP PLANNER - WELCOME SCREEN
+// =============================================================================
+// Premium welcome with swipable feature carousel + social sign-in
+// Design principles:
+//   - One Primary Action: "Continue with Google"
+//   - Feature value shown BEFORE sign-in (builds trust)
+//   - Auto-advancing carousel with manual swipe support
+
 /**
- * Premium Welcome Screen with animated elements and social sign-in
- * 
- * Design Features:
- * - Animated floating elements in background
- * - Gradient accent text
- * - Social sign-in buttons (Google primary)
- * - Alternative email sign-in
- * - Progress indicators during sign-in
+ * Feature card data for the welcome carousel
  */
+private data class WelcomeFeature(
+    val icon: ImageVector,
+    val title: String,
+    val subtitle: String,
+    val gradient: List<Color>,
+    val isPro: Boolean = false
+)
+
+private val welcomeFeatures = listOf(
+    WelcomeFeature(
+        icon = Icons.Default.Explore,
+        title = "Organize Your Trips",
+        subtitle = "Flights, hotels, activities — all in one beautiful timeline",
+        gradient = listOf(PrimaryGradientStart, PrimaryGradientEnd)
+    ),
+    WelcomeFeature(
+        icon = Icons.Default.Groups,
+        title = "Plan Together",
+        subtitle = "Invite friends & family to collaborate in real-time",
+        gradient = listOf(Color(0xFF667eea), Color(0xFF764ba2))
+    ),
+    WelcomeFeature(
+        icon = Icons.Default.AutoAwesome,
+        title = "AI-Powered Planning",
+        subtitle = "Describe your dream trip, get a full itinerary instantly",
+        gradient = listOf(Secondary, Color(0xFFE040FB))
+    ),
+    WelcomeFeature(
+        icon = Icons.Default.CloudDone,
+        title = "Works Offline",
+        subtitle = "Download trips before you go — no Wi-Fi needed",
+        gradient = listOf(Success, Color(0xFF4CAF50))
+    ),
+    WelcomeFeature(
+        icon = Icons.Default.HowToVote,
+        title = "Vote Together",
+        subtitle = "Can't decide on a restaurant? Let the group vote!",
+        gradient = listOf(Color(0xFFf093fb), Color(0xFFf5576c))
+    ),
+    WelcomeFeature(
+        icon = Icons.Default.RocketLaunch,
+        title = "More Coming Soon",
+        subtitle = "We're always adding new features to make your travels easier ✨",
+        gradient = listOf(Warning, Color(0xFFFF6B9D))
+    )
+)
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WelcomeScreen(
     onGoogleLoginClicked: () -> Unit,
@@ -96,6 +149,16 @@ fun WelcomeScreen(
         label = "contentScale"
     )
     
+    // Pager state for feature carousel
+    val pagerState = rememberPagerState(pageCount = { welcomeFeatures.size })
+    
+    // Auto-advance carousel every 4 seconds
+    LaunchedEffect(pagerState.currentPage) {
+        delay(4000)
+        val nextPage = (pagerState.currentPage + 1) % welcomeFeatures.size
+        pagerState.animateScrollToPage(nextPage)
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -122,7 +185,7 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(48.dp))
             
             // Hero section
             Column(
@@ -137,7 +200,7 @@ fun WelcomeScreen(
                     // Glow background
                     Box(
                         modifier = Modifier
-                            .size(180.dp)
+                            .size(140.dp)
                             .background(
                                 brush = Brush.radialGradient(
                                     colors = listOf(
@@ -154,13 +217,13 @@ fun WelcomeScreen(
                         painter = painterResource(id = R.drawable.dash_logo),
                         contentDescription = "Dash Logo",
                         modifier = Modifier
-                            .size(120.dp)
-                            .clip(RoundedCornerShape(28.dp)),
+                            .size(96.dp)
+                            .clip(RoundedCornerShape(24.dp)),
                         contentScale = ContentScale.Fit
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 
                 // Headline with gradient
                 Text(
@@ -174,40 +237,76 @@ fun WelcomeScreen(
                             append("together")
                         }
                     },
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = OnBackground,
                     textAlign = TextAlign.Center
                 )
                 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 
                 // Subheadline
                 Text(
                     text = "The smartest way to travel with\nfriends, family & AI",
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = OnBackgroundSecondary,
                     textAlign = TextAlign.Center,
-                    lineHeight = 24.sp
+                    lineHeight = 22.sp
                 )
                 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(28.dp))
                 
-                // Feature highlights
+                // ─── Feature Carousel ───
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    pageSpacing = 16.dp,
+                    contentPadding = PaddingValues(horizontal = 32.dp)
+                ) { page ->
+                    FeatureCarouselCard(feature = welcomeFeatures[page])
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Page indicators
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(24.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    FeatureChip(text = "🤝 Collaborate")
-                    FeatureChip(text = "🤖 AI Powered")
-                    FeatureChip(text = "📴 Offline")
+                    repeat(welcomeFeatures.size) { index ->
+                        val selected = pagerState.currentPage == index
+                        val width by animateDpAsState(
+                            targetValue = if (selected) 20.dp else 6.dp,
+                            animationSpec = tween(300),
+                            label = "indicatorWidth"
+                        )
+                        
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 3.dp)
+                                .height(6.dp)
+                                .width(width)
+                                .clip(CircleShape)
+                                .background(
+                                    if (selected) {
+                                        Brush.horizontalGradient(welcomeFeatures[pagerState.currentPage].gradient)
+                                    } else {
+                                        Brush.horizontalGradient(
+                                            listOf(SurfaceBorder, SurfaceBorder)
+                                        )
+                                    }
+                                )
+                        )
+                    }
                 }
             }
             
             // Sign in section
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(bottom = 24.dp)
             ) {
                 // Google Sign In (Primary action)
                 Button(
@@ -244,9 +343,6 @@ fun WelcomeScreen(
                     }
                 }
                 
-                // Apple Sign In (if needed in future)
-                // Currently hidden but ready for implementation
-                
                 // Email option
                 if (onEmailLoginClicked != null) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -280,7 +376,7 @@ fun WelcomeScreen(
                     }
                 }
                 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 
                 // Terms
                 Text(
@@ -295,9 +391,97 @@ fun WelcomeScreen(
     }
 }
 
-/**
- * Floating decorative elements for visual interest
- */
+// =============================================================================
+// Feature Carousel Card
+// =============================================================================
+
+@Composable
+private fun FeatureCarouselCard(feature: WelcomeFeature) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = SurfaceContainer)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Gradient accent stripe at top
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(Brush.horizontalGradient(feature.gradient))
+            )
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Icon with gradient background
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            Brush.linearGradient(feature.gradient)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        feature.icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = feature.title,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = OnSurface
+                        )
+                        if (feature.isPro) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Surface(
+                                shape = RoundedCornerShape(4.dp),
+                                color = ProGold.copy(alpha = 0.15f)
+                            ) {
+                                Text(
+                                    text = "PRO",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ProGold,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    Text(
+                        text = feature.subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = OnSurfaceVariant,
+                        maxLines = 2,
+                        lineHeight = 18.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+// =============================================================================
+// Floating Decorative Elements
+// =============================================================================
+
 @Composable
 private fun FloatingElements(floatOffset: Float, rotateAngle: Float) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -344,24 +528,6 @@ private fun FloatingElements(floatOffset: Float, rotateAngle: Float) {
                     color = PrimaryGradientEnd.copy(alpha = 0.1f),
                     shape = CircleShape
                 )
-        )
-    }
-}
-
-/**
- * Small feature chip for highlights
- */
-@Composable
-private fun FeatureChip(text: String) {
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = SurfaceContainer
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelMedium,
-            color = OnSurfaceVariant
         )
     }
 }

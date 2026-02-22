@@ -9,8 +9,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.*
@@ -27,19 +29,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.dash.travel.ui.theme.*
 import kotlinx.coroutines.delay
 
 // =============================================================================
-// DASH TRIP PLANNER - TOOLTIP MANAGER
+// DASH TRIP PLANNER - TOOLTIP & ONBOARDING MANAGER
 // =============================================================================
-// Manages first-time user tooltips that disappear after 2 uses
+// Manages first-time user tooltips, contextual guides, and onboarding state
 
-/**
- * Tooltip identifiers for tracking which tooltips have been shown
- */
+// ─── Tooltip Identifiers ─────────────────────────────────────────────────────
+
 object TooltipIds {
     const val HOME_TAP_TRIP = "tooltip_home_tap_trip"
     const val HOME_FAB_ADD = "tooltip_home_fab_add"
@@ -52,66 +54,279 @@ object TooltipIds {
     const val ADD_TRIP_SAVE = "tooltip_add_trip_save"
 }
 
-/**
- * Maximum number of times to show a tooltip
- */
+// ─── Guide Identifiers ───────────────────────────────────────────────────────
+
+object GuideIds {
+    const val HOME_GUIDE = "guide_home"
+    const val TRIP_DETAIL_GUIDE = "guide_trip_detail"
+}
+
 const val MAX_TOOLTIP_SHOWS = 2
 
-/**
- * Manages tooltip display state and persistence
- */
+private const val PREFS_NAME = "dash_tooltips"
+private const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
+
+// ─── TooltipManager ──────────────────────────────────────────────────────────
+
 class TooltipManager(private val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(
-        "dash_tooltips",
+        PREFS_NAME,
         Context.MODE_PRIVATE
     )
     
-    /**
-     * Get the number of times a tooltip has been shown
-     */
-    fun getShowCount(tooltipId: String): Int {
-        return prefs.getInt(tooltipId, 0)
-    }
+    fun getShowCount(tooltipId: String): Int = prefs.getInt(tooltipId, 0)
     
-    /**
-     * Check if a tooltip should be shown (hasn't exceeded max shows)
-     */
-    fun shouldShow(tooltipId: String): Boolean {
-        return getShowCount(tooltipId) < MAX_TOOLTIP_SHOWS
-    }
+    fun shouldShow(tooltipId: String): Boolean = getShowCount(tooltipId) < MAX_TOOLTIP_SHOWS
     
-    /**
-     * Mark a tooltip as shown (increment counter)
-     */
     fun markShown(tooltipId: String) {
         val currentCount = getShowCount(tooltipId)
         prefs.edit().putInt(tooltipId, currentCount + 1).apply()
     }
     
-    /**
-     * Reset a specific tooltip
-     */
     fun reset(tooltipId: String) {
         prefs.edit().remove(tooltipId).apply()
     }
     
-    /**
-     * Reset all tooltips (for testing or "show hints again" feature)
-     */
     fun resetAll() {
         prefs.edit().clear().apply()
     }
+    
+    // ─── Onboarding State ────────────────────────────────────────────────
+    
+    fun isOnboardingCompleted(): Boolean = prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)
+    
+    fun setOnboardingCompleted() {
+        prefs.edit().putBoolean(KEY_ONBOARDING_COMPLETED, true).apply()
+    }
+    
+    // ─── Guide State ─────────────────────────────────────────────────────
+    
+    fun hasCompletedGuide(guideId: String): Boolean = prefs.getBoolean("${guideId}_completed", false)
+    
+    fun setGuideCompleted(guideId: String) {
+        prefs.edit().putBoolean("${guideId}_completed", true).apply()
+    }
+    
+    fun getGuideStep(guideId: String): Int = prefs.getInt("${guideId}_step", 0)
+    
+    fun setGuideStep(guideId: String, step: Int) {
+        prefs.edit().putInt("${guideId}_step", step).apply()
+    }
 }
 
-/**
- * Composable to provide TooltipManager through composition
- */
+// ─── Composition Local ───────────────────────────────────────────────────────
+
 val LocalTooltipManager = compositionLocalOf<TooltipManager?> { null }
 
 @Composable
 fun rememberTooltipManager(): TooltipManager {
     val context = LocalContext.current
     return remember { TooltipManager(context) }
+}
+
+// =============================================================================
+// CONTEXTUAL GUIDE - Step-by-step first-time guidance
+// =============================================================================
+// A full-width bottom card that shows clear, friendly instructions
+// Replaces scattered SmartTooltips with a sequential guide
+
+/**
+ * A single step in a contextual guide
+ */
+data class ContextualGuideStep(
+    val icon: ImageVector,
+    val message: String,
+    val emoji: String = ""
+)
+
+/**
+ * State holder for a contextual guide
+ */
+class ContextualGuideState(
+    val guideId: String,
+    val steps: List<ContextualGuideStep>,
+    private val tooltipManager: TooltipManager
+) {
+    var currentStepIndex by mutableIntStateOf(
+        tooltipManager.getGuideStep(guideId)
+    )
+        private set
+    
+    val currentStep: ContextualGuideStep?
+        get() = steps.getOrNull(currentStepIndex)
+    
+    val isComplete: Boolean
+        get() = tooltipManager.hasCompletedGuide(guideId) || currentStepIndex >= steps.size
+    
+    val totalSteps: Int
+        get() = steps.size
+    
+    fun next() {
+        currentStepIndex++
+        if (currentStepIndex >= steps.size) {
+            tooltipManager.setGuideCompleted(guideId)
+        }
+        tooltipManager.setGuideStep(guideId, currentStepIndex)
+    }
+    
+    fun dismiss() {
+        tooltipManager.setGuideCompleted(guideId)
+        currentStepIndex = steps.size
+    }
+}
+
+@Composable
+fun rememberContextualGuideState(
+    guideId: String,
+    steps: List<ContextualGuideStep>
+): ContextualGuideState {
+    val tooltipManager = LocalTooltipManager.current ?: rememberTooltipManager()
+    return remember(guideId) {
+        ContextualGuideState(guideId, steps, tooltipManager)
+    }
+}
+
+/**
+ * Contextual Guide Card - shown at the top of a screen to provide
+ * step-by-step guidance for first-time users
+ */
+@Composable
+fun ContextualGuide(
+    guideState: ContextualGuideState,
+    modifier: Modifier = Modifier
+) {
+    val step = guideState.currentStep
+    
+    AnimatedVisibility(
+        visible = !guideState.isComplete && step != null,
+        enter = fadeIn(tween(400)) + expandVertically(tween(400)),
+        exit = fadeOut(tween(300)) + shrinkVertically(tween(300)),
+        modifier = modifier
+    ) {
+        if (step != null) {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = PrimaryContainer
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    // Step indicator
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Step badge
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Primary.copy(alpha = 0.2f)
+                        ) {
+                            Text(
+                                text = "Step ${guideState.currentStepIndex + 1} of ${guideState.totalSteps}",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
+                                color = PrimaryGradientEnd,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                        
+                        // Dismiss
+                        IconButton(
+                            onClick = { guideState.dismiss() },
+                            modifier = Modifier.size(28.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = "Dismiss guide",
+                                tint = OnSurfaceVariant,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Message row
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        // Icon
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Primary.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = step.icon,
+                                contentDescription = null,
+                                tint = PrimaryGradientEnd,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                        
+                        // Message text
+                        Text(
+                            text = if (step.emoji.isNotEmpty()) "${step.emoji} ${step.message}" else step.message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = OnPrimaryContainer,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.weight(1f),
+                            lineHeight = 20.sp
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Action button
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        FilledTonalButton(
+                            onClick = { guideState.next() },
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = Primary,
+                                contentColor = OnPrimary
+                            ),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = if (guideState.currentStepIndex == guideState.totalSteps - 1) "Got it!" else "Next",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            if (guideState.currentStepIndex < guideState.totalSteps - 1) {
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// =============================================================================
+// LEGACY COMPONENTS (kept for backward compatibility)
+// =============================================================================
+
+enum class TooltipPosition {
+    TOP, BOTTOM, START, END
 }
 
 /**
@@ -128,7 +343,7 @@ fun TooltipOverlay(
     var visible by remember { mutableStateOf(false) }
     
     LaunchedEffect(Unit) {
-        delay(300) // Small delay before showing
+        delay(300)
         visible = true
     }
     
@@ -184,10 +399,6 @@ fun TooltipOverlay(
             }
         }
     }
-}
-
-enum class TooltipPosition {
-    TOP, BOTTOM, START, END
 }
 
 /**
@@ -246,7 +457,6 @@ fun PulseTooltipTarget(
         content()
         
         if (showPulse) {
-            // Pulse ring effect
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -269,7 +479,7 @@ data class TourStep(
     val tooltipId: String,
     val message: String,
     val icon: ImageVector = Icons.Default.TouchApp,
-    val targetDescription: String = "" // For accessibility
+    val targetDescription: String = ""
 )
 
 /**

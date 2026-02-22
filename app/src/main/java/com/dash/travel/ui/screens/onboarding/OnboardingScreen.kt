@@ -28,16 +28,24 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dash.travel.ui.components.GradientButton
 import com.dash.travel.ui.components.ProBadge
 import com.dash.travel.ui.theme.*
 import kotlinx.coroutines.launch
+
+// =============================================================================
+// DASH TRIP PLANNER - ONBOARDING SCREEN
+// =============================================================================
+// First-launch only guided tour after sign-in
+// Warm, conversational tone — respects user's time
 
 /**
  * Onboarding page content with optional Pro badge
  */
 data class OnboardingPage(
     val icon: ImageVector,
+    val emoji: String,
     val title: String,
     val description: String,
     val gradient: List<Color>,
@@ -47,12 +55,13 @@ data class OnboardingPage(
 /**
  * Enhanced Onboarding Screen - First-time user experience
  * 
- * Features:
+ * Design:
+ * - Minimal, warm, conversational copy
  * - Swipeable horizontal pager
  * - Animated page indicators
  * - Pro feature badges
- * - Premium gradient backgrounds
  * - Skip and Next navigation
+ * - Only shown on first launch (managed by TooltipManager / SharedPrefs)
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -63,33 +72,38 @@ fun OnboardingScreen(
     val pages = listOf(
         OnboardingPage(
             icon = Icons.Default.Explore,
-            title = "Your Trips, Organized",
-            description = "Create beautiful itineraries with flights, hotels, activities, and notes all in one chronological timeline",
+            emoji = "👋",
+            title = "Welcome aboard!",
+            description = "We'll keep all your trips, flights, hotels & plans\nperfectly organized in one place.",
             gradient = listOf(PrimaryGradientStart, PrimaryGradientEnd)
         ),
         OnboardingPage(
             icon = Icons.Default.Groups,
-            title = "Plan Together",
-            description = "Invite friends and family to collaborate in real-time. Vote on restaurants, activities, and more",
-            gradient = listOf(Secondary, Tertiary)
+            emoji = "🤝",
+            title = "Better together",
+            description = "Invite your travel crew — everyone can\nadd, vote, and edit in real-time.",
+            gradient = listOf(Color(0xFF667eea), Color(0xFF764ba2))
         ),
         OnboardingPage(
             icon = Icons.Default.AutoAwesome,
-            title = "AI-Powered Planning",
-            description = "Tell AI what you want: \"3 days in Kyoto, temples + food, $800 budget\" and get a complete itinerary",
+            emoji = "🤖",
+            title = "Your AI travel buddy",
+            description = "Just describe your dream trip and we'll\nbuild the itinerary for you.",
             gradient = listOf(Secondary, Color(0xFFE040FB)),
             isPro = true
         ),
         OnboardingPage(
             icon = Icons.Default.CloudDone,
-            title = "Offline Ready",
-            description = "Download your trips and map snapshots. Access everything without internet when traveling",
+            emoji = "📴",
+            title = "No Wi-Fi? No problem.",
+            description = "Download your trips before you go.\nEverything works offline.",
             gradient = listOf(Success, Color(0xFF4CAF50))
         ),
         OnboardingPage(
             icon = Icons.Default.RocketLaunch,
-            title = "Ready to Explore?",
-            description = "Let's create your first trip and start planning your next adventure!",
+            emoji = "🎉",
+            title = "You're all set!",
+            description = "Let's plan your first adventure.\nWe'll guide you through it.",
             gradient = PrimaryGradient
         )
     )
@@ -179,7 +193,7 @@ fun OnboardingScreen(
             // Navigation button (full width on last page)
             if (isLastPage) {
                 GradientButton(
-                    text = "Get Started",
+                    text = "Let's Go!",
                     onClick = onComplete,
                     modifier = Modifier.fillMaxWidth(),
                     gradientColors = pages[pagerState.currentPage].gradient
@@ -236,11 +250,18 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Emoji above the icon
+        Text(
+            text = page.emoji,
+            style = MaterialTheme.typography.displayMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        
         // Icon with gradient background
         Box(
             modifier = Modifier
-                .size(160.dp)
-                .clip(RoundedCornerShape(40.dp))
+                .size(120.dp)
+                .clip(RoundedCornerShape(32.dp))
                 .background(
                     Brush.linearGradient(page.gradient)
                 ),
@@ -249,17 +270,17 @@ private fun OnboardingPageContent(page: OnboardingPage) {
             Icon(
                 page.icon,
                 contentDescription = null,
-                modifier = Modifier.size(80.dp),
+                modifier = Modifier.size(60.dp),
                 tint = Color.White
             )
         }
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         // Pro badge (if applicable)
         if (page.isPro) {
             ProBadge()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
         }
 
         // Title
@@ -279,10 +300,11 @@ private fun OnboardingPageContent(page: OnboardingPage) {
             style = MaterialTheme.typography.bodyLarge,
             color = OnBackgroundSecondary,
             textAlign = TextAlign.Center,
+            lineHeight = 24.sp,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
 
         // Extra spacer for bottom nav
-        Spacer(modifier = Modifier.height(140.dp))
+        Spacer(modifier = Modifier.height(120.dp))
     }
 }

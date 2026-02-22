@@ -232,16 +232,66 @@ fun TimezoneSelector(
     
     val commonTimezones = remember {
         listOf(
-            "UTC" to "UTC (Universal)",
+            // Americas
             "America/New_York" to "New York (ET)",
             "America/Chicago" to "Chicago (CT)",
             "America/Denver" to "Denver (MT)",
             "America/Los_Angeles" to "Los Angeles (PT)",
+            "America/Anchorage" to "Anchorage (AKT)",
+            "Pacific/Honolulu" to "Honolulu (HST)",
+            "America/Toronto" to "Toronto (ET)",
+            "America/Vancouver" to "Vancouver (PT)",
+            "America/Mexico_City" to "Mexico City (CST)",
+            "America/Sao_Paulo" to "São Paulo (BRT)",
+            "America/Buenos_Aires" to "Buenos Aires (ART)",
+            "America/Lima" to "Lima (PET)",
+            "America/Bogota" to "Bogotá (COT)",
+            
+            // Europe
             "Europe/London" to "London (GMT)",
             "Europe/Paris" to "Paris (CET)",
-            "Asia/Tokyo" to "Tokyo (JST)",
+            "Europe/Berlin" to "Berlin (CET)",
+            "Europe/Rome" to "Rome (CET)",
+            "Europe/Madrid" to "Madrid (CET)",
+            "Europe/Amsterdam" to "Amsterdam (CET)",
+            "Europe/Zurich" to "Zurich (CET)",
+            "Europe/Vienna" to "Vienna (CET)",
+            "Europe/Stockholm" to "Stockholm (CET)",
+            "Europe/Athens" to "Athens (EET)",
+            "Europe/Moscow" to "Moscow (MSK)",
+            "Europe/Istanbul" to "Istanbul (TRT)",
+            
+            // Asia
+            "Asia/Dubai" to "Dubai (GST)",
+            "Asia/Kolkata" to "India (IST)",
+            "Asia/Bangkok" to "Bangkok (ICT)",
             "Asia/Singapore" to "Singapore (SGT)",
-            "Australia/Sydney" to "Sydney (AEST)"
+            "Asia/Hong_Kong" to "Hong Kong (HKT)",
+            "Asia/Shanghai" to "Shanghai (CST)",
+            "Asia/Tokyo" to "Tokyo (JST)",
+            "Asia/Seoul" to "Seoul (KST)",
+            "Asia/Manila" to "Manila (PHT)",
+            "Asia/Jakarta" to "Jakarta (WIB)",
+            "Asia/Kuala_Lumpur" to "Kuala Lumpur (MYT)",
+            
+            // Oceania
+            "Australia/Sydney" to "Sydney (AEST)",
+            "Australia/Melbourne" to "Melbourne (AEST)",
+            "Australia/Perth" to "Perth (AWST)",
+            "Australia/Brisbane" to "Brisbane (AEST)",
+            "Pacific/Auckland" to "Auckland (NZST)",
+            "Pacific/Fiji" to "Fiji (FJT)",
+            
+            // Africa & Middle East
+            "Africa/Johannesburg" to "Johannesburg (SAST)",
+            "Africa/Cairo" to "Cairo (EET)",
+            "Africa/Lagos" to "Lagos (WAT)",
+            "Africa/Nairobi" to "Nairobi (EAT)",
+            "Asia/Jerusalem" to "Jerusalem (IST)",
+            "Asia/Riyadh" to "Riyadh (AST)",
+            
+            // UTC
+            "UTC" to "UTC (Universal)"
         )
     }
 

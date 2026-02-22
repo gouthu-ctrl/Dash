@@ -11,6 +11,9 @@ interface ItineraryDao {
     
     @Query("SELECT * FROM itinerary_items WHERE tripId = :tripId AND isDeleted = 0 ORDER BY displayOrder ASC")
     fun getItineraryForTrip(tripId: String): Flow<List<ItineraryItemEntity>>
+
+    @Query("SELECT * FROM itinerary_items WHERE tripId = :tripId AND isDeleted = 0 ORDER BY displayOrder ASC")
+    suspend fun getItineraryListForTrip(tripId: String): List<ItineraryItemEntity>
     
     @Query("SELECT * FROM itinerary_items WHERE id = :itemId")
     suspend fun getItemById(itemId: String): ItineraryItemEntity?
@@ -49,6 +52,9 @@ interface ItineraryDao {
     
     @Query("DELETE FROM itinerary_items WHERE isDeleted = 1 AND isDirty = 0")
     suspend fun cleanupDeletedItems()
+    
+    @Query("DELETE FROM itinerary_items")
+    suspend fun clearAllItems()
     
     // ==================== SYNC ====================
     

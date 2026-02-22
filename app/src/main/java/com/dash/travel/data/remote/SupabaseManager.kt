@@ -9,6 +9,9 @@ import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.serializer.KotlinXSerializer
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.engine.android.Android
 import kotlinx.serialization.json.Json
 
 import io.github.jan.supabase.annotations.SupabaseInternal
@@ -42,6 +45,22 @@ object SupabaseManager {
                 connectTimeoutMillis = 60_000
                 socketTimeoutMillis = 60_000
             }
+        }
+    }
+
+    /**
+     * Shared HttpClient for other repositories (like ImageRepository)
+     */
+    /**
+     * Shared HttpClient for other repositories (like ImageRepository)
+     */
+    val httpClient = io.ktor.client.HttpClient(Android) {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+                encodeDefaults = true
+            })
         }
     }
 }

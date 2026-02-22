@@ -6,28 +6,30 @@ import androidx.lifecycle.viewModelScope
 import com.dash.travel.data.local.dao.ItineraryDao
 import com.dash.travel.data.local.entity.ItineraryItemEntity
 import com.dash.travel.data.repository.TripRepository
+import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.dash.travel.data.model.SupabaseTrip
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-import com.dash.travel.data.model.ItineraryAttachment
-import kotlinx.serialization.builtins.ListSerializer
+import com.dash.travel.data.model.*
+import com.dash.travel.data.remote.SupabaseManager
+import com.dash.travel.data.repository.DocumentRepository
+import com.dash.travel.data.repository.ImageRepository
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-
-import com.dash.travel.data.remote.SupabaseManager
-import io.github.jan.supabase.auth.auth
-import com.dash.travel.data.repository.DocumentRepository
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.put
+import kotlinx.serialization.builtins.ListSerializer
 
 class TripDetailViewModel(
     private val tripId: String,
+    private val tripDao: com.dash.travel.data.local.dao.TripDao,
     private val itineraryDao: ItineraryDao,
     private val tripRepository: TripRepository,
-    private val documentRepository: DocumentRepository
+    private val documentRepository: DocumentRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
 
     // Using mutableStateListOf for optimized, zero-latency UI updates
@@ -48,6 +50,10 @@ class TripDetailViewModel(
     // Error state (must be declared before init{} since init calls refreshItinerary which uses _error)
     private val _error = MutableStateFlow<String?>(null)
     val error = _error.asStateFlow()
+
+    // Active Users (Presence)
+    private val _activeUsers = MutableStateFlow<List<PresenceUser>>(emptyList())
+    val activeUsers = _activeUsers.asStateFlow()
 
     // Expose current user ID for Role checks
     val currentUserId = SupabaseManager.client.auth.currentUserOrNull()?.id
@@ -95,6 +101,34 @@ class TripDetailViewModel(
                 if (tripId.isNotEmpty()) {
                     tripRepository.subscribeToVoteChanges(tripId).collect {
                         fetchUserVotes()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        
+        // Realtime Presence
+        viewModelScope.launch {
+            try {
+                val session = SupabaseManager.client.auth.currentSessionOrNull()
+                val user = session?.user
+                if (user != null) {
+                    // Create PresenceUser. Try to get name/avatar from profile if available, 
+                    // otherwise fall back or fetch. 
+                    // Since we might not have the full profile loaded here easily without another call,
+                    // we'll try to use what we know or just a placeholder logic that ProfileRepository could handle.
+                    // Ideally we'd pass ProfileRepository to this VM.
+                    // For now, let's create a basic presence user using ID.
+                    val presenceUser = PresenceUser(
+                        userId = user.id,
+                        displayName = user.email?.split("@")?.firstOrNull() ?: "Traveler",
+                        avatarUrl = null, // Can't easily get this without ProfileRepo here, but that's okay for MVP
+                        color = "#" + user.id.take(6) // Deterministic color from ID
+                    )
+                    
+                    tripRepository.subscribeToPresence(tripId, presenceUser).collect { users ->
+                        _activeUsers.value = users
                     }
                 }
             } catch (e: Exception) {
@@ -170,9 +204,36 @@ class TripDetailViewModel(
     fun onMove(fromIndex: Int, toIndex: Int) {
         if (fromIndex == toIndex || fromIndex !in items.indices || toIndex !in items.indices) return
 
+        val item = items[fromIndex]
+        
+        // Determine target date from neighbors
+        // We look at the item currently at toIndex (which will be shifted)
+        val targetItem = items[toIndex]
+        
+        // If moving to a different date group, update the date
+        // We use the date part of the startTime (ISO format yyyy-MM-ddTHH:mm:ss)
+        val currentDate = item.startTime?.substringBefore("T")
+        val targetDate = targetItem.startTime?.substringBefore("T")
+        
+        var updatedItem = item
+        if (currentDate != targetDate && targetDate != null) {
+            // Update the date, keeping the time if possible or defaulting to 09:00
+            // For now, simpler: just use targetDate + "T09:00:00" if original was null, or keep original time
+            val originalTime = item.startTime?.substringAfter("T", "09:00:00") ?: "09:00:00"
+            val newStartTime = "${targetDate}T$originalTime"
+            
+            // Also update end time if present
+            val newEndTime = if (item.endTime != null) {
+                 val originalEndTime = item.endTime.substringAfter("T", "10:00:00")
+                 "${targetDate}T$originalEndTime"
+            } else null
+            
+            updatedItem = item.copy(startTime = newStartTime, endTime = newEndTime, isDirty = true)
+        }
+
         items.apply {
-            val item = removeAt(fromIndex)
-            add(toIndex, item)
+            removeAt(fromIndex)
+            add(toIndex, updatedItem)
         }
     }
 
@@ -180,18 +241,29 @@ class TripDetailViewModel(
      * Called when drag ends. Persists the order to Room and schedules network sync.
      */
     fun onDragEnd() {
-        // Update display orders locally
-        val updatedOrders = items.mapIndexed { index, item ->
-            item.id to index
-        }
-
-        // Immediate persistence to Room (Local-First)
         viewModelScope.launch {
-            itineraryDao.updateAllOrders(updatedOrders)
+            // 1. Update display order in memory to match current list position
+            //    and capture any date changes (already in 'items' from onMove)
+            val updatedEntities = items.mapIndexed { index, item ->
+                if (item.displayOrder != index) {
+                    item.copy(displayOrder = index, isDirty = true) 
+                } else item
+            }
+            
+            // 2. Atomically persist ALL changes (Dates + Orders) to Room
+            //    'insertItems' with OnConflictStrategy.REPLACE functions as an upsert
+            itineraryDao.insertItems(updatedEntities)
+            
+            // 3. Update the mutable list to reflect the persisted state (sanity check)
+            //    This effectively clears the 'isDirty' flag if we re-fetched, but here we just want to ensure
+            //    memory matches what we just sent to Room.
+            //    However, to keep it simple and avoid fighting the Flow, we just wait for the Flow to emit.
+            //    But we DO need to ensure 'items' has 'isDirty=true' so the Sync job picks them up?
+            //    Room flow will emit the items we just inserted.
+            
+            // 4. Trigger Remote Sync
+            scheduleRemoteSync()
         }
-
-        // Debounced remote sync (Google Weather pattern)
-        scheduleRemoteSync()
     }
 
     private fun scheduleRemoteSync() {
@@ -206,7 +278,20 @@ class TripDetailViewModel(
         try {
             // Send the final state to the cloud
             items.forEachIndexed { index, item ->
-                tripRepository.updateItemSortingIndex(item.id, index.toDouble())
+                // We must update order AND dates because onMove changes dates locally
+                val updates = kotlinx.serialization.json.buildJsonObject {
+                    put("sorting_index", index)
+                    
+                    // Only send date/time if valid
+                    if (item.startTime != null) {
+                        put("start_time", item.startTime)
+                    }
+                    if (item.endTime != null) {
+                        put("end_time", item.endTime)
+                    }
+                }
+                
+                tripRepository.updateItineraryItem(item.id, updates)
             }
         } catch (e: Exception) {
             _error.value = "Sync failed: ${e.message}"
@@ -227,6 +312,23 @@ class TripDetailViewModel(
                 
                 // Refresh to be safe (optional)
                 // refreshItinerary()
+            } catch (e: Exception) {
+                _error.value = "Delete failed: ${e.message}"
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    /**
+     * Soft delete the entire trip
+     */
+    fun deleteTrip() {
+        viewModelScope.launch {
+            try {
+                // Logical delete on Supabase
+                tripRepository.deleteTrip(tripId)
+                // Immediate local cleanup
+                tripDao.hardDeleteTrip(tripId)
             } catch (e: Exception) {
                 _error.value = "Delete failed: ${e.message}"
                 e.printStackTrace()
@@ -309,6 +411,45 @@ class TripDetailViewModel(
             } catch (e: Exception) {
                 _error.value = "Vote failed"
                 refreshItinerary() // Revert state
+            }
+        }
+    }
+
+    /**
+     * Fetch a new random image from Pixabay and update the trip
+     */
+    fun refreshTripImage() {
+        viewModelScope.launch {
+            try {
+                val currentTrip = _trip.value ?: run {
+                    android.util.Log.w("TripDetailVM", "refreshTripImage: No current trip")
+                    return@launch
+                }
+                val destination = currentTrip.destinationData?.name ?: currentTrip.title ?: "Travel"
+                android.util.Log.d("TripDetailVM", "Refreshing image for destination: $destination")
+                
+                val newImageUrl = imageRepository.fetchRandomImage(destination)
+                if (newImageUrl != null) {
+                    android.util.Log.d("TripDetailVM", "Got new image URL: $newImageUrl")
+                    
+                    // Update Supabase
+                    tripRepository.updateTrip(tripId, mapOf("trip_image_url" to newImageUrl))
+                    
+                    // Update local state (Flow)
+                    _trip.value = _trip.value?.copy(tripImageUrl = newImageUrl)
+                    
+                    // Update local DB (Room) so the Home screen and cache reflect the new image
+                    val currentTripEntity = tripDao.getTripById(tripId)
+                    if (currentTripEntity != null) {
+                        tripDao.updateTrip(currentTripEntity.copy(tripImageUrl = newImageUrl))
+                    }
+                    
+                    android.util.Log.d("TripDetailVM", "Updated trip with new image locally and remotely")
+                } else {
+                    android.util.Log.w("TripDetailVM", "fetchRandomImage returned null")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("TripDetailVM", "Failed to refresh image", e)
             }
         }
     }

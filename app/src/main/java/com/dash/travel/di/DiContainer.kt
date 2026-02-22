@@ -65,6 +65,10 @@ object DiContainer {
     val aiRepository by lazy { 
         AIRepository(SupabaseManager.client) 
     }
+
+    val imageRepository by lazy {
+        ImageRepository(SupabaseManager.httpClient)
+    }
     
     val profileRepository by lazy { 
         ProfileRepository(SupabaseManager.client) 

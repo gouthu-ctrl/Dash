@@ -18,6 +18,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import io.github.jan.supabase.realtime.*
+import io.github.jan.supabase.postgrest.query.filter.FilterOperation
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 
 class HomeViewModel(
     private val tripDao: TripDao,
@@ -52,6 +55,36 @@ class HomeViewModel(
         
         // Fetch User Profile
         fetchUserProfile()
+        
+        // Listen for Realtime Invitations
+        subscribeToInvitations()
+    }
+
+    private fun subscribeToInvitations() {
+        viewModelScope.launch {
+            try {
+                val user = SupabaseManager.client.auth.currentUserOrNull()
+                val userId = user?.id ?: return@launch
+                
+                val channel = SupabaseManager.client.channel("trip_invites_$userId")
+                
+                val changes = channel.postgresChangeFlow<PostgresAction>(schema = "public") {
+                    table = "trip_members"
+                    filter(FilterOperation("user_id", FilterOperator.EQ, userId))
+                }
+
+                channel.subscribe()
+
+                changes.collect { action ->
+                    if (action is PostgresAction.Insert) {
+                        // New invitation received! Refresh trips.
+                        refreshTrips()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun fetchUserProfile() {

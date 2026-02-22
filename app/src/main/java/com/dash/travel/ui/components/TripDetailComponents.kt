@@ -19,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.zIndex
+import androidx.compose.foundation.border
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -32,6 +34,7 @@ import com.dash.travel.data.local.entity.ItineraryItemEntity
 import com.dash.travel.data.model.SupabaseTrip
 import com.dash.travel.data.model.ItineraryAttachment
 import com.dash.travel.ui.theme.*
+import com.dash.travel.data.model.PresenceUser
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
@@ -52,12 +55,18 @@ fun TripHeroSection(
     destinationName: String,
     canEdit: Boolean,
     onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit = {},
+    onExportPdfClick: () -> Unit = {},
+    activeUsers: List<PresenceUser> = emptyList(), // New param
     showOptions: () -> Unit
 ) {
+    var showMenu by remember { mutableStateOf(false) }
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(380.dp)
+            .background(Color(0xFF2D333B)) // Fallback dark background for text visibility
     ) {
         AsyncImage(
             model = trip?.tripImageUrl,
@@ -136,20 +145,70 @@ fun TripHeroSection(
                     )
                 }
             }
+
+            
+            // Presence Row (Active Users)
+            if (activeUsers.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                PresenceAvatarRow(users = activeUsers)
+            }
         }
 
 
-        if (canEdit) {
+        // Trip Actions Menu
+        Box(
+            modifier = Modifier
+                .statusBarsPadding()
+                .padding(16.dp)
+                .align(Alignment.TopEnd)
+        ) {
             IconButton(
-                onClick = onEditClick,
+                onClick = { showMenu = true },
                 modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(16.dp)
-                    .align(Alignment.TopEnd)
                     .clip(CircleShape)
                     .background(Color.Black.copy(alpha = 0.4f))
             ) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White)
+                Icon(Icons.Default.MoreVert, contentDescription = "Trip options", tint = Color.White)
+            }
+            
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                if (canEdit) {
+                    DropdownMenuItem(
+                        text = { Text("Edit Trip") },
+                        onClick = { 
+                            showMenu = false
+                            onEditClick()
+                        },
+                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) }
+                    )
+                }
+                DropdownMenuItem(
+                    text = { Text("Export to PDF") },
+                    onClick = { 
+                        showMenu = false
+                        onExportPdfClick()
+                    },
+                    leadingIcon = { Icon(Icons.Default.PictureAsPdf, contentDescription = null) }
+                )
+                if (canEdit) {
+                    DropdownMenuItem(
+                        text = { Text("Delete Trip", color = MaterialTheme.colorScheme.error) },
+                        onClick = { 
+                            showMenu = false
+                            onDeleteClick()
+                        },
+                        leadingIcon = { 
+                            Icon(
+                                Icons.Default.Delete, 
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
+                            ) 
+                        }
+                    )
+                }
             }
         }
     }
@@ -164,6 +223,7 @@ fun TripSummaryCard(
     totalMembers: Int,
     totalPlaces: Int,
     estimatedBudget: String? = null,
+    onTravelersClick: () -> Unit = {}, // New param
     modifier: Modifier = Modifier
 ) {
     DashCard(
@@ -172,8 +232,9 @@ fun TripSummaryCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(vertical = 12.dp), // Reduced vertical padding
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             SummaryStatItem(
                 icon = Icons.Default.CalendarToday,
@@ -183,7 +244,7 @@ fun TripSummaryCard(
             )
             Divider(
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(24.dp) // Reduced divider height
                     .width(1.dp),
                 color = SurfaceBorder
             )
@@ -191,11 +252,12 @@ fun TripSummaryCard(
                 icon = Icons.Default.Group,
                 value = totalMembers.toString(),
                 label = stringResource(if (totalMembers == 1) R.string.stat_traveler_singular else R.string.stat_traveler_plural),
-                iconColor = Secondary
+                iconColor = Secondary,
+                onClick = onTravelersClick // Pass click handler
             )
             Divider(
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(24.dp) // Reduced divider height
                     .width(1.dp),
                 color = SurfaceBorder
             )
@@ -214,18 +276,23 @@ private fun SummaryStatItem(
     icon: ImageVector,
     value: String,
     label: String,
-    iconColor: Color
+    iconColor: Color,
+    onClick: (() -> Unit)? = null // Optional click handler
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            // Add padding inside clickable area if needed, or rely on parent padding
+            .padding(8.dp) // Add touch target padding
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = iconColor,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(20.dp) // Reduced icon size
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp)) // Reduced spacer
         Text(
             text = value,
             style = MaterialTheme.typography.titleMedium,
@@ -689,8 +756,8 @@ fun EmptyItinerary() {
         Text(
             text = stringResource(R.string.trip_empty_title),
             style = MaterialTheme.typography.titleMedium,
-            color = OnSurface,
-            fontWeight = FontWeight.Bold
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.SemiBold
         )
         Text(
             text = stringResource(R.string.trip_empty_subtitle),
@@ -753,17 +820,89 @@ private fun DetailBadge(icon: ImageVector, text: String) {
             imageVector = icon,
             contentDescription = null,
             tint = Primary,
-            modifier = Modifier.size(10.dp)
+            modifier = Modifier.size(12.dp)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
             color = Primary,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Bold
         )
     }
 }
+
+/**
+ * Row of overlapping avatars for active users
+ */
+@Composable
+fun PresenceAvatarRow(users: List<PresenceUser>) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Viewing now:", 
+            style = MaterialTheme.typography.labelSmall, 
+            color = Color.White.copy(alpha = 0.7f),
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        
+        Box {
+            users.take(5).forEachIndexed { index, user ->
+                PresenceAvatar(
+                    user = user,
+                    modifier = Modifier
+                        .padding(start = (index * 24).dp) // Overlap
+                        .zIndex(5f - index) // Stack order
+                )
+            }
+            if (users.size > 5) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = (5 * 24).dp)
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                        .border(1.dp, Color.White, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("+${users.size - 5}", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PresenceAvatar(user: PresenceUser, modifier: Modifier = Modifier) {
+    val color = try { Color(android.graphics.Color.parseColor(user.color)) } catch(e: Exception) { Gold }
+    
+    Box(
+        modifier = modifier
+            .size(32.dp)
+            .clip(CircleShape)
+            .background(color)
+            .border(1.dp, Color.White, CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        if (user.avatarUrl != null) {
+            AsyncImage(
+                model = user.avatarUrl,
+                contentDescription = user.displayName,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Text(
+                text = user.displayName.take(1).uppercase(),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        }
+    }
+}
+
 
 private fun getIconForKey(key: String): ImageVector {
     return when (key.lowercase()) {
@@ -773,5 +912,68 @@ private fun getIconForKey(key: String): ImageVector {
         "access_code" -> Icons.Default.VpnKey
         "room" -> Icons.Default.DoorSliding
         else -> Icons.Default.Info
+    }
+}
+
+/**
+ * Day header separator for the timeline - visually separates items by day
+ */
+@Composable
+fun DayHeaderSeparator(
+    date: String,
+    itemCount: Int
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Left line
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(1.dp)
+                .background(OnSurfaceVariant.copy(alpha = 0.3f))
+        )
+        
+        // Date badge
+        Surface(
+            color = Primary.copy(alpha = 0.1f),
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.padding(horizontal = 12.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = Primary
+                )
+                Text(
+                    text = date,
+                    style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = OnSurface
+                )
+                Text(
+                    text = "($itemCount)",
+                    style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+                    color = OnSurfaceVariant
+                )
+            }
+        }
+        
+        // Right line
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(1.dp)
+                .background(OnSurfaceVariant.copy(alpha = 0.3f))
+        )
     }
 }

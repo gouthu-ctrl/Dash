@@ -50,6 +50,9 @@ interface TripDao {
     @Query("DELETE FROM trips WHERE isDeleted = 1 AND isDirty = 0")
     suspend fun cleanupDeletedTrips()
     
+    @Query("DELETE FROM trips")
+    suspend fun clearAllTrips()
+    
     // ==================== SYNC ====================
     
     @Query("SELECT * FROM trips WHERE isDirty = 1")

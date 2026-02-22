@@ -34,8 +34,10 @@ import coil.compose.AsyncImage
 import com.dash.travel.data.local.entity.TripEntity
 import com.dash.travel.ui.components.*
 import com.dash.travel.ui.onboarding.LocalTooltipManager
-import com.dash.travel.ui.onboarding.SmartTooltip
-import com.dash.travel.ui.onboarding.TooltipIds
+import com.dash.travel.ui.onboarding.ContextualGuide
+import com.dash.travel.ui.onboarding.ContextualGuideStep
+import com.dash.travel.ui.onboarding.GuideIds
+import com.dash.travel.ui.onboarding.rememberContextualGuideState
 import com.dash.travel.ui.theme.*
 import com.dash.travel.ui.viewmodel.HomeViewModel
 import java.text.SimpleDateFormat
@@ -62,7 +64,6 @@ fun HomeScreen(
     userName: String = "Traveler",
     onNavigateToTrip: (String) -> Unit = {},
     onCreateTrip: () -> Unit = {},
-    onNavigateToAIPlanner: () -> Unit = {},
     onNavigateToSettings: (() -> Unit)? = null,
     onNavigateToProfile: (() -> Unit)? = null
 ) {
@@ -101,7 +102,7 @@ fun HomeScreen(
     }
 
     Scaffold(
-        containerColor = Background,
+        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onCreateTrip,
@@ -116,8 +117,7 @@ fun HomeScreen(
         Box(modifier = Modifier.padding(innerPadding)) {
             if (allTrips.isEmpty()) {
                 EmptyHomeContent(
-                    onCreateTrip = onCreateTrip,
-                    onNavigateToAIPlanner = onNavigateToAIPlanner
+                    onCreateTrip = onCreateTrip
                 )
             } else {
                 LazyColumn(
@@ -169,18 +169,26 @@ fun HomeScreen(
                         }
                     }
                     
-                    // Quick widgets
+                    // Contextual guide for first-time users
                     item {
-                        AnimatedVisibility(
-                            visible = showContent,
-                            enter = fadeIn(tween(600, delayMillis = 100))
-                        ) {
-                            QuickWidgets(
-                                onNavigateToAIPlanner = onNavigateToAIPlanner
+                        val homeGuideState = rememberContextualGuideState(
+                            guideId = GuideIds.HOME_GUIDE,
+                            steps = listOf(
+                                ContextualGuideStep(
+                                    icon = Icons.Default.TouchApp,
+                                    message = "Tap any trip to see the full plan",
+                                    emoji = "👆"
+                                ),
+                                ContextualGuideStep(
+                                    icon = Icons.Default.Add,
+                                    message = "Use the + button to create a new trip anytime",
+                                    emoji = "✨"
+                                )
                             )
-                        }
+                        )
+                        ContextualGuide(guideState = homeGuideState)
                     }
-                    
+
                     // All trips header
                     item {
                         SectionHeader(
@@ -201,24 +209,13 @@ fun HomeScreen(
                                         animationSpec = tween(400, delayMillis = 150 + (index * 50))
                                     )
                         ) {
-                            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                                TripCard(
-                                    trip = trip,
-                                    onClick = { onNavigateToTrip(trip.id) },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                                
-                                if (index == 0) {
-                                    SmartTooltip(
-                                        tooltipId = TooltipIds.HOME_TAP_TRIP,
-                                        message = "👆 Tap to view plan",
-                                        modifier = Modifier
-                                            .align(Alignment.Center)
-                                            .offset(y = 20.dp),
-                                        delayMs = 1000
-                                    )
-                                }
-                            }
+                            TripCard(
+                                trip = trip,
+                                onClick = { onNavigateToTrip(trip.id) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 6.dp)
+                            )
                         }
                     }
                 }
@@ -247,13 +244,13 @@ private fun HomeHeader(
             Text(
                 text = GreetingText(),
                 style = MaterialTheme.typography.bodyMedium,
-                color = OnBackgroundSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = userName,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = OnBackground
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
         
@@ -355,9 +352,7 @@ private fun UpcomingTripHero(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                        .background(
-                            Brush.linearGradient(PrimaryGradient.map { it.copy(alpha = 0.3f) })
-                        )
+                        .background(PrimaryContainer)
                 )
             }
             
@@ -429,57 +424,129 @@ private fun UpcomingTripHero(
 }
 
 /**
- * Quick action widgets row
+ * Feature Discovery Cards Row - Premium onboarding experience
  */
 @Composable
-private fun QuickWidgets(
-    onNavigateToAIPlanner: () -> Unit
-) {
+private fun FeatureDiscoveryCards() {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.padding(vertical = 8.dp)
     ) {
         item {
-            QuickWidget(
+            FeatureCard(
+                icon = Icons.Outlined.Groups,
+                title = "Collaborate",
+                subtitle = "Plan together with friends",
+                gradient = listOf(Color(0xFF667eea), Color(0xFF764ba2))
+            )
+        }
+        item {
+            FeatureCard(
                 icon = Icons.Filled.AutoAwesome,
-                label = stringResource(R.string.widget_ai_planner),
-                gradient = listOf(Color(0xFF9C27B0), Color(0xFFE040FB)),
-                onClick = onNavigateToAIPlanner
+                title = "AI Powered",
+                subtitle = "Smart suggestions in trips",
+                gradient = listOf(Color(0xFF9C27B0), Color(0xFFE040FB))
             )
         }
         item {
-            QuickWidget(
-                icon = Icons.Outlined.Checklist,
-                label = stringResource(R.string.widget_packing),
-                gradient = listOf(Color(0xFF4CAF50), Color(0xFF8BC34A)),
-                onClick = { /* TODO */ }
+            FeatureCard(
+                icon = Icons.Outlined.Share,
+                title = "Export & Share",
+                subtitle = "PDF itineraries & links",
+                gradient = listOf(Color(0xFF11998e), Color(0xFF38ef7d))
             )
         }
         item {
-            QuickWidget(
-                icon = Icons.Outlined.WbSunny,
-                label = stringResource(R.string.widget_weather),
-                gradient = listOf(Color(0xFF2196F3), Color(0xFF03A9F4)),
-                onClick = { /* TODO */ }
+            FeatureCard(
+                icon = Icons.Outlined.HowToVote,
+                title = "Vote Together",
+                subtitle = "Decide as a group",
+                gradient = listOf(Color(0xFFf093fb), Color(0xFFf5576c))
             )
         }
         item {
-            QuickWidget(
+            FeatureCard(
                 icon = Icons.Outlined.FolderOpen,
-                label = stringResource(R.string.widget_documents),
-                gradient = listOf(Secondary, Tertiary),
-                onClick = { /* TODO */ }
+                title = "Document Vault",
+                subtitle = "Keep travel docs safe",
+                gradient = listOf(Secondary, Tertiary)
             )
         }
-        item {
-            QuickWidget(
-                icon = Icons.Outlined.TrendingUp,
-                label = stringResource(R.string.widget_price_alerts),
-                gradient = listOf(Warning, Color(0xFFFF9800)),
-                isPro = true,
-                onClick = { /* TODO */ }
+    }
+}
+
+@Composable
+private fun FeatureCard(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    gradient: List<Color>,
+    isPremium: Boolean = false
+) {
+    Card(
+        modifier = Modifier
+            .width(140.dp)
+            .height(140.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = SurfaceContainer)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Gradient accent at top
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(Brush.horizontalGradient(gradient))
             )
+            
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Brush.linearGradient(gradient.map { it.copy(alpha = 0.15f) })),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            icon,
+                            contentDescription = null,
+                            tint = gradient[0],
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    if (isPremium) {
+                        ProBadge(
+                            small = true,
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .offset(x = 8.dp, y = (-4).dp)
+                        )
+                    }
+                }
+                
+                Column {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = OnSurface
+                    )
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = OnSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
     }
 }
@@ -663,91 +730,101 @@ fun TripCard(
 }
 
 /**
- * Empty state when no trips exist
+ * Empty state when no trips exist - with feature discovery
  */
 @Composable
 fun EmptyHomeContent(
     modifier: Modifier = Modifier,
-    onCreateTrip: () -> Unit,
-    onNavigateToAIPlanner: () -> Unit
+    onCreateTrip: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentPadding = PaddingValues(vertical = 32.dp)
     ) {
-        // Animated icon
-        val infiniteTransition = rememberInfiniteTransition(label = "float")
-        val scale by infiniteTransition.animateFloat(
-            initialValue = 1f,
-            targetValue = 1.05f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1500, easing = EaseInOutSine),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "iconScale"
-        )
-        
-        Box(
-            modifier = Modifier
-                .size(160.dp)
-                .scale(scale)
-                .clip(RoundedCornerShape(40.dp))
-                .background(
-                    Brush.linearGradient(
-                        PrimaryGradient.map { it.copy(alpha = 0.2f) }
+        // Hero Section
+        item {
+            Column(
+                modifier = Modifier.padding(horizontal = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Animated icon
+                val infiniteTransition = rememberInfiniteTransition(label = "float")
+                val scale by infiniteTransition.animateFloat(
+                    initialValue = 1f,
+                    targetValue = 1.05f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(1500, easing = EaseInOutSine),
+                        repeatMode = RepeatMode.Reverse
+                    ),
+                    label = "iconScale"
+                )
+                
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .scale(scale)
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(
+                            Brush.linearGradient(
+                                PrimaryGradient.map { it.copy(alpha = 0.2f) }
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FlightTakeoff,
+                        contentDescription = null,
+                        modifier = Modifier.size(56.dp),
+                        tint = Primary
                     )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.FlightTakeoff,
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-                tint = Primary
-            )
+                }
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                Text(
+                    text = stringResource(R.string.home_empty_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Text(
+                    text = stringResource(R.string.home_empty_subtitle),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                GradientButton(
+                    text = stringResource(R.string.home_create_trip),
+                    onClick = onCreateTrip,
+                    icon = Icons.Default.Add
+                )
+            }
         }
         
-        Spacer(modifier = Modifier.height(40.dp))
+        // Feature Discovery Section
+        item {
+            Spacer(modifier = Modifier.height(48.dp))
+            Text(
+                text = "Discover What's Possible",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = OnBackground,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
         
-        Text(
-            text = stringResource(R.string.home_empty_title),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = OnBackground
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = stringResource(R.string.home_empty_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = OnBackgroundSecondary
-        )
-        
-        Spacer(modifier = Modifier.height(40.dp))
-        
-        GradientButton(
-            text = stringResource(R.string.home_create_trip),
-            onClick = onCreateTrip,
-            icon = Icons.Default.Add
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        OutlinedButton(
-            onClick = onNavigateToAIPlanner,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(12.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Primary)
-        ) {
-            Icon(Icons.Filled.AutoAwesome, contentDescription = null, tint = Primary)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.widget_ai_planner), color = Primary)
+        // Feature Cards
+        item {
+            FeatureDiscoveryCards()
         }
     }
 }

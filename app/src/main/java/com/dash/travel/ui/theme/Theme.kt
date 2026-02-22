@@ -92,6 +92,10 @@ private val DashLightColorScheme = lightColorScheme(
     inverseSurface = Color(0xFF1F2937),
     inverseOnSurface = Color.White,
     
+    // Containers
+    surfaceContainerHigh = Color(0xFFECE6F0),
+    surfaceContainerHighest = Color(0xFFE6E0E9),
+    
     // Error Colors
     error = Error,
     onError = Color.White,
@@ -117,12 +121,8 @@ fun DashTheme(
     dynamicColor: Boolean = false, // Keep brand colors consistent
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        // For now, always use dark theme as per design spec
-        // Dynamic colors disabled to maintain brand consistency
-        darkTheme -> DashDarkColorScheme
-        else -> DashLightColorScheme
-    }
+    // Force Dark Theme
+    val colorScheme = DashDarkColorScheme
     
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -132,8 +132,12 @@ fun DashTheme(
             window.statusBarColor = Background.toArgb()
             @Suppress("DEPRECATION")
             window.navigationBarColor = Background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
+            
+            // Force light status/nav icons only if background is light, but here background is dark
+            // So we want light content (white icons) -> isAppearanceLight... = false
+            val wic = WindowCompat.getInsetsController(window, view)
+            wic.isAppearanceLightStatusBars = false
+            wic.isAppearanceLightNavigationBars = false
         }
     }
 

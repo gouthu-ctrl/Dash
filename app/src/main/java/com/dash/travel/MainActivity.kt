@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -37,6 +36,7 @@ import com.dash.travel.ui.viewmodel.AddItineraryViewModel
 import com.dash.travel.ui.viewmodel.AddTripViewModel
 import com.dash.travel.ui.viewmodel.HomeViewModel
 import com.dash.travel.ui.viewmodel.TripDetailViewModel
+import com.dash.travel.ui.viewmodel.AISuggestionsViewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import io.github.jan.supabase.auth.auth
@@ -53,6 +53,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.appcompat.app.AppCompatActivity
 import com.dash.travel.util.FeatureManager
+import com.dash.travel.ui.onboarding.TooltipManager
+import com.dash.travel.ui.screens.onboarding.OnboardingScreen
 
 class MainActivity : AppCompatActivity() {
     private lateinit var db: DashDatabase
@@ -91,6 +93,7 @@ class MainActivity : AppCompatActivity() {
                 val coroutineScope = rememberCoroutineScope()
                 val context = this
                 val credentialManager = remember { CredentialManager.create(context) }
+                val tooltipManager = remember { TooltipManager(context) }
                 
                 var userProfile by remember { mutableStateOf<com.dash.travel.data.model.Profile?>(null) }
                 var userName by remember { mutableStateOf("Traveler") }
@@ -107,7 +110,11 @@ class MainActivity : AppCompatActivity() {
                                 userProfile?.fullName?.let { userName = it.split(" ").firstOrNull() ?: it }
                             }
                         }
-                        navController.navigate("home") { popUpTo("welcome") { inclusive = true } }
+                        if (tooltipManager.isOnboardingCompleted()) {
+                            navController.navigate("home") { popUpTo("welcome") { inclusive = true } }
+                        } else {
+                            navController.navigate("onboarding") { popUpTo("welcome") { inclusive = true } }
+                        }
                     }
                 }
 
@@ -147,8 +154,18 @@ class MainActivity : AppCompatActivity() {
                                             this.provider = Google
                                         }
                                         
-                                        navController.navigate("home") {
-                                            popUpTo("welcome") { inclusive = true }
+                                        // Clear cached data from previous user
+                                        db.tripDao().clearAllTrips()
+                                        db.itineraryDao().clearAllItems()
+                                        
+                                        if (tooltipManager.isOnboardingCompleted()) {
+                                            navController.navigate("home") {
+                                                popUpTo("welcome") { inclusive = true }
+                                            }
+                                        } else {
+                                            navController.navigate("onboarding") {
+                                                popUpTo("welcome") { inclusive = true }
+                                            }
                                         }
                                     }
                                 } catch (e: Exception) {
@@ -157,6 +174,24 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         })
+                    }
+
+                    // ONBOARDING SCREEN (first launch only)
+                    composable("onboarding") {
+                        OnboardingScreen(
+                            onComplete = {
+                                tooltipManager.setOnboardingCompleted()
+                                navController.navigate("home") {
+                                    popUpTo("onboarding") { inclusive = true }
+                                }
+                            },
+                            onSkip = {
+                                tooltipManager.setOnboardingCompleted()
+                                navController.navigate("home") {
+                                    popUpTo("onboarding") { inclusive = true }
+                                }
+                            }
+                        )
                     }
 
                     // HOME SCREEN
@@ -184,7 +219,6 @@ class MainActivity : AppCompatActivity() {
                             userName = displayName,
                             onNavigateToTrip = { navController.navigate("trip_detail/$it") },
                             onCreateTrip = { navController.navigate("add_trip") },
-                            onNavigateToAIPlanner = { navController.navigate("ai_planner") },
                             onNavigateToSettings = { navController.navigate("settings") },
                             onNavigateToProfile = { navController.navigate("profile") }
                         )
@@ -198,7 +232,8 @@ class MainActivity : AppCompatActivity() {
                                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                                     return AddTripViewModel(
                                         tripRepository = DiContainer.tripRepository,
-                                        profileRepository = DiContainer.profileRepository
+                                        profileRepository = DiContainer.profileRepository,
+                                        imageRepository = DiContainer.imageRepository
                                     ) as T
                                 }
                             }
@@ -206,7 +241,7 @@ class MainActivity : AppCompatActivity() {
 
                         AddTripScreen(
                             onNavigateBack = { navController.popBackStack() },
-                            onSaveTrip = { tripName, description, startDate, endDate, timezone, customAttributes, destination, origin, _ ->
+                            onSaveTrip = { tripName, description, startDate, endDate, timezone, customAttributes, destination, origin, inviteEmails ->
                                 val userId = SupabaseManager.client.auth.currentUserOrNull()?.id
                                 if (userId == null) {
                                     Toast.makeText(context, "Not logged in", Toast.LENGTH_SHORT).show()
@@ -214,7 +249,9 @@ class MainActivity : AppCompatActivity() {
                                 }
 
                                 addTripViewModel.createTrip(
-                                    tripName, startDate, endDate, timezone, destination, origin, userId,
+                                    tripName, startDate, endDate, timezone, destination, origin,
+                                    userId,
+                                    inviteEmails,
                                     onSuccess = {
                                         navController.popBackStack()
                                         Toast.makeText(context, "Trip created!", Toast.LENGTH_SHORT).show()
@@ -224,7 +261,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 )
                             },
-                            getHomeLocation = { "San Francisco" },
+                            getHomeLocation = { "" },
                             isFirstTrip = false,
                             viewModel = addTripViewModel
                         )
@@ -249,7 +286,8 @@ class MainActivity : AppCompatActivity() {
                                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                                     return AddTripViewModel(
                                         tripRepository = DiContainer.tripRepository,
-                                        profileRepository = DiContainer.profileRepository
+                                        profileRepository = DiContainer.profileRepository,
+                                        imageRepository = DiContainer.imageRepository
                                     ) as T
                                 }
                             }
@@ -290,9 +328,27 @@ class MainActivity : AppCompatActivity() {
                                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                                     return TripDetailViewModel(
                                         tripId = tripId, 
+                                        tripDao = db.tripDao(),
                                         itineraryDao = db.itineraryDao(),
                                         tripRepository = DiContainer.tripRepository,
-                                        documentRepository = DiContainer.documentRepository
+                                        documentRepository = DiContainer.documentRepository,
+                                        imageRepository = DiContainer.imageRepository
+                                    ) as T
+                                }
+                            }
+                        )
+                        
+                        // AI Suggestions ViewModel
+                        val aiSuggestionsViewModel: AISuggestionsViewModel = viewModel(
+                            key = "ai_suggestions_$tripId",
+                            factory = object : ViewModelProvider.Factory {
+                                @Suppress("UNCHECKED_CAST")
+                                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                                    return AISuggestionsViewModel(
+                                        tripId = tripId,
+                                        aiRepository = DiContainer.aiRepository,
+                                        tripRepository = DiContainer.tripRepository,
+                                        itineraryDao = db.itineraryDao()
                                     ) as T
                                 }
                             }
@@ -305,10 +361,18 @@ class MainActivity : AppCompatActivity() {
                             onNavigateBack = { navController.popBackStack() },
                             onAddItem = { navController.navigate("add_itinerary/$tripId") },
                             onRefreshImage = { _ -> 
-                                // Simplified: Call repository in ViewModel
+                                tripDetailViewModel.refreshTripImage()
                             },
                             onEditTripClicked = {
                                 navController.navigate("edit_trip/$tripId")
+                            },
+                            onDeleteTrip = {
+                                // Show confirmation dialog and soft delete
+                                tripDetailViewModel.deleteTrip()
+                                navController.popBackStack()
+                            },
+                            onExportToPdf = {
+                                navController.navigate("share_trip/$tripId")
                             },
                             fetchTripMembers = { id -> 
                                 try {
@@ -327,9 +391,9 @@ class MainActivity : AppCompatActivity() {
                                     emptyList() 
                                 }
                             },
-                            onViewMaps = { navController.navigate("map_view") }, // Pass params? map_view/$tripId?
+                            onViewMaps = { navController.navigate("map_view") },
                             onManageMembers = { navController.navigate("members/$tripId") },
-                            onViewDocs = { navController.navigate("document_vault") }, // document_vault/$tripId?
+                            onViewDocs = { navController.navigate("document_vault") },
                             onShare = { navController.navigate("share_trip/$tripId") },
                             onViewChat = { navController.navigate("chat/$tripId") },
 
@@ -347,7 +411,8 @@ class MainActivity : AppCompatActivity() {
                                         Toast.makeText(context, "No app found to open this file", Toast.LENGTH_SHORT).show()
                                     }
                                 }
-                            }
+                            },
+                            aiSuggestionsViewModel = aiSuggestionsViewModel
                         )
                     }
 
@@ -555,25 +620,8 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
 
-                    composable("ai_planner") {
-                        val aiViewModel: com.dash.travel.ui.viewmodel.AIPlannerViewModel = viewModel(
-                             factory = object : ViewModelProvider.Factory {
-                                 @Suppress("UNCHECKED_CAST")
-                                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                                     return com.dash.travel.ui.viewmodel.AIPlannerViewModel(
-                                         aiRepository = com.dash.travel.data.repository.AIRepository(SupabaseManager.client)
-                                     ) as T
-                                 }
-                             }
-                        )
-                        com.dash.travel.ui.screens.AIPlannerScreen(
-                            viewModel = aiViewModel,
-                            onNavigateBack = { navController.popBackStack() },
-                            onCreateTripFromPlan = { plan -> 
-                                navController.navigate("add_trip")
-                            }
-                        )
-                    }
+
+                    // AI Planner is now accessed via Trip Details > Ask AI
 
                     composable("photo_location") {
                         com.dash.travel.ui.screens.PhotoLocationScreen(
@@ -621,14 +669,28 @@ class MainActivity : AppCompatActivity() {
 
                     composable("share_trip/{tripId}") {
                         val tripId = it.arguments?.getString("tripId") ?: ""
+                        
+                        // ShareTripViewModel
+                        val viewModel: com.dash.travel.ui.viewmodel.ShareTripViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                            factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                                @Suppress("UNCHECKED_CAST")
+                                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                                    return com.dash.travel.ui.viewmodel.ShareTripViewModel(
+                                        tripId = tripId,
+                                        tripRepository = DiContainer.tripRepository,
+                                        itineraryDao = db.itineraryDao()
+                                    ) as T
+                                }
+                            }
+                        )
+
+                        val context = androidx.compose.ui.platform.LocalContext.current
+                        val tripState = viewModel.trip.collectAsState()
+                        
                         com.dash.travel.ui.screens.ShareTripScreen(
-                            tripTitle = "Trip", 
-                            isPublic = false,
-                            shareToken = null,
+                            tripTitle = tripState.value?.title ?: "Trip",
                             onNavigateBack = { navController.popBackStack() },
-                            onTogglePublic = { },
-                            onCopyLink = { },
-                            onExportPdf = { }
+                            onExportPdf = { viewModel.sharePdf(context) }
                         )
                     }
 

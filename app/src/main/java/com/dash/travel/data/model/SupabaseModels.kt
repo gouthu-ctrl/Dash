@@ -115,6 +115,7 @@ data class SupabaseTrip(
     @SerialName("custom_attributes") val customAttributes: CustomAttributes? = null,
     @SerialName("budget_limit") val budgetLimit: Double? = null,
     @SerialName("display_order") val displayOrder: Int = 0,
+    @SerialName("deleted_at") val deletedAt: String? = null,
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null
 )

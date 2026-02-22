@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
@@ -39,9 +40,13 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dash.travel.data.local.entity.ItineraryItemEntity
 import com.dash.travel.ui.components.*
-import com.dash.travel.ui.onboarding.SmartTooltip
-import com.dash.travel.ui.onboarding.TooltipIds
+import com.dash.travel.ui.onboarding.ContextualGuide
+import com.dash.travel.ui.onboarding.ContextualGuideStep
+import com.dash.travel.ui.onboarding.GuideIds
+import com.dash.travel.ui.onboarding.rememberContextualGuideState
 import com.dash.travel.ui.viewmodel.TripDetailViewModel
+import com.dash.travel.ui.viewmodel.AISuggestionsViewModel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
@@ -67,6 +72,8 @@ fun TripDetailScreen(
     onAddItem: () -> Unit,
     onRefreshImage: (String) -> Unit,
     onEditTripClicked: () -> Unit,
+    onDeleteTrip: () -> Unit = {},
+    onExportToPdf: () -> Unit = {},
     fetchTripMembers: suspend (String) -> List<TripMember>,
     onViewMaps: () -> Unit = {},
     onManageMembers: () -> Unit = {},
@@ -76,9 +83,15 @@ fun TripDetailScreen(
     onViewReminders: () -> Unit = {},
     onViewVoting: () -> Unit = {},
     onEditItem: (String) -> Unit = {},
-    onDownloadAttachment: (String) -> Unit = {}
+    onDownloadAttachment: (String) -> Unit = {},
+    aiSuggestionsViewModel: AISuggestionsViewModel? = null
 ) {
+    // AI Suggestions Bottom Sheet state
+    val scope = rememberCoroutineScope()
+    val aiSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showAISheet by remember { mutableStateOf(false) }
     val trip by viewModel.trip.collectAsState()
+    val activeUsers by viewModel.activeUsers.collectAsState()
     val items = viewModel.items
     val lazyListState = rememberLazyListState()
     val haptic = LocalHapticFeedback.current
@@ -105,6 +118,10 @@ fun TripDetailScreen(
     var selectedDayIndex by remember { mutableStateOf(-1) } // -1 = All days
     var showDeleteDialog by remember { mutableStateOf(false) }
     var itemToDelete by remember { mutableStateOf<String?>(null) }
+    var showTripDeleteDialog by remember { mutableStateOf(false) }
+    
+    // Day formatter for timeline headers
+    val dayFormatter = remember { SimpleDateFormat("EEEE, MMM d", Locale.getDefault()) }
     
     LaunchedEffect(tripId) {
         tripMembers = fetchTripMembers(tripId)
@@ -170,12 +187,6 @@ fun TripDetailScreen(
                     modifier = Modifier.width(160.dp) 
                 )
             }
-            // FAB Tooltip
-            SmartTooltip(
-                tooltipId = TooltipIds.TRIP_DETAIL_ADD_ITEM,
-                message = stringResource(R.string.trip_fab_tooltip),
-                position = com.dash.travel.ui.onboarding.TooltipPosition.TOP
-            )
         }
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
@@ -193,6 +204,9 @@ fun TripDetailScreen(
                             destinationName = destinationName,
                             canEdit = canEdit,
                             onEditClick = onEditTripClicked,
+                            onDeleteClick = { showTripDeleteDialog = true },
+                            onExportPdfClick = onExportToPdf,
+                            activeUsers = activeUsers,
                             showOptions = { if (canEdit) showImageOptions = true }
                         )
                 }
@@ -200,14 +214,41 @@ fun TripDetailScreen(
                 // Tools
                 item(key = "tools") {
                     QuickActionsRow(
-                        onViewMaps = onViewMaps,
                         onManageMembers = onManageMembers,
                         onViewDocs = onViewDocs,
                         onShare = onShare,
-                        onViewChat = onViewChat,
-                        onViewReminders = onViewReminders,
-                        onViewVoting = onViewVoting
+                        onViewVoting = onViewVoting,
+                        onAskAI = { 
+                            if (aiSuggestionsViewModel != null) {
+                                showAISheet = true
+                            }
+                        }
                     )
+                }
+
+                // Contextual guide for first-time users (after tools row)
+                item(key = "trip_guide") {
+                    val tripGuideState = rememberContextualGuideState(
+                        guideId = GuideIds.TRIP_DETAIL_GUIDE,
+                        steps = listOf(
+                            ContextualGuideStep(
+                                icon = Icons.Default.Timeline,
+                                message = "This is your trip timeline — scroll to see each day",
+                                emoji = "📋"
+                            ),
+                            ContextualGuideStep(
+                                icon = Icons.Default.Add,
+                                message = "Tap + to add flights, hotels, activities, or notes",
+                                emoji = "✈️"
+                            ),
+                            ContextualGuideStep(
+                                icon = Icons.Default.Groups,
+                                message = "Invite friends from the share menu to plan together",
+                                emoji = "🤝"
+                            )
+                        )
+                    )
+                    ContextualGuide(guideState = tripGuideState)
                 }
 
                 // 2. Summary & Stats
@@ -216,7 +257,8 @@ fun TripDetailScreen(
                             TripSummaryCard(
                                 totalDays = totalDays,
                                 totalMembers = tripMembers.count { it.status == "accepted" }.coerceAtLeast(1),
-                                totalPlaces = items.size
+                                totalPlaces = items.size,
+                                onTravelersClick = { onManageMembers() }
                             )
                     }
                 }
@@ -234,9 +276,14 @@ fun TripDetailScreen(
                     }
                 }
 
-                // 4. Participants
+                // 4. Participants - Clickable to navigate to Members screen
                 item(key = "details_section") {
-                    TripParticipantsSection(members = tripMembers)
+                    // Filter to show only accepted members in the main view
+                    val acceptedMembers = remember(tripMembers) { tripMembers.filter { it.status == "accepted" } }
+                    TripParticipantsSection(
+                        members = acceptedMembers,
+                        onNavigateToMembers = onManageMembers
+                    )
                 }
 
                 // 5. Itinerary Timeline
@@ -253,77 +300,98 @@ fun TripDetailScreen(
                 if (filteredItems.isEmpty()) {
                     item(key = "empty_itinerary") {
                         EmptyItinerary()
-                        // Tooltip on empty state
-                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            SmartTooltip(
-                                tooltipId = TooltipIds.TRIP_DETAIL_TIMELINE,
-                                message = stringResource(R.string.trip_empty_itinerary),
-                                position = com.dash.travel.ui.onboarding.TooltipPosition.BOTTOM
-                            )
-                        }
                     }
                 } else {
                     item(key = "timeline_header") {
                         SectionHeader(title = stringResource(R.string.trip_itinerary_title), modifier = Modifier.padding(horizontal = 24.dp))
                     }
                     
-                    itemsIndexed(filteredItems, key = { _, item -> item.id }) { index, item ->
-                        val isThisItemDragging = draggedItemId == item.id
+                    // Group items by day for day headers (computed outside remember since filteredItems changes)
+                    val groupedItems = filteredItems.groupBy { item ->
+                        item.startTime?.take(10) ?: "unscheduled"
+                    }.toSortedMap()
+                    
+                    var overallIndex = 0
+                    groupedItems.forEach { (dateKey, dayItems) ->
+                        // Day header
+                        item(key = "day_header_$dateKey") {
+                            val displayDate = if (dateKey == "unscheduled") {
+                                "Unscheduled"
+                            } else {
+                                try {
+                                    isoFormatter.parse(dateKey)?.let { dayFormatter.format(it) } ?: dateKey
+                                } catch (e: Exception) {
+                                    dateKey
+                                }
+                            }
+                            
+                            DayHeaderSeparator(
+                                date = displayDate,
+                                itemCount = dayItems.size
+                            )
+                        }
                         
-                        // Wrapper box for padding/margins
-                        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                            DraggableTimelineItemWrapper(
-                                item = item,
-                                isDragging = isThisItemDragging,
-                                dragOffset = if (isThisItemDragging) dragOffset else 0f,
-                                onDragStart = { 
-                                    if (canEdit) {
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        draggedItemId = item.id
-                                    }
-                                },
-                                onDrag = { delta -> 
-                                    dragOffset += delta
-                                    val currentIndex = filteredItems.indexOfFirst { it.id == item.id }
-                                    if (currentIndex != -1) {
-                                        val targetIndex = findTargetIndexInList(lazyListState, item.id, dragOffset, filteredItems)
-                                        if (targetIndex != null && targetIndex != currentIndex) {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            // Find real indices in 'items' for moving
-                                            val realFromIndex = items.indexOfFirst { it.id == item.id }
-                                            val targetItem = filteredItems[targetIndex]
-                                            val realToIndex = items.indexOfFirst { it.id == targetItem.id }
-                                            if (realFromIndex != -1 && realToIndex != -1) {
-                                                viewModel.onMove(realFromIndex, realToIndex)
-                                                dragOffset = 0f 
+                        // Items for this day
+                        itemsIndexed(dayItems, key = { _, item -> item.id }) { indexInDay, item ->
+                            val globalIndex = overallIndex + indexInDay
+                            val isThisItemDragging = draggedItemId == item.id
+                            
+                            // Wrapper box for padding/margins
+                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                DraggableTimelineItemWrapper(
+                                    item = item,
+                                    isDragging = isThisItemDragging,
+                                    dragOffset = if (isThisItemDragging) dragOffset else 0f,
+                                    onDragStart = { 
+                                        if (canEdit) {
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            draggedItemId = item.id
+                                        }
+                                    },
+                                    onDrag = { delta -> 
+                                        dragOffset += delta
+                                        val currentIndex = filteredItems.indexOfFirst { it.id == item.id }
+                                        if (currentIndex != -1) {
+                                            val targetIndex = findTargetIndexInList(lazyListState, item.id, dragOffset, filteredItems)
+                                            if (targetIndex != null && targetIndex != currentIndex) {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                // Find real indices in 'items' for moving
+                                                val realFromIndex = items.indexOfFirst { it.id == item.id }
+                                                val targetItem = filteredItems[targetIndex]
+                                                val realToIndex = items.indexOfFirst { it.id == targetItem.id }
+                                                if (realFromIndex != -1 && realToIndex != -1) {
+                                                    viewModel.onMove(realFromIndex, realToIndex)
+                                                    dragOffset = 0f 
+                                                }
                                             }
                                         }
-                                    }
-                                },
-                                onDragEnd = { 
-                                    draggedItemId = null
-                                    dragOffset = 0f 
-                                    viewModel.onDragEnd()
-                                }
-                            ) {
-                                // ACTUAL CONTENT reusing TripDetailComponents
-                                TimelineItem(
-                                    item = item,
-                                    isFirst = index == 0,
-                                    isLast = index == filteredItems.lastIndex,
-                                    currentUserVote = viewModel.userVotes[item.id],
-                                    voteState = viewModel.voteCounts[item.id],
-                                    onVote = { voteType -> viewModel.vote(item.id, voteType) },
-                                    canEdit = canEdit,
-                                    onClick = { if (canEdit) onEditItem(item.id) },
-                                    onDelete = {
-                                        itemToDelete = item.id
-                                        showDeleteDialog = true
                                     },
-                                    onDownloadAttachment = onDownloadAttachment
-                                )
+                                    onDragEnd = { 
+                                        draggedItemId = null
+                                        dragOffset = 0f 
+                                        viewModel.onDragEnd()
+                                    }
+                                ) {
+                                    // ACTUAL CONTENT reusing TripDetailComponents
+                                    TimelineItem(
+                                        item = item,
+                                        isFirst = indexInDay == 0,
+                                        isLast = indexInDay == dayItems.lastIndex,
+                                        currentUserVote = viewModel.userVotes[item.id],
+                                        voteState = viewModel.voteCounts[item.id],
+                                        onVote = { voteType -> viewModel.vote(item.id, voteType) },
+                                        canEdit = canEdit,
+                                        onClick = { if (canEdit) onEditItem(item.id) },
+                                        onDelete = {
+                                            itemToDelete = item.id
+                                            showDeleteDialog = true
+                                        },
+                                        onDownloadAttachment = onDownloadAttachment
+                                    )
+                                }
                             }
                         }
+                        overallIndex += dayItems.size
                     }
                 }
                 
@@ -382,18 +450,101 @@ fun TripDetailScreen(
             }
         )
     }
+
+    // Trip Delete Confirmation Dialog
+    if (showTripDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showTripDeleteDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            },
+            title = { Text("Delete Trip?") },
+            text = { 
+                Text(
+                    "Are you sure you want to delete \"${trip?.title ?: "this trip"}\"? This action cannot be undone.",
+                    style = MaterialTheme.typography.bodyMedium
+                ) 
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showTripDeleteDialog = false
+                        onDeleteTrip()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) { 
+                    Text("Delete") 
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTripDeleteDialog = false }) { 
+                    Text("Cancel") 
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
+
+    // AI Suggestions Bottom Sheet
+    if (showAISheet && aiSuggestionsViewModel != null) {
+        // Get last itinerary item's location (or trip destination as fallback)
+        val lastItineraryLocation = remember(items) {
+            items.lastOrNull()?.locationName ?: ""
+        }
+        
+        AISuggestionsBottomSheet(
+            sheetState = aiSheetState,
+            viewModel = aiSuggestionsViewModel,
+            tripDestination = destinationName,
+            lastItineraryLocation = lastItineraryLocation,
+            onDismiss = { 
+                showAISheet = false 
+                aiSuggestionsViewModel.reset()
+            },
+            onItemAdded = {
+                // Refresh the itinerary to show the newly added item
+                viewModel.refreshItinerary()
+                Toast.makeText(context, "Added to your itinerary!", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
 }
 
 @Composable
-fun TripParticipantsSection(members: List<TripMember>) {
+fun TripParticipantsSection(
+    members: List<TripMember>,
+    onNavigateToMembers: () -> Unit = {}
+) {
     if (members.isNotEmpty()) {
-        Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
-            Text(
-                text = "${stringResource(R.string.trip_members_title)} (${members.size})",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .clickable(onClick = onNavigateToMembers)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${stringResource(R.string.trip_members_title)} (${members.size})",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = "View all members",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
             
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 members.take(6).forEach { member ->
@@ -480,6 +631,16 @@ private fun findTargetIndexInList(
     val center = draggedItem.offset + draggedItem.size / 2 + offset
     
     val targetItem = visibleItemsfirstOrNull(items, center) ?: return null
+
+    // If target is a header, try to snap to the item immediately following it (start of that day)
+    if (targetItem.key.toString().startsWith("day_header_")) {
+        val headerIndex = items.indexOf(targetItem)
+        if (headerIndex != -1 && headerIndex + 1 < items.size) {
+            val nextItem = items[headerIndex + 1]
+            val index = list.indexOfFirst { it.id == nextItem.key }
+            if (index != -1) return index
+        }
+    }
 
     return list.indexOfFirst { it.id == targetItem.key }.takeIf { it != -1 }
 }

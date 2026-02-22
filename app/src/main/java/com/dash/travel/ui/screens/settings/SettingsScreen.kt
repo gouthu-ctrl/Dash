@@ -156,13 +156,7 @@ fun SettingsScreen(
             // Appearance section
             item {
                 SettingsSection(title = "Appearance") {
-                    SettingsToggleItem(
-                        icon = Icons.Default.DarkMode,
-                        title = "Dark Mode",
-                        subtitle = "Use dark theme",
-                        isChecked = settings.darkMode,
-                        onToggle = onToggleDarkMode
-                    )
+
                     SettingsClickItem(
                         icon = Icons.Default.Language,
                         title = "Language",

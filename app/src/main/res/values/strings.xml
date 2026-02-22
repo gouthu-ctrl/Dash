@@ -140,6 +140,18 @@
     <string name="action_members">Members</string>
     <string name="action_share">Share</string>
 
+    <!-- AI Suggestions -->
+    <string name="ai_ask">Ask AI</string>
+    <string name="ai_suggestions_title">AI Suggestions</string>
+    <string name="ai_prompt_hint">What would you like to do?</string>
+    <string name="ai_chip_tomorrow">What to do tomorrow?</string>
+    <string name="ai_chip_food">Food nearby</string>
+    <string name="ai_chip_hidden">Hidden gems</string>
+    <string name="ai_add_to_trip">Add to Trip</string>
+    <string name="ai_added_success">Added to your itinerary!</string>
+    <string name="ai_thinking">Thinking…</string>
+    <string name="ai_empty_state">Ask AI for suggestions to enhance your trip</string>
+
     <!-- Profile -->
     <string name="profile_title">Profile</string>
     <string name="profile_unknown_user">Unknown User</string>

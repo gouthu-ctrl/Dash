@@ -19,6 +19,8 @@ data class GeneratedItem(
     @SerialName("start_time") val startTime: String? = null,
     @SerialName("end_time") val endTime: String? = null,
     @SerialName("location_name") val locationName: String? = null,
+    @SerialName("location_lat") val locationLat: Double? = null,
+    @SerialName("location_lng") val locationLng: Double? = null,
     @SerialName("estimated_cost") val estimatedCost: Double? = null,
     val currency: String? = null
 )

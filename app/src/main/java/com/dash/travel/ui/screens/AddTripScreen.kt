@@ -130,33 +130,9 @@ fun AddTripScreen(
         if (destinationName.isNotBlank()) "Trip to $destinationName" else "New Trip"
     }
     
-    // Timezone state
-    var selectedTimezone by remember { mutableStateOf(displayTrip?.timezone ?: "UTC") }
-    
-    // Custom fields state
-    val customFields = remember { mutableStateListOf<CustomField>() }
-    
-    LaunchedEffect(displayTrip) {
-        if (displayTrip != null) {
-             selectedTimezone = displayTrip.timezone
-             // Handle Notes
-             // customFields logic...
-             customFields.clear()
-             displayTrip.customAttributes?.customFields?.let { fields ->
-                 customFields.addAll(fields.map { CustomField(name = it.label, value = it.value) })
-             }
-             // For backward compatibility or if notes stored differently
-             // displayTrip.description -> notes
-        }
-    }
-
-    // Notes state
-    var notes by remember { mutableStateOf(displayTrip?.description ?: "") }
-    LaunchedEffect(displayTrip) {
-        if (displayTrip != null) {
-             notes = displayTrip.description ?: ""
-        }
-    }
+    // Defaults for removed fields (Timezone, Notes, Custom Fields)
+    val selectedTimezone = displayTrip?.timezone ?: "UTC"
+    val notes = displayTrip?.description ?: ""
     
     // Invite emails
     var inviteEmails by remember { mutableStateOf("") }
@@ -196,7 +172,7 @@ fun AddTripScreen(
     }
 
     Scaffold(
-        containerColor = Background,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { 
@@ -212,9 +188,9 @@ fun AddTripScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Background,
-                    titleContentColor = OnBackground,
-                    navigationIconContentColor = OnBackground
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }
@@ -259,7 +235,7 @@ fun AddTripScreen(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(12.dp))
                                 .clickable { showDateRangePicker = true },
-                            color = SurfaceContainer
+                            color = MaterialTheme.colorScheme.surfaceContainer
                         ) {
                             Row(
                                 modifier = Modifier.padding(16.dp),
@@ -268,7 +244,7 @@ fun AddTripScreen(
                                 Icon(
                                     Icons.Default.CalendarMonth, 
                                     contentDescription = null,
-                                    tint = Primary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
@@ -278,13 +254,13 @@ fun AddTripScreen(
                                         else "Select Dates",
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.Medium,
-                                        color = if (startDate != null) OnSurface else OnSurfaceVariant
+                                        color = if (startDate != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     if (startDate == null) {
                                         Text(
                                             text = "When are you going?",
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = OnSurfaceVariant
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                 }
@@ -294,39 +270,6 @@ fun AddTripScreen(
                 }
             }
 
-            // Timezone & Notes
-            item {
-                SectionHeader(title = "Details")
-                DashCard(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        TimezoneSelector(
-                            selectedTimezone = selectedTimezone,
-                            onTimezoneSelected = { selectedTimezone = it }
-                        )
-                        
-                        NotesSection(
-                            notes = notes,
-                            onNotesChange = { notes = it }
-                        )
-                    }
-                }
-            }
-
-            // Custom Fields (Progressive Disclosure)
-            item {
-                CustomFieldsSection(
-                    fields = customFields,
-                    onAddField = { name, value ->
-                        customFields.add(CustomField(name = name, value = value))
-                    },
-                    onRemoveField = { id ->
-                        customFields.removeAll { it.id == id }
-                    }
-                )
-            }
 
             // Travel Companions (only for new trips)
             if (existingTrip == null) {
@@ -350,9 +293,9 @@ fun AddTripScreen(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedContainerColor = SurfaceContainer,
-                                    unfocusedContainerColor = SurfaceContainer,
-                                    focusedBorderColor = Primary,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
                                     unfocusedBorderColor = Color.Transparent
                                 )
                             )
@@ -361,14 +304,14 @@ fun AddTripScreen(
                                 Icon(
                                     Icons.Default.GroupAdd, 
                                     contentDescription = null,
-                                    tint = Primary, 
+                                    tint = MaterialTheme.colorScheme.primary, 
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "They'll get an invite to join this trip",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = OnSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -386,13 +329,7 @@ fun AddTripScreen(
                             .map { it.trim() }
                             .filter { it.isNotBlank() }
                         
-                        val customAttrs = if (customFields.isNotEmpty()) {
-                            buildJsonObject {
-                                customFields.forEach { field ->
-                                    put(field.name, field.value)
-                                }
-                            }
-                        } else null
+                        val customAttrs: JsonObject? = null
                         
                         startDate?.let { sDate ->
                             endDate?.let { eDate ->
@@ -415,7 +352,7 @@ fun AddTripScreen(
                               startDate != null && 
                               endDate != null && 
                               destinationData != null && 
-                              fromLocationData != null
+                              (fromLocationData != null || fromLocationName.isNotBlank())
                 )
                 
                 // Tooltip for first time users
@@ -464,18 +401,18 @@ fun AddTripScreen(
                 }
             },
             colors = DatePickerDefaults.colors(
-                containerColor = SurfaceContainerHigh,
-                titleContentColor = OnSurface,
-                headlineContentColor = OnSurface,
-                weekdayContentColor = OnSurfaceVariant,
-                subheadContentColor = OnSurfaceVariant,
-                yearContentColor = OnSurfaceVariant,
-                currentYearContentColor = Primary,
-                selectedYearContentColor = OnPrimary,
-                selectedDayContentColor = OnPrimary,
-                selectedDayContainerColor = Primary,
-                todayContentColor = Primary,
-                dayContentColor = OnSurface
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                headlineContentColor = MaterialTheme.colorScheme.onSurface,
+                weekdayContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                subheadContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                yearContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                currentYearContentColor = MaterialTheme.colorScheme.primary,
+                selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
+                selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+                selectedDayContainerColor = MaterialTheme.colorScheme.primary,
+                todayContentColor = MaterialTheme.colorScheme.primary,
+                dayContentColor = MaterialTheme.colorScheme.onSurface
             )
         ) {
             DateRangePicker(
@@ -490,13 +427,13 @@ fun AddTripScreen(
                 },
                 showModeToggle = false,
                 colors = DatePickerDefaults.colors(
-                    containerColor = SurfaceContainerHigh,
-                    titleContentColor = OnSurface,
-                    headlineContentColor = OnSurface,
-                    weekdayContentColor = OnSurfaceVariant,
-                    subheadContentColor = OnSurfaceVariant,
-                    dayContentColor = OnSurface,
-                    selectedDayContainerColor = Primary
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    headlineContentColor = MaterialTheme.colorScheme.onSurface,
+                    weekdayContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    subheadContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    dayContentColor = MaterialTheme.colorScheme.onSurface,
+                    selectedDayContainerColor = MaterialTheme.colorScheme.primary
                 )
             )
         }

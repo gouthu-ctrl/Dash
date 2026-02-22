@@ -35,7 +35,7 @@ val OnTertiaryContainer = Color(0xFFFFD9E2)
 // -----------------------------------------------------------------------------
 // SURFACE HIERARCHY (GitHub-dark inspired)
 // -----------------------------------------------------------------------------
-val Background = Color(0xFF0D1117)              // Deepest background
+val Background = Color.Black                // Amoled Black
 val Surface = Color(0xFF161B22)                 // Card backgrounds
 val SurfaceVariant = Color(0xFF21262D)          // Elevated cards, modals
 val SurfaceBright = Color(0xFF2D333B)           // Highlighted surfaces
@@ -125,8 +125,8 @@ val PrimaryGradient = listOf(PrimaryGradientStart, PrimaryGradientEnd)
 val ProGradient = listOf(ProGradientStart, ProGradientEnd)
 val SurfaceGradient = listOf(Surface, SurfaceVariant)
 val HeroOverlayGradient = listOf(
-    Color(0x00000000),  // Transparent at top
-    Color(0xCC0D1117)   // 80% background at bottom
+    Color.Transparent,  // Transparent at top
+    Color.Black.copy(alpha = 0.8f)   // 80% black at bottom
 )
 
 // -----------------------------------------------------------------------------

@@ -41,7 +41,7 @@ fun LocationPickerField(
     onLocationSelected: (String, JsonObject) -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(initialValue) }
+    var selectedText by remember(initialValue) { mutableStateOf(initialValue) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -54,15 +54,15 @@ fun LocationPickerField(
                 Icon(
                     Icons.Default.Search, 
                     contentDescription = null,
-                    tint = Primary 
+                    tint = MaterialTheme.colorScheme.primary
                 ) 
             },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = SurfaceContainer,
-                unfocusedContainerColor = SurfaceContainer,
-                focusedBorderColor = Primary,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = Color.Transparent
             )
         )
@@ -83,9 +83,9 @@ fun LocationPickerField(
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            containerColor = Background,
-            contentColor = OnBackground,
-            dragHandle = { BottomSheetDefaults.DragHandle(color = OnSurfaceVariant) },
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            dragHandle = { BottomSheetDefaults.DragHandle(color = MaterialTheme.colorScheme.onSurfaceVariant) },
             modifier = Modifier.fillMaxHeight(0.9f)
         ) {
             LocationSearchSheetContent(
@@ -148,9 +148,9 @@ fun LocationSearchSheetContent(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = SurfaceContainerHigh,
-                unfocusedContainerColor = SurfaceContainerHigh,
-                focusedBorderColor = Primary,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = Color.Transparent
             )
         )
@@ -256,7 +256,7 @@ private fun HeaderText(text: String) {
     Text(
         text,
         style = MaterialTheme.typography.labelMedium,
-        color = Primary,
+        color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(top = 12.dp, bottom = 8.dp, start = 8.dp)
     )
@@ -275,9 +275,9 @@ fun LocationResultItem(
     }
     
     val tint = when {
-        result.isRecent -> Secondary
-        result.isPopular -> Warning
-        else -> OnSurfaceVariant
+        result.isRecent -> MaterialTheme.colorScheme.secondary
+        result.isPopular -> Warning // Warning is semantic, keeping it or mapping to errorContainer? Let's use custom if needed, or error.
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Surface(
@@ -292,7 +292,7 @@ fun LocationResultItem(
         ) {
             Surface(
                 shape = RoundedCornerShape(8.dp),
-                color = SurfaceContainerHigh,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 modifier = Modifier.size(40.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -311,7 +311,7 @@ fun LocationResultItem(
                 Text(
                     text = result.name,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = OnSurface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -319,7 +319,7 @@ fun LocationResultItem(
                     Text(
                         text = result.country,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = OnSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
