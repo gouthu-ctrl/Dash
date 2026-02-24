@@ -147,26 +147,33 @@ class AddTripViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // Construct proper update map
-                val updates = mutableMapOf<String, Any?>(
-                    "title" to title,
-                    "description" to description,
-                    "start_date" to startDate,
-                    "end_date" to endDate,
-                    "timezone" to timezone
-                )
+                var updatedImageUrl: String? = null
                 
-                // Add optional fields only if they exist - Supabase handles JSON/JSONB automagically mostly,
-                // but tripRepository.updateTrip likely expects Map<String, Any?>
-                
-                if (customAttributes != null) updates["custom_attributes"] = customAttributes
-                
+                // If the destination is being updated, fetch a new corresponding image
                 if (destination != null) {
-                    updates["destination_data"] = destination // Supabase client should serialize this
+                    val destinationName = destination["name"]?.jsonPrimitive?.content?.replace("\"", "")
+                    if (!destinationName.isNullOrBlank()) {
+                        val rawImageUrl = imageRepository.fetchRandomImage(destinationName)
+                            ?: imageRepository.fetchRandomImage("Travel") // Fallback
+                            
+                        // Append cache-busting fragment
+                        if (rawImageUrl != null) {
+                            updatedImageUrl = "$rawImageUrl#t=${System.currentTimeMillis()}"
+                        }
+                    }
                 }
-                
-                if (origin != null) {
-                    updates["origin_data"] = origin
+
+                // Construct proper update payload
+                val updates = kotlinx.serialization.json.buildJsonObject {
+                    put("title", title)
+                    if (description != null) put("description", description)
+                    put("start_date", startDate)
+                    put("end_date", endDate)
+                    put("timezone", timezone)
+                    if (customAttributes != null) put("custom_attributes", customAttributes)
+                    if (destination != null) put("destination_data", destination)
+                    if (origin != null) put("origin_data", origin)
+                    if (updatedImageUrl != null) put("trip_image_url", updatedImageUrl)
                 }
 
                 tripRepository.updateTrip(tripId, updates)

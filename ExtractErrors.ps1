@@ -1,0 +1,1 @@
+$logFile = "install.log"`n$errors = Select-String -Path $logFile -Pattern "e:" -Context 0,2 | Select-Object -First 20`n$errors | ForEach-Object { "$($_.Line)`n$($_.Context.PostContext -join `"`n`")`n---" }

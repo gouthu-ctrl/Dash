@@ -428,20 +428,33 @@ class TripDetailViewModel(
                 val destination = currentTrip.destinationData?.name ?: currentTrip.title ?: "Travel"
                 android.util.Log.d("TripDetailVM", "Refreshing image for destination: $destination")
                 
-                val newImageUrl = imageRepository.fetchRandomImage(destination)
+                var newImageUrl = imageRepository.fetchRandomImage(destination)
+                
+                // Fallback to "Travel" if no hits for the specific destination
+                if (newImageUrl == null && destination != "Travel") {
+                    newImageUrl = imageRepository.fetchRandomImage("Travel")
+                }
+
                 if (newImageUrl != null) {
-                    android.util.Log.d("TripDetailVM", "Got new image URL: $newImageUrl")
+                    // Append a URL fragment (#t={timestamp}) to bust Coil's cache without breaking the Pixabay URL
+                    // The # fragment is not sent to the server (HTTP 400 avoided) but Coil uses the full URL string as a cache key.
+                    val cacheBusterUrl = "$newImageUrl#t=${System.currentTimeMillis()}"
+                    
+                    android.util.Log.d("TripDetailVM", "Got new image URL: $cacheBusterUrl")
                     
                     // Update Supabase
-                    tripRepository.updateTrip(tripId, mapOf("trip_image_url" to newImageUrl))
+                    val updates = kotlinx.serialization.json.buildJsonObject {
+                        put("trip_image_url", cacheBusterUrl)
+                    }
+                    tripRepository.updateTrip(tripId, updates)
                     
                     // Update local state (Flow)
-                    _trip.value = _trip.value?.copy(tripImageUrl = newImageUrl)
+                    _trip.value = _trip.value?.copy(tripImageUrl = cacheBusterUrl)
                     
                     // Update local DB (Room) so the Home screen and cache reflect the new image
                     val currentTripEntity = tripDao.getTripById(tripId)
                     if (currentTripEntity != null) {
-                        tripDao.updateTrip(currentTripEntity.copy(tripImageUrl = newImageUrl))
+                        tripDao.updateTrip(currentTripEntity.copy(tripImageUrl = cacheBusterUrl))
                     }
                     
                     android.util.Log.d("TripDetailVM", "Updated trip with new image locally and remotely")

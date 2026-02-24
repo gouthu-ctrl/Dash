@@ -1,0 +1,32 @@
+﻿
+[Incubating] Problems report is available at: file:///D:/StudioProjects/Dash/build/reports/problems/problems-report.html
+./gradlew : 
+At line:1 char:1
++ ./gradlew compileDebugKotlin --console=plain -Pkotlin.daemon.jvmargs= ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Task '.daemon.jvmargs=-Xmx2048m' not found in root project 'Dash' and its 
+subprojects.
+
+* Try:
+> Run gradlew tasks to get a list of available tasks.
+> For more on name expansion, please refer to https://docs.gradle.org/9.1.0/user
+guide/command_line_interface.html#sec:name_abbreviation in the Gradle 
+documentation.
+> Run with --stacktrace option to get the stack trace.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to generate a Build Scan (Powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.1.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 4s

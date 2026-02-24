@@ -110,7 +110,7 @@ class TripRepository(private val supabase: SupabaseClient) {
     /**
      * Update existing trip
      */
-    suspend fun updateTrip(tripId: String, updates: Map<String, Any?>): SupabaseTrip {
+    suspend fun updateTrip(tripId: String, updates: kotlinx.serialization.json.JsonObject): SupabaseTrip {
         return supabase.from("trips")
             .update(updates) {
                 filter { eq("id", tripId) }

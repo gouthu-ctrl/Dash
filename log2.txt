@@ -1,0 +1,1983 @@
+﻿
+> 02-16 14:51:57.450  6864  6864 F libc    : Fatal 
+signal 31 (SIGSYS), code 1 (SYS_SECCOMP), syscall 
+116 in tid 6864 (dmesg), pid 6864 (dmesg)
+  02-16 14:51:57.706  6874  6874 F DEBUG   : *** 
+*** *** *** *** *** *** *** *** *** *** *** *** *** 
+*** ***
+  02-16 14:51:57.706  6874  6874 F DEBUG   : Build 
+fingerprint: 'google/mustang/mustang:16/BP4A.260205.
+001/14624666:user/release-keys'
+  02-16 14:51:57.706  6874  6874 F DEBUG   : Kernel 
+Release: 
+'6.6.98-android15-8-g4b48560cd07d-ab14239520-4k'
+  02-16 14:51:57.706  6874  6874 F DEBUG   : 
+Revision: 'MP1.0'
+  02-16 14:51:57.706  6874  6874 F DEBUG   : ABI: 
+'arm64'
+  02-16 14:51:57.706  6874  6874 F DEBUG   : 
+Timestamp: 2026-02-16 14:51:57.658758773-0500
+  02-16 14:51:57.706  6874  6874 F DEBUG   : 
+Process uptime: 2s
+  02-16 14:51:57.706  6874  6874 F DEBUG   : 
+Executable: /system/bin/toybox
+  02-16 14:51:57.706  6874  6874 F DEBUG   : 
+Cmdline: dmesg
+  02-16 14:51:57.706  6874  6874 F DEBUG   : pid: 
+6864, tid: 6864, name: dmesg  >>> dmesg <<<
+  02-16 14:51:57.706  6874  6874 F DEBUG   : uid: 
+10471
+  02-16 14:51:57.706  6874  6874 F DEBUG   : 
+tagged_addr_ctrl: 0000000000000001 
+(PR_TAGGED_ADDR_ENABLE)
+  02-16 14:51:57.706  6874  6874 F DEBUG   : 
+pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, 
+PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+  02-16 14:51:57.706  6874  6874 F DEBUG   : esr: 
+0000000092000006 (Data Abort Exception 0x24)
+  02-16 14:51:57.706  6874  6874 F DEBUG   : signal 
+31 (SIGSYS), code 1 (SYS_SECCOMP), fault addr 
+--------
+  02-16 14:51:57.706  6874  6874 F DEBUG   : Cause: 
+seccomp prevented call to disallowed arm64 system 
+call 116
+  02-16 14:51:57.706  6874  6874 F DEBUG   :     x0 
+ 000000000000000a  x1  0000000000000000  x2  
+0000000000000000  x3  0000000000000000
+  02-16 14:51:57.706  6874  6874 F DEBUG   :     x4 
+ 0000007fda0dbfa1  x5  0000000000000004  x6  
+0000000000000202  x7  73656e6465570038
+  02-16 14:51:57.706  6874  6874 F DEBUG   :     x8 
+ 0000000000000074  x9  0000000000000000  x10 
+0000007fda0d9f30  x11 0000007fda0d9f00
+  02-16 14:51:57.706  6874  6874 F DEBUG   :     
+x12 ffffff80ffffffd0  x13 0000000000000001  x14 
+0000000000000001  x15 0000000000000101
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 
+Process: com.mysalesforce.mycommunity.C00D80000000bz
+L1EAI.A0OT3c000000CaR8GAK, PID: 6420
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: c
+om.google.android.gms.tasks.RuntimeExecutionExceptio
+n: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.getResult(com.go
+ogle.android.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.onCreate$lambda$2
+(PilotCoApp.kt:29)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.$r8$lambda$GV6rgY
+ulOOno7ANT238fdaQeSgw(Unknown Source:0)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp$$ExternalSyntheti
+cLambda2.onComplete(D8$$SyntheticClass:0)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzi.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 
+Caused by: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:665)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.l
+ambda$getToken$7$com-google-firebase-messaging-Fireb
+aseMessaging(FirebaseMessaging.java:421)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging$$
+ExternalSyntheticLambda11.run(D8$$SyntheticClass:0)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.util.concurrent.Executors$RunnableAdapter.ca
+ll(Executors.java:520)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.util.concurrent.FutureTask.run(FutureTask.ja
+va:317)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.util.concurrent.ScheduledThreadPoolExecutor$
+ScheduledFutureTask.run(ScheduledThreadPoolExecutor.
+java:348)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor.runWorker
+(ThreadPoolExecutor.java:1154)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor$Worker.ru
+n(ThreadPoolExecutor.java:652)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.common.util.concurrent.zza
+.run(com.google.android.gms:play-services-basement@@
+18.3.0:2)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.lang.Thread.run(Thread.java:1563)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 
+Caused by: java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.zza(com.google
+.android.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.await(com.goog
+le.android.gms:play-services-tasks@@18.1.0:9)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:663)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+... 9 more
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 
+Caused by: java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.handleRespon
+se(GmsRpc.java:318)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.lambda$extra
+ctResponseWhenComplete$0$com-google-firebase-messagi
+ng-GmsRpc(GmsRpc.java:329)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc$$ExternalSyn
+theticLambda0.then(D8$$SyntheticClass:0)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at androidx.privacysandbox.ads.adservices.adid.AdIdM
+anager$Api33Ext4Impl$$ExternalSyntheticLambda0.execu
+te(D8$$SyntheticClass:0)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:8)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzy.execute
+(Unknown Source:0)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.tasks.TaskCompletionSource
+.setResult(com.google.android.gms:play-services-task
+s@@18.1.0:1)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzs.zzd(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:3)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzu.zza(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:2)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzm.handleM
+essage(com.google.android.gms:play-services-cloud-me
+ssaging@@17.2.0:14)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:128)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 00:35:23.179  6420  6420 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 
+Process: com.mysalesforce.mycommunity.C00D80000000bz
+L1EAI.A0OT3c000000CaR8GAK, PID: 8694
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: c
+om.google.android.gms.tasks.RuntimeExecutionExceptio
+n: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.getResult(com.go
+ogle.android.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.onCreate$lambda$2
+(PilotCoApp.kt:29)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.$r8$lambda$GV6rgY
+ulOOno7ANT238fdaQeSgw(Unknown Source:0)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp$$ExternalSyntheti
+cLambda2.onComplete(D8$$SyntheticClass:0)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzi.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 
+Caused by: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:665)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.l
+ambda$getToken$7$com-google-firebase-messaging-Fireb
+aseMessaging(FirebaseMessaging.java:421)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging$$
+ExternalSyntheticLambda11.run(D8$$SyntheticClass:0)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.util.concurrent.Executors$RunnableAdapter.ca
+ll(Executors.java:520)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.util.concurrent.FutureTask.run(FutureTask.ja
+va:317)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.util.concurrent.ScheduledThreadPoolExecutor$
+ScheduledFutureTask.run(ScheduledThreadPoolExecutor.
+java:348)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor.runWorker
+(ThreadPoolExecutor.java:1154)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor$Worker.ru
+n(ThreadPoolExecutor.java:652)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.common.util.concurrent.zza
+.run(com.google.android.gms:play-services-basement@@
+18.3.0:2)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.lang.Thread.run(Thread.java:1563)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 
+Caused by: java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.zza(com.google
+.android.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.await(com.goog
+le.android.gms:play-services-tasks@@18.1.0:9)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:663)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+... 9 more
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 
+Caused by: java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.handleRespon
+se(GmsRpc.java:318)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.lambda$extra
+ctResponseWhenComplete$0$com-google-firebase-messagi
+ng-GmsRpc(GmsRpc.java:329)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc$$ExternalSyn
+theticLambda0.then(D8$$SyntheticClass:0)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at androidx.privacysandbox.ads.adservices.adid.AdIdM
+anager$Api33Ext4Impl$$ExternalSyntheticLambda0.execu
+te(D8$$SyntheticClass:0)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:8)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzy.execute
+(Unknown Source:0)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.tasks.TaskCompletionSource
+.setResult(com.google.android.gms:play-services-task
+s@@18.1.0:1)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzs.zzd(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:3)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzu.zza(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:2)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzm.handleM
+essage(com.google.android.gms:play-services-cloud-me
+ssaging@@17.2.0:14)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:128)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 00:35:45.774  8694  8694 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 
+Process: com.mysalesforce.mycommunity.C00D80000000bz
+L1EAI.A0OT3c000000CaR8GAK, PID: 9887
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: c
+om.google.android.gms.tasks.RuntimeExecutionExceptio
+n: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.getResult(com.go
+ogle.android.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.onCreate$lambda$2
+(PilotCoApp.kt:29)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.$r8$lambda$GV6rgY
+ulOOno7ANT238fdaQeSgw(Unknown Source:0)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp$$ExternalSyntheti
+cLambda2.onComplete(D8$$SyntheticClass:0)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzi.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 
+Caused by: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:665)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.l
+ambda$getToken$7$com-google-firebase-messaging-Fireb
+aseMessaging(FirebaseMessaging.java:421)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging$$
+ExternalSyntheticLambda11.run(D8$$SyntheticClass:0)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.util.concurrent.Executors$RunnableAdapter.ca
+ll(Executors.java:520)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.util.concurrent.FutureTask.run(FutureTask.ja
+va:317)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.util.concurrent.ScheduledThreadPoolExecutor$
+ScheduledFutureTask.run(ScheduledThreadPoolExecutor.
+java:348)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor.runWorker
+(ThreadPoolExecutor.java:1154)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor$Worker.ru
+n(ThreadPoolExecutor.java:652)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.common.util.concurrent.zza
+.run(com.google.android.gms:play-services-basement@@
+18.3.0:2)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.lang.Thread.run(Thread.java:1563)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 
+Caused by: java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.zza(com.google
+.android.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.await(com.goog
+le.android.gms:play-services-tasks@@18.1.0:9)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:663)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+... 9 more
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 
+Caused by: java.io.IOException: FIS_AUTH_ERROR
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.handleRespon
+se(GmsRpc.java:318)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.lambda$extra
+ctResponseWhenComplete$0$com-google-firebase-messagi
+ng-GmsRpc(GmsRpc.java:329)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc$$ExternalSyn
+theticLambda0.then(D8$$SyntheticClass:0)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at androidx.privacysandbox.ads.adservices.adid.AdIdM
+anager$Api33Ext4Impl$$ExternalSyntheticLambda0.execu
+te(D8$$SyntheticClass:0)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:8)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzy.execute
+(Unknown Source:0)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.tasks.TaskCompletionSource
+.setResult(com.google.android.gms:play-services-task
+s@@18.1.0:1)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzs.zzd(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:3)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzu.zza(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:2)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzm.handleM
+essage(com.google.android.gms:play-services-cloud-me
+ssaging@@17.2.0:14)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:128)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 00:36:20.524  9887  9887 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 
+Process: com.mysalesforce.mycommunity.C00D80000000bz
+L1EAI.A0OT3c000000CaR8GAK, PID: 23814
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: c
+om.google.android.gms.tasks.RuntimeExecutionExceptio
+n: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.getResult(com.go
+ogle.android.gms:play-services-tasks@@18.1.0:3)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.onCreate$lambda$2
+(PilotCoApp.kt:29)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.$r8$lambda$GV6rgY
+ulOOno7ANT238fdaQeSgw(Unknown Source:0)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp$$ExternalSyntheti
+cLambda2.onComplete(D8$$SyntheticClass:0)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzi.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 
+Caused by: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:665)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.l
+ambda$getToken$7$com-google-firebase-messaging-Fireb
+aseMessaging(FirebaseMessaging.java:421)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging$$
+ExternalSyntheticLambda11.run(D8$$SyntheticClass:0)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.util.concurrent.Executors$RunnableAdapter.ca
+ll(Executors.java:520)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.util.concurrent.FutureTask.run(FutureTask.ja
+va:317)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.util.concurrent.ScheduledThreadPoolExecutor$
+ScheduledFutureTask.run(ScheduledThreadPoolExecutor.
+java:348)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor.runWorker
+(ThreadPoolExecutor.java:1154)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor$Worker.ru
+n(ThreadPoolExecutor.java:652)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.common.util.concurrent.zza
+.run(com.google.android.gms:play-services-basement@@
+18.3.0:2)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.lang.Thread.run(Thread.java:1563)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 
+Caused by: java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.zza(com.google
+.android.gms:play-services-tasks@@18.1.0:5)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.await(com.goog
+le.android.gms:play-services-tasks@@18.1.0:9)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:663)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+... 9 more
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 
+Caused by: java.io.IOException: FIS_AUTH_ERROR
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.handleRespon
+se(GmsRpc.java:318)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.lambda$extra
+ctResponseWhenComplete$0$com-google-firebase-messagi
+ng-GmsRpc(GmsRpc.java:329)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc$$ExternalSyn
+theticLambda0.then(D8$$SyntheticClass:0)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at androidx.privacysandbox.ads.adservices.adid.AdIdM
+anager$Api33Ext4Impl$$ExternalSyntheticLambda0.execu
+te(D8$$SyntheticClass:0)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:8)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzy.execute
+(Unknown Source:0)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.tasks.TaskCompletionSource
+.setResult(com.google.android.gms:play-services-task
+s@@18.1.0:1)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzs.zzd(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:3)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzu.zza(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:2)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzm.handleM
+essage(com.google.android.gms:play-services-cloud-me
+ssaging@@17.2.0:14)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:128)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 02:48:24.802 23814 23814 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 
+Process: com.mysalesforce.mycommunity.C00D80000000bz
+L1EAI.A0OT3c000000CaR8GAK, PID: 25209
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: c
+om.google.android.gms.tasks.RuntimeExecutionExceptio
+n: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.getResult(com.go
+ogle.android.gms:play-services-tasks@@18.1.0:3)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.onCreate$lambda$2
+(PilotCoApp.kt:29)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.$r8$lambda$GV6rgY
+ulOOno7ANT238fdaQeSgw(Unknown Source:0)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp$$ExternalSyntheti
+cLambda2.onComplete(D8$$SyntheticClass:0)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzi.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 
+Caused by: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:665)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.l
+ambda$getToken$7$com-google-firebase-messaging-Fireb
+aseMessaging(FirebaseMessaging.java:421)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging$$
+ExternalSyntheticLambda11.run(D8$$SyntheticClass:0)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at java.util.concurrent.Executors$RunnableAdapter.ca
+ll(Executors.java:520)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at java.util.concurrent.FutureTask.run(FutureTask.ja
+va:317)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at java.util.concurrent.ScheduledThreadPoolExecutor$
+ScheduledFutureTask.run(ScheduledThreadPoolExecutor.
+java:348)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor.runWorker
+(ThreadPoolExecutor.java:1154)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor$Worker.ru
+n(ThreadPoolExecutor.java:652)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.common.util.concurrent.zza
+.run(com.google.android.gms:play-services-basement@@
+18.3.0:2)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at java.lang.Thread.run(Thread.java:1563)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 
+Caused by: java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.zza(com.google
+.android.gms:play-services-tasks@@18.1.0:5)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.await(com.goog
+le.android.gms:play-services-tasks@@18.1.0:9)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:663)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+... 9 more
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 
+Caused by: java.io.IOException: FIS_AUTH_ERROR
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.handleRespon
+se(GmsRpc.java:318)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.lambda$extra
+ctResponseWhenComplete$0$com-google-firebase-messagi
+ng-GmsRpc(GmsRpc.java:329)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc$$ExternalSyn
+theticLambda0.then(D8$$SyntheticClass:0)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at androidx.privacysandbox.ads.adservices.adid.AdIdM
+anager$Api33Ext4Impl$$ExternalSyntheticLambda0.execu
+te(D8$$SyntheticClass:0)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:8)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzy.execute
+(Unknown Source:0)
+> 02-18 03:13:46.680 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.tasks.TaskCompletionSource
+.setResult(com.google.android.gms:play-services-task
+s@@18.1.0:1)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzs.zzd(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:3)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzu.zza(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:2)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzm.handleM
+essage(com.google.android.gms:play-services-cloud-me
+ssaging@@17.2.0:14)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:128)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 03:13:46.681 25209 25209 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 
+Process: com.mysalesforce.mycommunity.C00D80000000bz
+L1EAI.A0OT3c000000CaR8GAK, PID: 31017
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: c
+om.google.android.gms.tasks.RuntimeExecutionExceptio
+n: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.getResult(com.go
+ogle.android.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.onCreate$lambda$2
+(PilotCoApp.kt:29)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.$r8$lambda$GV6rgY
+ulOOno7ANT238fdaQeSgw(Unknown Source:0)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp$$ExternalSyntheti
+cLambda2.onComplete(D8$$SyntheticClass:0)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzi.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 
+Caused by: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:665)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.l
+ambda$getToken$7$com-google-firebase-messaging-Fireb
+aseMessaging(FirebaseMessaging.java:421)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging$$
+ExternalSyntheticLambda11.run(D8$$SyntheticClass:0)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.util.concurrent.Executors$RunnableAdapter.ca
+ll(Executors.java:520)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.util.concurrent.FutureTask.run(FutureTask.ja
+va:317)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.util.concurrent.ScheduledThreadPoolExecutor$
+ScheduledFutureTask.run(ScheduledThreadPoolExecutor.
+java:348)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor.runWorker
+(ThreadPoolExecutor.java:1154)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor$Worker.ru
+n(ThreadPoolExecutor.java:652)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.common.util.concurrent.zza
+.run(com.google.android.gms:play-services-basement@@
+18.3.0:2)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.lang.Thread.run(Thread.java:1563)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 
+Caused by: java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.zza(com.google
+.android.gms:play-services-tasks@@18.1.0:5)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.await(com.goog
+le.android.gms:play-services-tasks@@18.1.0:9)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:663)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+... 9 more
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 
+Caused by: java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.handleRespon
+se(GmsRpc.java:318)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.lambda$extra
+ctResponseWhenComplete$0$com-google-firebase-messagi
+ng-GmsRpc(GmsRpc.java:329)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc$$ExternalSyn
+theticLambda0.then(D8$$SyntheticClass:0)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at androidx.privacysandbox.ads.adservices.adid.AdIdM
+anager$Api33Ext4Impl$$ExternalSyntheticLambda0.execu
+te(D8$$SyntheticClass:0)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:8)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzy.execute
+(Unknown Source:0)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.tasks.TaskCompletionSource
+.setResult(com.google.android.gms:play-services-task
+s@@18.1.0:1)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzs.zzd(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:3)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzu.zza(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:2)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzm.handleM
+essage(com.google.android.gms:play-services-cloud-me
+ssaging@@17.2.0:14)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:128)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 04:40:28.803 31017 31017 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 
+Process: com.mysalesforce.mycommunity.C00D80000000bz
+L1EAI.A0OT3c000000CaR8GAK, PID: 31392
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: c
+om.google.android.gms.tasks.RuntimeExecutionExceptio
+n: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.getResult(com.go
+ogle.android.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.onCreate$lambda$2
+(PilotCoApp.kt:29)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp.$r8$lambda$GV6rgY
+ulOOno7ANT238fdaQeSgw(Unknown Source:0)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.mysalesforce.mycommunity.C00D80000000bzL1EAI.
+A0OT3c000000CaR8GAK.app.PilotCoApp$$ExternalSyntheti
+cLambda2.onComplete(D8$$SyntheticClass:0)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzi.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 
+Caused by: java.io.IOException: 
+java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:665)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.l
+ambda$getToken$7$com-google-firebase-messaging-Fireb
+aseMessaging(FirebaseMessaging.java:421)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging$$
+ExternalSyntheticLambda11.run(D8$$SyntheticClass:0)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at java.util.concurrent.Executors$RunnableAdapter.ca
+ll(Executors.java:520)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at java.util.concurrent.FutureTask.run(FutureTask.ja
+va:317)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at java.util.concurrent.ScheduledThreadPoolExecutor$
+ScheduledFutureTask.run(ScheduledThreadPoolExecutor.
+java:348)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor.runWorker
+(ThreadPoolExecutor.java:1154)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at java.util.concurrent.ThreadPoolExecutor$Worker.ru
+n(ThreadPoolExecutor.java:652)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.common.util.concurrent.zza
+.run(com.google.android.gms:play-services-basement@@
+18.3.0:2)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at java.lang.Thread.run(Thread.java:1563)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 
+Caused by: java.util.concurrent.ExecutionException: 
+java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.zza(com.google
+.android.gms:play-services-tasks@@18.1.0:5)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.Tasks.await(com.goog
+le.android.gms:play-services-tasks@@18.1.0:9)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.firebase.messaging.FirebaseMessaging.b
+lockingGetToken(FirebaseMessaging.java:663)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+... 9 more
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 
+Caused by: java.io.IOException: FIS_AUTH_ERROR
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.handleRespon
+se(GmsRpc.java:318)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc.lambda$extra
+ctResponseWhenComplete$0$com-google-firebase-messagi
+ng-GmsRpc(GmsRpc.java:329)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.firebase.messaging.GmsRpc$$ExternalSyn
+theticLambda0.then(D8$$SyntheticClass:0)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at androidx.privacysandbox.ads.adservices.adid.AdIdM
+anager$Api33Ext4Impl$$ExternalSyntheticLambda0.execu
+te(D8$$SyntheticClass:0)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzc.run(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:8)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzy.execute
+(Unknown Source:0)
+> 02-18 04:40:45.766 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzd.zzd(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:1)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzr.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:5)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.zzw.zzb(com.google.a
+ndroid.gms:play-services-tasks@@18.1.0:3)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.tasks.TaskCompletionSource
+.setResult(com.google.android.gms:play-services-task
+s@@18.1.0:1)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzs.zzd(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:3)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzu.zza(com
+.google.android.gms:play-services-cloud-messaging@@1
+7.2.0:2)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.google.android.gms.cloudmessaging.zzm.handleM
+essage(com.google.android.gms:play-services-cloud-me
+ssaging@@17.2.0:14)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:128)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-18 04:40:45.767 31392 31392 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+> 02-20 01:27:46.895 27388 27388 F libc    : Fatal 
+signal 31 (SIGSYS), code 1 (SYS_SECCOMP), syscall 
+116 in tid 27388 (dmesg), pid 27388 (dmesg)
+  02-20 01:27:47.120 27398 27398 F DEBUG   : *** 
+*** *** *** *** *** *** *** *** *** *** *** *** *** 
+*** ***
+  02-20 01:27:47.120 27398 27398 F DEBUG   : Build 
+fingerprint: 'google/mustang/mustang:16/BP4A.260205.
+001/14624666:user/release-keys'
+  02-20 01:27:47.120 27398 27398 F DEBUG   : Kernel 
+Release: 
+'6.6.98-android15-8-g4b48560cd07d-ab14239520-4k'
+  02-20 01:27:47.122 27398 27398 F DEBUG   : 
+Revision: 'MP1.0'
+  02-20 01:27:47.122 27398 27398 F DEBUG   : ABI: 
+'arm64'
+  02-20 01:27:47.122 27398 27398 F DEBUG   : 
+Timestamp: 2026-02-20 01:27:47.047759833-0500
+  02-20 01:27:47.122 27398 27398 F DEBUG   : 
+Process uptime: 2s
+  02-20 01:27:47.122 27398 27398 F DEBUG   : 
+Executable: /system/bin/toybox
+  02-20 01:27:47.122 27398 27398 F DEBUG   : 
+Cmdline: dmesg
+  02-20 01:27:47.122 27398 27398 F DEBUG   : pid: 
+27388, tid: 27388, name: dmesg  >>> dmesg <<<
+  02-20 01:27:47.122 27398 27398 F DEBUG   : uid: 
+10471
+  02-20 01:27:47.122 27398 27398 F DEBUG   : 
+tagged_addr_ctrl: 0000000000000001 
+(PR_TAGGED_ADDR_ENABLE)
+  02-20 01:27:47.122 27398 27398 F DEBUG   : 
+pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, 
+PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+  02-20 01:27:47.122 27398 27398 F DEBUG   : esr: 
+0000000092000006 (Data Abort Exception 0x24)
+  02-20 01:27:47.122 27398 27398 F DEBUG   : signal 
+31 (SIGSYS), code 1 (SYS_SECCOMP), fault addr 
+--------
+  02-20 01:27:47.122 27398 27398 F DEBUG   : Cause: 
+seccomp prevented call to disallowed arm64 system 
+call 116
+  02-20 01:27:47.122 27398 27398 F DEBUG   :     x0 
+ 000000000000000a  x1  0000000000000000  x2  
+0000000000000000  x3  0000000000000000
+  02-20 01:27:47.122 27398 27398 F DEBUG   :     x4 
+ 0000007fe20e1a61  x5  0000000000000004  x6  
+0000000000000000  x7  73656e6465570038
+  02-20 01:27:47.122 27398 27398 F DEBUG   :     x8 
+ 0000000000000074  x9  0000000000000000  x10 
+0000007fe20df9f0  x11 0000007fe20df9c0
+  02-20 01:27:47.122 27398 27398 F DEBUG   :     
+x12 ffffff80ffffffd0  x13 0000000000000001  x14 
+0000000000000001  x15 0000000000000202
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 
+FATAL EXCEPTION: main
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 
+Process: com.android.systemui:screenshot, PID: 19355
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 
+java.util.concurrent.CancellationException: Task 
+was cancelled.
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at androidx.concurrent.futures.AbstractResolvableFut
+ure.getDoneValue$1(go/retraceme d7434036f30927423ce8
+aca1e3c453e1261a0e8c346035197b57fdd4a4917e53:33)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at androidx.concurrent.futures.AbstractResolvableFut
+ure.get(go/retraceme d7434036f30927423ce8aca1e3c453e
+1261a0e8c346035197b57fdd4a4917e53:46)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at com.android.systemui.screenshot.scroll.ScrollCapt
+ureController$$ExternalSyntheticLambda1.run(go/retra
+ceme d7434036f30927423ce8aca1e3c453e1261a0e8c3460351
+97b57fdd4a4917e53:75)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-21 09:23:21.012 19355 19355 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+  --------- beginning of kernel
+  02-21 11:55:07.330     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.357     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.391     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.428     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.464     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.492     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.527     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.559     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.594     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.628     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.664     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.695     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.731     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.760     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.796     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.829     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.862     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.894     0     0 I trusty  : 
+logging.cc: 79: ***: :236: Command Received: 
+AuthenticationEvaluate
+  02-21 11:55:07.926     0     0 I trusty  : --ACFW 
+Config marking secure--
+> 02-22 00:46:00.343 17136 17136 F libc    : Fatal 
+signal 31 (SIGSYS), code 1 (SYS_SECCOMP), syscall 
+116 in tid 17136 (dmesg), pid 17136 (dmesg)
+  02-22 00:46:00.556 17152 17152 F DEBUG   : *** 
+*** *** *** *** *** *** *** *** *** *** *** *** *** 
+*** ***
+  02-22 00:46:00.556 17152 17152 F DEBUG   : Build 
+fingerprint: 'google/mustang/mustang:16/BP4A.260205.
+001/14624666:user/release-keys'
+  02-22 00:46:00.556 17152 17152 F DEBUG   : Kernel 
+Release: 
+'6.6.98-android15-8-g4b48560cd07d-ab14239520-4k'
+  02-22 00:46:00.556 17152 17152 F DEBUG   : 
+Revision: 'MP1.0'
+  02-22 00:46:00.556 17152 17152 F DEBUG   : ABI: 
+'arm64'
+  02-22 00:46:00.556 17152 17152 F DEBUG   : 
+Timestamp: 2026-02-22 00:46:00.487817016-0500
+  02-22 00:46:00.556 17152 17152 F DEBUG   : 
+Process uptime: 1s
+  02-22 00:46:00.556 17152 17152 F DEBUG   : 
+Executable: /system/bin/toybox
+  02-22 00:46:00.556 17152 17152 F DEBUG   : 
+Cmdline: dmesg
+  02-22 00:46:00.556 17152 17152 F DEBUG   : pid: 
+17136, tid: 17136, name: dmesg  >>> dmesg <<<
+  02-22 00:46:00.556 17152 17152 F DEBUG   : uid: 
+10471
+  02-22 00:46:00.556 17152 17152 F DEBUG   : 
+tagged_addr_ctrl: 0000000000000001 
+(PR_TAGGED_ADDR_ENABLE)
+  02-22 00:46:00.556 17152 17152 F DEBUG   : 
+pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, 
+PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+  02-22 00:46:00.556 17152 17152 F DEBUG   : esr: 
+0000000092000006 (Data Abort Exception 0x24)
+  02-22 00:46:00.557 17152 17152 F DEBUG   : signal 
+31 (SIGSYS), code 1 (SYS_SECCOMP), fault addr 
+--------
+  02-22 00:46:00.557 17152 17152 F DEBUG   : Cause: 
+seccomp prevented call to disallowed arm64 system 
+call 116
+  02-22 00:46:00.557 17152 17152 F DEBUG   :     x0 
+ 000000000000000a  x1  0000000000000000  x2  
+0000000000000000  x3  0000000000000000
+  02-22 00:46:00.557 17152 17152 F DEBUG   :     x4 
+ 0000007fc7e58da1  x5  0000000000000004  x6  
+0000000000000202  x7  73656e6465570038
+  02-22 00:46:00.557 17152 17152 F DEBUG   :     x8 
+ 0000000000000074  x9  0000000000000000  x10 
+0000007fc7e56d30  x11 0000007fc7e56d00
+  02-22 00:46:00.557 17152 17152 F DEBUG   :     
+x12 ffffff80ffffffd0  x13 0000000000000000  x14 
+0000000000000001  x15 0000000000000000
+> 02-22 18:06:11.049  3171  3171 D TripDetailVM: 
+Refreshing image for destination: Atlanta
+  02-22 18:06:11.053  1701  1701 D AOC     : CHRE: 
+DRAM vote count begins
+  02-22 18:06:11.053  1701  1701 D AOC     : CHRE: 
+DRAM vote count ends: 0 ms
+  02-22 18:06:11.054  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.15 w_lux: 5.15 C:0.09 G:0.03
+  02-22 18:06:11.054  1397  1460 D CHRE    : @ 
+818201.864: Parsed nanoapp message from host: app 
+ID 0x476f6f676c00103b endpoint 0x8005 msgType 1 
+payload size 6
+  02-22 18:06:11.059  3171  3171 D 
+WindowOnBackDispatcher: setTopOnBackInvokedCallback 
+(unwrapped): null
+  02-22 18:06:11.060  1994  5363 D CoreBackPreview: 
+Window{5ab96bc u0 
+com.dash.travel/com.dash.travel.MainActivity}: 
+Setting back callback null
+  02-22 18:06:11.062  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.80 w_lux: 5.06 C:0.09 G:0.03
+  02-22 18:06:11.068  3171  3236 D HWUI    : 
+endAllActiveAnimators on 0xb400007b892f97a0 
+(UnprojectedRipple) with handle 0xb400007a9933cb80
+  02-22 18:06:11.072  3171  3171 W 
+InputEventReceiver: Failed to send outbound event 
+on channel '5ab96bc 
+com.dash.travel/com.dash.travel.MainActivity'.  
+status=DEAD_OBJECT(-32)
+  02-22 18:06:11.072  3171  3171 W 
+InputEventReceiver: channel '5ab96bc 
+com.dash.travel/com.dash.travel.MainActivity' ~ 
+Could not send 0 outbound event(s), 
+status:DEAD_OBJECT
+  02-22 18:06:11.073  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.05 w_lux: 5.12 C:0.09 G:0.03
+  02-22 18:06:11.086  1994  2040 V WindowManager: 
+Unknown focus tokens, dropping reportFocusChanged
+  02-22 18:06:11.087  1994  2040 I 
+DisplayDeviceRepository: Display device changed 
+render timings: "Built-in Screen", 
+renderFrameRate=120.00001, 
+presentationDeadlineNanos=11500000, 
+appVsyncOffsetNanos=6233332, 
+frameRateOverrides=[{uid=1000 
+frameRateHz=120.00001}, {uid=10253 
+frameRateHz=120.00001}, {uid=10270 
+frameRateHz=120.00001}, {uid=10550 
+frameRateHz=120.00001}]
+  02-22 18:06:11.088  1462  9658 D DeviceHalAidl: 
+[default] setParameters: parameters: 
+"screen_state=on"
+  02-22 18:06:11.089  1392  2586 D ASvc::Module: 
+updateScreenState: 1
+  02-22 18:06:11.089  1462  9658 D DeviceHalAidl: 
+[r_submix] setParameters: parameters: 
+"screen_state=on"
+  02-22 18:06:11.089  1392 11851 D AHAL_Module: 
+updateScreenState: r_submix: 1
+  02-22 18:06:11.089  1462  9658 D DeviceHalAidl: 
+[bluetooth] setParameters: parameters: 
+"screen_state=on"
+  02-22 18:06:11.089  1392 12020 D AHAL_Module: 
+updateScreenState: bluetooth: 1
+  02-22 18:06:11.091  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.76 w_lux: 5.10 C:0.09 G:0.03
+> 02-22 18:06:11.395  3171  3171 D TripDetailVM: 
+Got new image URL: https://pixabay.com/get/g3e90aaf5
+a84f99e6515939fded02d4f8f0d19ea5d8271cf73333d745e25b
+6341e278467394b99e811543ffd2c386ffb8_640.jpg#t=17718
+01571395
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 
+Failed to refresh image
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 
+kotlinx.serialization.SerializationException: 
+Serializer for class 'Any' is not found.
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 
+Please ensure that class is marked as 
+'@Serializable' and that the serialization compiler 
+plugin is applied.
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.internal.Platform_commonKt.
+serializerNotRegistered(Platform.common.kt:90)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.internal.PlatformKt.platfor
+mSpecificSerializerNotRegistered(Platform.kt:33)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializer(Serializers.kt:134)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializer(Un
+known Source:1)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializersForParameters(Serializers.kt:267)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializersFo
+rParameters(Unknown Source:1)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializerByKTypeImpl$SerializersKt__SerializersKt
+(Serializers.kt:225)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializer(Serializers.kt:133)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializer(Un
+known Source:1)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializer(Serializers.kt:72)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializer(Un
+known Source:1)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at io.github.jan.supabase.serializer.KotlinXSerializ
+er.encode(KotlinXSerializer.kt:13)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at com.dash.travel.data.repository.TripRepository.up
+dateTrip(TripRepository.kt:850)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at com.dash.travel.ui.viewmodel.TripDetailViewModel$
+refreshTripImage$1.invokeSuspend(TripDetailViewModel
+.kt:446)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlin.coroutines.jvm.internal.BaseContinuationIm
+pl.resumeWith(ContinuationImpl.kt:33)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at kotlinx.coroutines.DispatchedTask.run(DispatchedT
+ask.kt:100)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-22 18:06:11.397  3171  3171 E TripDetailVM: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+  02-22 18:06:11.399  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.87 w_lux: 5.09 C:0.09 G:0.03
+  02-22 18:06:11.407  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.91 w_lux: 5.14 C:0.09 G:0.03
+  02-22 18:06:11.412  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.76 w_lux: 5.13 C:0.09 G:0.03
+  02-22 18:06:11.416  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.20 w_lux: 5.07 C:0.09 G:0.03
+  02-22 18:06:11.529  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.81 w_lux: 4.99 C:0.09 G:0.03
+  02-22 18:06:11.533  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.05 w_lux: 5.11 C:0.09 G:0.03
+  02-22 18:06:11.541  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.89 w_lux: 5.09 C:0.09 G:0.03
+  02-22 18:06:11.550  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.19 w_lux: 5.07 C:0.09 G:0.03
+  02-22 18:06:11.554  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.86 w_lux: 5.07 C:0.09 G:0.03
+  02-22 18:06:11.559  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.11 w_lux: 5.09 C:0.09 G:0.03
+  02-22 18:06:11.579  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.79 w_lux: 5.03 C:0.09 G:0.03
+  02-22 18:06:11.583  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.98 w_lux: 5.05 C:0.09 G:0.03
+  02-22 18:06:11.595  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.90 w_lux: 5.05 C:0.09 G:0.03
+  02-22 18:06:11.600  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.33 w_lux: 5.11 C:0.09 G:0.03
+  02-22 18:06:11.716  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.76 w_lux: 5.05 C:0.09 G:0.03
+  02-22 18:06:11.720  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.02 w_lux: 5.07 C:0.09 G:0.03
+  02-22 18:06:11.754  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.86 w_lux: 5.13 C:0.09 G:0.03
+  02-22 18:06:11.763  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.07 w_lux: 5.05 C:0.09 G:0.03
+  02-22 18:06:11.783  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.85 w_lux: 5.07 C:0.09 G:0.03
+  02-22 18:06:11.787  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.97 w_lux: 5.05 C:0.09 G:0.03
+> 02-22 18:06:13.964  3171  3171 D TripDetailVM: 
+Refreshing image for destination: Atlanta
+  02-22 18:06:13.965  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.84 w_lux: 5.03 C:0.08 G:0.03
+  02-22 18:06:13.965  1701  1701 D AOC     : CHRE: 
+DRAM vote count ends: 0 ms
+  02-22 18:06:13.968  1397  1460 D CHRE    : @ 
+818204.777: Parsed nanoapp message from host: app 
+ID 0x476f6f676c00103b endpoint 0x8005 msgType 1 
+payload size 6
+  02-22 18:06:13.976  3171  3171 D 
+WindowOnBackDispatcher: setTopOnBackInvokedCallback 
+(unwrapped): null
+  02-22 18:06:13.977  1994  5363 D CoreBackPreview: 
+Window{d4019dd u0 
+com.dash.travel/com.dash.travel.MainActivity}: 
+Setting back callback null
+  02-22 18:06:13.983  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.74 w_lux: 4.90 C:0.09 G:0.03
+  02-22 18:06:13.985  3171  3236 D HWUI    : 
+endAllActiveAnimators on 0xb400007b893a94d0 
+(UnprojectedRipple) with handle 0xb400007a99339610
+  02-22 18:06:13.990  3171  3171 W 
+InputEventReceiver: Failed to send outbound event 
+on channel 'd4019dd 
+com.dash.travel/com.dash.travel.MainActivity'.  
+status=DEAD_OBJECT(-32)
+  02-22 18:06:13.990  3171  3171 W 
+InputEventReceiver: channel 'd4019dd 
+com.dash.travel/com.dash.travel.MainActivity' ~ 
+Could not send 0 outbound event(s), 
+status:DEAD_OBJECT
+  02-22 18:06:13.996  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.83 w_lux: 5.01 C:0.09 G:0.03
+  02-22 18:06:14.005  1994  2040 I 
+DisplayDeviceRepository: Display device changed 
+render timings: "Built-in Screen", 
+renderFrameRate=120.00001, 
+presentationDeadlineNanos=11500000, 
+appVsyncOffsetNanos=6233332, 
+frameRateOverrides=[{uid=1000 
+frameRateHz=120.00001}, {uid=10253 
+frameRateHz=120.00001}, {uid=10270 
+frameRateHz=120.00001}, {uid=10550 
+frameRateHz=120.00001}]
+  02-22 18:06:14.006  1994  2040 V WindowManager: 
+Unknown focus tokens, dropping reportFocusChanged
+  02-22 18:06:14.013  1462 31303 D DeviceHalAidl: 
+[default] setParameters: parameters: 
+"screen_state=on"
+  02-22 18:06:14.013  1392  2586 D ASvc::Module: 
+updateScreenState: 1
+  02-22 18:06:14.013  1462 31303 D DeviceHalAidl: 
+[r_submix] setParameters: parameters: 
+"screen_state=on"
+  02-22 18:06:14.013   644 13401 W 
+hwc-platform-drm-generic: GetOrCreateFbId layer id 
+is not set, id 9223372036854775807. Not including 
+in long term fb cache
+  02-22 18:06:14.014  1392  2586 D AHAL_Module: 
+updateScreenState: r_submix: 1
+  02-22 18:06:14.014  1462 31303 D DeviceHalAidl: 
+[bluetooth] setParameters: parameters: 
+"screen_state=on"
+  02-22 18:06:14.014  1392 12020 D AHAL_Module: 
+updateScreenState: bluetooth: 1
+  02-22 18:06:14.017  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.39 w_lux: 5.01 C:0.09 G:0.02
+> 02-22 18:06:14.147  3171  3171 D TripDetailVM: 
+Got new image URL: https://pixabay.com/get/g8be9c39a
+dae8e6ea8cbe4d32759a83939d460dfaee2d683f3c068ec1100e
+c15c3924d3c7468beafd1a89539717bae2ad73e7ec667babfd48
+094e5b574b585496_640.jpg#t=1771801574147
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 
+Failed to refresh image
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 
+kotlinx.serialization.SerializationException: 
+Serializer for class 'Any' is not found.
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 
+Please ensure that class is marked as 
+'@Serializable' and that the serialization compiler 
+plugin is applied.
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.internal.Platform_commonKt.
+serializerNotRegistered(Platform.common.kt:90)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.internal.PlatformKt.platfor
+mSpecificSerializerNotRegistered(Platform.kt:33)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializer(Serializers.kt:134)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializer(Un
+known Source:1)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializersForParameters(Serializers.kt:267)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializersFo
+rParameters(Unknown Source:1)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializerByKTypeImpl$SerializersKt__SerializersKt
+(Serializers.kt:225)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializer(Serializers.kt:133)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializer(Un
+known Source:1)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt__SerializersK
+t.serializer(Serializers.kt:72)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.serialization.SerializersKt.serializer(Un
+known Source:1)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at io.github.jan.supabase.serializer.KotlinXSerializ
+er.encode(KotlinXSerializer.kt:13)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at com.dash.travel.data.repository.TripRepository.up
+dateTrip(TripRepository.kt:850)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at com.dash.travel.ui.viewmodel.TripDetailViewModel$
+refreshTripImage$1.invokeSuspend(TripDetailViewModel
+.kt:446)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlin.coroutines.jvm.internal.BaseContinuationIm
+pl.resumeWith(ContinuationImpl.kt:33)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at kotlinx.coroutines.DispatchedTask.run(DispatchedT
+ask.kt:100)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at 
+android.os.Handler.handleCallback(Handler.java:1070)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:125)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at 
+android.os.Looper.dispatchMessage(Looper.java:333)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at android.os.Looper.loopOnce(Looper.java:263)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at android.os.Looper.loop(Looper.java:367)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at android.app.ActivityThread.main(ActivityThread.ja
+va:9287)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at java.lang.reflect.Method.invoke(Native Method)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgs
+Caller.run(RuntimeInit.java:566)
+> 02-22 18:06:14.148  3171  3171 E TripDetailVM: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteIni
+t.java:929)
+  02-22 18:06:14.151  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.78 w_lux: 5.04 C:0.09 G:0.03
+  02-22 18:06:14.159  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.13 w_lux: 5.02 C:0.09 G:0.03
+  02-22 18:06:14.164  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.77 w_lux: 5.00 C:0.09 G:0.03
+  02-22 18:06:14.165  1994  2040 I 
+DisplayDeviceRepository: Display device changed 
+render timings: "Built-in Screen", 
+renderFrameRate=120.00001, 
+presentationDeadlineNanos=11500000, 
+appVsyncOffsetNanos=6233332, frameRateOverrides=[]
+  02-22 18:06:14.172  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.06 w_lux: 4.98 C:0.09 G:0.03
+  02-22 18:06:14.184  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.78 w_lux: 5.01 C:0.09 G:0.03
+  02-22 18:06:14.188  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.83 w_lux: 5.00 C:0.08 G:0.03
+  02-22 18:06:14.196  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.72 w_lux: 5.00 C:0.09 G:0.03
+  02-22 18:06:14.201  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.10 w_lux: 5.05 C:0.08 G:0.03
+  02-22 18:06:14.205  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.75 w_lux: 5.03 C:0.09 G:0.03
+  02-22 18:06:14.209  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.93 w_lux: 4.98 C:0.08 G:0.03
+  02-22 18:06:14.221  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.70 w_lux: 5.03 C:0.09 G:0.03
+  02-22 18:06:14.230  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.94 w_lux: 5.00 C:0.09 G:0.03
+  02-22 18:06:14.238  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.79 w_lux: 5.01 C:0.09 G:0.03
+  02-22 18:06:14.243  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.90 w_lux: 4.98 C:0.08 G:0.03
+  02-22 18:06:14.246  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.68 w_lux: 4.94 C:0.09 G:0.03
+  02-22 18:06:14.251  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:2.86 w_lux: 4.96 C:0.09 G:0.03
+  02-22 18:06:14.255  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.67 w_lux: 4.98 C:0.09 G:0.03
+  02-22 18:06:14.259  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 2 -> 1 d_lux:3.04 w_lux: 4.96 C:0.09 G:0.03
+  02-22 18:06:14.271  1701  1701 D AOC     : 
+A3:MSG: tmd3743_device.cc, 989: USF: TMD3743: C/G 
+switch 1 -> 2 d_lux:2.80 w_lux: 4.90 C:0.09 G:0.03
+
+

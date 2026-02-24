@@ -89,8 +89,7 @@ fun OnboardingScreen(
             emoji = "🤖",
             title = "Your AI travel buddy",
             description = "Just describe your dream trip and we'll\nbuild the itinerary for you.",
-            gradient = listOf(Secondary, Color(0xFFE040FB)),
-            isPro = true
+            gradient = listOf(Secondary, Color(0xFFE040FB))
         ),
         OnboardingPage(
             icon = Icons.Default.CloudDone,

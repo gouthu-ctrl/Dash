@@ -30,6 +30,8 @@
     <string name="home_trip_join">Join Trip</string>
     <string name="home_trip_decline">Decline</string>
     <string name="home_all_trips">All Trips</string>
+    <string name="home_upcoming_trips">Upcoming Trips</string>
+    <string name="home_past_memories">Past Memories</string>
     <string name="home_see_all">See all</string>
     <string name="home_view_trip">View Trip</string>
     <string name="home_empty_title">Ready for Adventure?</string>

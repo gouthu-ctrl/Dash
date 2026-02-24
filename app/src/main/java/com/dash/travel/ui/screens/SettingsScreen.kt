@@ -93,20 +93,7 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            SettingsSectionTitle(stringResource(R.string.settings_appearance))
-            
-            // Dark Mode Selector
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ThemeOptionChip(stringResource(R.string.settings_theme_light), uiState.theme == "light") { viewModel.setTheme("light") }
-                    ThemeOptionChip(stringResource(R.string.settings_theme_dark), uiState.theme == "dark") { viewModel.setTheme("dark") }
-                    ThemeOptionChip(stringResource(R.string.settings_theme_system), uiState.theme == "system") { viewModel.setTheme("system") }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
+            // Removed Dark Mode Selector
             
             SettingsActionItem(
                 title = stringResource(R.string.settings_language),
@@ -126,19 +113,7 @@ fun SettingsScreen(
                 onCheckedChange = { notificationsEnabled = it }
             )
 
-            SettingsSectionTitle(stringResource(R.string.settings_account))
-            
-            SettingsActionItem(
-                title = stringResource(R.string.settings_privacy),
-                icon = Icons.Default.Security,
-                onClick = { /* Navigate to Privacy */ }
-            )
-            
-            SettingsActionItem(
-                title = stringResource(R.string.settings_about),
-                icon = Icons.Default.Info,
-                onClick = { /* Navigate to About */ }
-            )
+            // Removed Privacy and About Settings Action Items
             
             Spacer(modifier = Modifier.height(24.dp))
             
@@ -167,17 +142,7 @@ fun SettingsScreen(
     }
 }
 
-@Composable
-fun ThemeOptionChip(label: String, selected: Boolean, onClick: () -> Unit) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label) },
-        leadingIcon = if (selected) {
-            { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp)) }
-        } else null
-    )
-}
+// Removed ThemeOptionChip
 
 @Composable
 fun LanguageSelectionDialog(currentLanguage: String, onDismiss: () -> Unit, onLanguageSelected: (String) -> Unit) {

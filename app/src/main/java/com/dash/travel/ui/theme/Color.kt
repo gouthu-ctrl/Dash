@@ -42,6 +42,7 @@ val SurfaceBright = Color(0xFF2D333B)           // Highlighted surfaces
 val SurfaceContainer = Color(0xFF1C2128)        // Input fields, chips
 val SurfaceContainerHigh = Color(0xFF262C34)    // Elevated containers
 val SurfaceContainerHighest = Color(0xFF30363D) // Highest elevation
+val SurfaceContainerLowest = Color(0xFF0D1117)  // Lowest elevation (darker than surface)
 val SurfaceBorder = Color(0xFF30363D)           // Subtle borders
 val InverseSurface = Color(0xFFF0F6FC)          // Light mode fallback
 

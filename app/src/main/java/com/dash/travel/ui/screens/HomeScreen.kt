@@ -72,14 +72,33 @@ fun HomeScreen(
     val pendingInvitations = allTrips.filter { it.membershipStatus == "pending" }
     val userProfile by viewModel.userProfile.collectAsState()
     
-    val upcomingTrip = acceptedTrips.firstOrNull { trip ->
-        trip.startDate?.let { dateStr ->
-            try {
-                val date = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(dateStr)
-                date?.after(Date()) == true
-            } catch (e: Exception) { false }
-        } ?: false
+    val today = Date()
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    
+    // Partition into Upcoming and Past
+    val (upcomingTrips, pastTrips) = acceptedTrips.partition { trip ->
+        val dateStr = trip.endDate ?: trip.startDate // Use end date if available, otherwise start
+        if (dateStr == null) return@partition true // No dates = treat as upcoming/draft
+        try {
+            val date = sdf.parse(dateStr)
+            date != null && !date.before(today) // Inclusive of today
+        } catch (e: Exception) {
+            true // Parse error = treat as upcoming
+        }
     }
+
+    // Sort upcoming (soonest first)
+    val sortedUpcomingTrips = upcomingTrips.sortedBy { trip ->
+        trip.startDate?.let { try { sdf.parse(it)?.time } catch (e: Exception) { null } } ?: Long.MAX_VALUE
+    }
+    
+    // Sort past (most recent first)
+    val sortedPastTrips = pastTrips.sortedByDescending { trip ->
+        trip.endDate?.let { try { sdf.parse(it)?.time } catch (e: Exception) { null } } ?: 0L
+    }
+    
+    // The closest upcoming trip gets the Hero spot
+    val upcomingTrip = sortedUpcomingTrips.firstOrNull()
     
     var showContent by remember { mutableStateOf(false) }
     
@@ -189,18 +208,20 @@ fun HomeScreen(
                         ContextualGuide(guideState = homeGuideState)
                     }
 
-                    // All trips header
-                    item {
-                        SectionHeader(
-                            title = stringResource(R.string.home_all_trips),
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            action = if (acceptedTrips.size > 3) stringResource(R.string.home_see_all) else null,
-                            onActionClick = { /* Navigate to trips list */ }
-                        )
+                    // Upcoming Trips header
+                    if (sortedUpcomingTrips.size > 1) {
+                        item {
+                            SectionHeader(
+                                title = stringResource(R.string.home_upcoming_trips),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                action = if (sortedUpcomingTrips.size > 4) stringResource(R.string.home_see_all) else null,
+                                onActionClick = { /* Navigate to upcoming trips list */ }
+                            )
+                        }
                     }
                     
-                    // Trip cards with stagger animation
-                    itemsIndexed(acceptedTrips, key = { _, trip -> trip.id }) { index, trip ->
+                    // Trip cards with stagger animation (Excluding Hero)
+                    itemsIndexed(sortedUpcomingTrips.drop(1), key = { _, trip -> trip.id }) { index, trip ->
                         AnimatedVisibility(
                             visible = showContent,
                             enter = fadeIn(tween(400, delayMillis = 150 + (index * 50))) +
@@ -216,6 +237,35 @@ fun HomeScreen(
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp, vertical = 6.dp)
                             )
+                        }
+                    }
+
+                    // Past Memories header
+                    if (sortedPastTrips.isNotEmpty()) {
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            SectionHeader(
+                                title = stringResource(R.string.home_past_memories),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                action = if (sortedPastTrips.size > 3) stringResource(R.string.home_see_all) else null,
+                                onActionClick = { /* Navigate to past trips list */ }
+                            )
+                        }
+                        
+                        itemsIndexed(sortedPastTrips, key = { _, trip -> trip.id }) { _, trip ->
+                            AnimatedVisibility(
+                                visible = showContent,
+                                enter = fadeIn(tween(400)) + slideInVertically(initialOffsetY = { 30 })
+                            ) {
+                                TripCard(
+                                    trip = trip,
+                                    onClick = { onNavigateToTrip(trip.id) },
+                                    isPast = true,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -617,16 +667,20 @@ private fun QuickWidget(
 fun TripCard(
     trip: TripEntity,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isPast: Boolean = false
 ) {
     val daysLeft = calculateDaysLeft(trip.startDate)
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .then(if (isPast) Modifier.background(Surface) else Modifier),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface)
+        colors = CardDefaults.cardColors(
+            containerColor = if (isPast) SurfaceContainerLowest else Surface
+        )
     ) {
         Row(
             modifier = Modifier
@@ -652,7 +706,8 @@ fun TripCard(
                         model = trip.tripImageUrl,
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        colorFilter = if (isPast) androidx.compose.ui.graphics.ColorFilter.colorMatrix(androidx.compose.ui.graphics.ColorMatrix().apply { setToSaturation(0.4f) }) else null
                     )
                 } else {
                     Icon(

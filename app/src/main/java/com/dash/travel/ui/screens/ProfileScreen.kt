@@ -137,18 +137,7 @@ fun ProfileScreen(
             
             Spacer(modifier = Modifier.height(32.dp))
             
-            // Travel Style (Chips) - Mock content
-            DashCard(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.profile_travel_style), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SuggestionChip(onClick = {}, label = { Text(stringResource(R.string.style_nature)) })
-                        SuggestionChip(onClick = {}, label = { Text(stringResource(R.string.style_foodie)) })
-                        SuggestionChip(onClick = {}, label = { Text(stringResource(R.string.style_backpacker)) })
-                    }
-                }
-            }
+            // Removed Travel Style (Chips)
         }
     }
 }
